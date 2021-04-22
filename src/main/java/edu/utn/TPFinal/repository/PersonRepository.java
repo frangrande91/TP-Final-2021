@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.Persistence;
+package edu.utn.TPFinal.repository;
 
 import edu.utn.TPFinal.model.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
