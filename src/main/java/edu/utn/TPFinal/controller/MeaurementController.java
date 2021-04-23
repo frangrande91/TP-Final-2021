@@ -25,7 +25,7 @@ public class MeaurementController {
         return measurementService.getAllMeasuremets();
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public Measurement getMeasurementById(@PathVariable Integer id){
         return measurementService.getMeasurementById(id);
     }
@@ -33,6 +33,11 @@ public class MeaurementController {
     @DeleteMapping
     public void deleteMeasurementById(@PathVariable Integer id){
         measurementService.deleteMeasurementById(id);
+    }
+
+    @PutMapping("/{id}/{idMeter}")
+    public void addMeterToMeasurement(@PathVariable Integer id, @PathVariable Integer idMeter){
+        measurementService.addMeterToMeasurement(id, idMeter);
     }
 
 

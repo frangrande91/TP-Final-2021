@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
@@ -29,11 +30,12 @@ public class Bill {
     private Measurement initialMeasurement;
 
     @OneToOne
-    @JoinColumn(name = "initial_measurement_id")
+    @JoinColumn(name = "final_measurement_id")
     private Measurement finalMeasurement;
 
     private Double totalConsuption;
 
+    @NotNull(message = "typeRate should not be null")
     private TypeRate typeRate;
 
     private Double totalPayable;
