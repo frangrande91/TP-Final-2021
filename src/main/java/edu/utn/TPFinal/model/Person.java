@@ -29,7 +29,6 @@ public abstract class Person {
     @NotBlank(message = "The first last name can not be blank")
     private String lastName;
 
-    /*@UniqueConstraint*/
     @OneToOne()
     private User user;
 

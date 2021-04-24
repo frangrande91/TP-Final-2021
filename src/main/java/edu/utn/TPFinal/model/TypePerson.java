@@ -2,7 +2,7 @@ package edu.utn.TPFinal.model;
 
 public enum TypePerson {
 
-    USER("Employee"),
+    EMPLOYEE("Employee"),
     CLIENT("Client");
 
     private String description;

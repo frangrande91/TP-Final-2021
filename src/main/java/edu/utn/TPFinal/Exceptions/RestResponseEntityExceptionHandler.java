@@ -42,4 +42,9 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handlerExceptions(ex,request);
     }
 
+    @ExceptionHandler({ErrorLoginException.class})
+    public ResponseEntity<Object> handlerErrorLoginException(ErrorLoginException ex,WebRequest request) {
+        return handlerExceptions(ex,request);
+    }
+
 }
