@@ -4,14 +4,25 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Address {
 
+    @NotNull(message = "street should not be null")
     private String street;
-    private String number;
+
+    @NotNull(message = "number should not be null")
+    private Integer number;
+
     private String floor;
+
+    @OneToOne
+    @JoinColumn(name = "meter_id")
     private Meter meter;
 
 
