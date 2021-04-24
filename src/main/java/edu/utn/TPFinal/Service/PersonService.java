@@ -1,15 +1,14 @@
-package edu.utn.TPFinal.Service;
+package edu.utn.TPFinal.service;
 
 import edu.utn.TPFinal.Exceptions.ClientNotFoundException;
 import edu.utn.TPFinal.Exceptions.ErrorLoginException;
 import edu.utn.TPFinal.Exceptions.PersonNotFoundException;
 import edu.utn.TPFinal.model.*;
+import edu.utn.TPFinal.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import edu.utn.TPFinal.repository.PersonRepository;
+
 import java.util.List;
-import edu.utn.TPFinal.service.AddressService;
-import static java.util.Objects.isNull;
 
 @Service
 public class PersonService {

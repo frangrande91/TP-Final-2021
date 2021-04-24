@@ -35,21 +35,27 @@ public class BillController {
         billService.deleteBillById(id);
     }
 
-    //addClientToBill
+    @PutMapping("/{id}/{idClient}")
+    public void addClientToBill(@PathVariable Integer id, @PathVariable String idClient){
+        billService.addClientToBill(id, idClient);
+    }
 
-    //addAddressToBill
+    @PutMapping("/{id}/{idAddress}")
+    public void addAddressToBill(@PathVariable Integer id, @PathVariable Integer idAddress){
+        billService.addAddressToBill(id, idAddress);
+    }
 
     @PutMapping("/{id}/{idMeter}")
     public void addMeterToBill(@PathVariable Integer id, @PathVariable Integer idMeter){
         billService.addMeterToBill(id, idMeter);
     }
 
-    @PatchMapping("{id}/{idMeasurement}")
+    @PatchMapping("/{id}/{idMeasurement}")
     public void addInitialMeasurement(@PathVariable Integer id, Integer idMeasurement){
         billService.addInitialMeasurement(id, idMeasurement);
     }
 
-    @PatchMapping("{id}/{idMeasurement}")
+    @PatchMapping("/{id}/{idMeasurement}")
     public void addFinalalMeasurement(@PathVariable Integer id, Integer idMeasurement){
         billService.addFinalMeasurement(id, idMeasurement);
     }

@@ -1,6 +1,6 @@
 package edu.utn.TPFinal.controller;
 
-import edu.utn.TPFinal.Service.PersonService;
+import edu.utn.TPFinal.service.PersonService;
 import edu.utn.TPFinal.model.Client;
 import edu.utn.TPFinal.model.Employee;
 import edu.utn.TPFinal.model.Person;

@@ -1,8 +1,6 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.model.Bill;
-import edu.utn.TPFinal.model.Measurement;
-import edu.utn.TPFinal.model.Meter;
+import edu.utn.TPFinal.model.*;
 import edu.utn.TPFinal.repository.BillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,12 +15,16 @@ public class BillService {
     private BillRepository billRepository;
     private MeterService meterService;
     private MeasurementService measurementService;
+    private PersonService personService;
+    private AddressService addressService;
 
     @Autowired
-    public BillService(BillRepository billRepository, MeterService meterService, MeasurementService measurementService) {
+    public BillService(BillRepository billRepository, MeterService meterService, MeasurementService measurementService, PersonService personService, AddressService addressService) {
         this.billRepository = billRepository;
         this.meterService = meterService;
         this.measurementService = measurementService;
+        this.personService = personService;
+        this.addressService = addressService;
 
     }
 
@@ -43,9 +45,21 @@ public class BillService {
         billRepository.deleteById(id);
     }
 
-    //addClientToBill
+    public void addClientToBill(Integer id, String idClient) {
+        Bill bill = getBillById(id);
+        Person person = personService.getById(idClient);
+        if(person instanceof Client){
+            bill.setClient((Client)person);
+        }
+        billRepository.save(bill);
+    }
 
-    //addAddressToBill
+    public void addAddressToBill(Integer id, Integer idAddress) {
+        Bill bill = getBillById(id);
+        Address address = addressService.getAddressById(idAddress);
+        bill.setAddress(address);
+        billRepository.save(bill);
+    }
 
     public void addMeterToBill(Integer id, Integer idMeter) {
         Bill bill = getBillById(id);
@@ -67,7 +81,5 @@ public class BillService {
         bill.setInitialMeasurement(measurement);
         billRepository.save(bill);
     }
-
-
 
 }
