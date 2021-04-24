@@ -3,20 +3,17 @@ package edu.utn.TPFinal.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.validation.constraints.Size;
+import javax.persistence.Id;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User extends Person {
+@Data
+@Entity
+public class User {
 
-    @Size(min = 5,max = 20)
-    private String userName;
-
-    @Size(min = 5,max = 20)
+    @Id
+    private String username;
     private String password;
 
 }

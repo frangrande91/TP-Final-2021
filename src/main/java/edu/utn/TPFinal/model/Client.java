@@ -13,4 +13,9 @@ import java.util.List;
 public class Client extends Person {
 
     private List<Address> addresses;
+
+    @Override
+    public TypePerson typePerson() {
+        return TypePerson.CLIENT;
+    }
 }

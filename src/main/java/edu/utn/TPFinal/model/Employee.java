@@ -5,20 +5,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 public class Employee extends Person {
 
-    private String numberEmployee;
+    private Integer yearsOfAntiquity;
 
-    @Size(min = 5,max = 20)
-    private String userName;
-
-    @Size(min = 5,max = 20)
-    private String password;
-
+    @Override
+    public TypePerson typePerson() {
+        return TypePerson.USER;
+    }
 }
