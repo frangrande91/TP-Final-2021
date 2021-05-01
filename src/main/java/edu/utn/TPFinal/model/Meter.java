@@ -15,7 +15,7 @@ public class Meter {
 
     @Id
     @GeneratedValue
-    private String id;
+    private Integer id;
 
     @NotNull(message = "brand should not be null")
     private String brand;

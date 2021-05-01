@@ -1,6 +1,7 @@
 package edu.utn.TPFinal.controller;
 
 import edu.utn.TPFinal.model.Bill;
+import edu.utn.TPFinal.model.PostResponse;
 import edu.utn.TPFinal.service.BillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +17,8 @@ public class BillController {
 
 
     @PostMapping("/")
-    public void addBill(@RequestBody Bill bill){
-        billService.addBill(bill);
+    public PostResponse addBill(@RequestBody Bill bill){
+        return billService.addBill(bill);
     }
 
     @GetMapping()

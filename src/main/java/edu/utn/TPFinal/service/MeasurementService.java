@@ -2,7 +2,9 @@ package edu.utn.TPFinal.service;
 
 import edu.utn.TPFinal.model.Measurement;
 import edu.utn.TPFinal.model.Meter;
+import edu.utn.TPFinal.model.PostResponse;
 import edu.utn.TPFinal.repository.MeasurementRepository;
+import edu.utn.TPFinal.utils.EntityURLBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import java.util.List;
 @Service
 public class MeasurementService {
 
+    private static final String MEASUREMENT_PATH = "measurement";
     private MeasurementRepository measurementRepository;
     private MeterService meterService;
 
@@ -23,8 +26,13 @@ public class MeasurementService {
         this.meterService = meterService;
     }
 
-    public void addMeasurement(Measurement measurement) {
-        measurementRepository.save(measurement);
+    public PostResponse addMeasurement(Measurement measurement) {
+        Measurement m = measurementRepository.save(measurement);
+        return PostResponse
+                .builder()
+                .status(HttpStatus.CREATED)
+                .url(EntityURLBuilder.buildURL(MEASUREMENT_PATH, m.getId()))
+                .build();
     }
 
 

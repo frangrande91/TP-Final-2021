@@ -1,6 +1,7 @@
 package edu.utn.TPFinal.controller;
 
 import edu.utn.TPFinal.model.Measurement;
+import edu.utn.TPFinal.model.PostResponse;
 import edu.utn.TPFinal.service.MeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +17,8 @@ public class MeaurementController {
 
 
     @PostMapping("/")
-    public void addMeasurement(@RequestBody Measurement measurement){
-        measurementService.addMeasurement(measurement);
+    public PostResponse addMeasurement(@RequestBody Measurement measurement){
+       return measurementService.addMeasurement(measurement);
     }
 
     @GetMapping()

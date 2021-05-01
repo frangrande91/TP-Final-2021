@@ -1,6 +1,7 @@
 package edu.utn.TPFinal.controller;
 
 import edu.utn.TPFinal.model.Meter;
+import edu.utn.TPFinal.model.PostResponse;
 import edu.utn.TPFinal.service.MeterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +17,8 @@ public class MeterController {
 
 
     @PostMapping("/")
-    public void addMeter(@RequestBody Meter meter){
-        meterService.addMeter(meter);
+    public PostResponse addMeter(@RequestBody Meter meter){
+        return meterService.addMeter(meter);
     }
 
     @GetMapping()
