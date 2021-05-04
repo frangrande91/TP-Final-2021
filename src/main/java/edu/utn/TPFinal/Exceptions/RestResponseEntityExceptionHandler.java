@@ -37,8 +37,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<Object>(apiError,new HttpHeaders(),apiError.getHttpStatus());
     }
 
-    @ExceptionHandler({PersonNotFoundException.class})
-    public ResponseEntity<Object> handlerVehicleNotFoundException(PersonNotFoundException ex, WebRequest request) {
+    @ExceptionHandler({UserNotFoundException.class})
+    public ResponseEntity<Object> handlerVehicleNotFoundException(UserNotFoundException ex, WebRequest request) {
         return handlerExceptions(ex,request);
     }
 

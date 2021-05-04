@@ -37,7 +37,7 @@ public class BillController {
     }
 
     @PutMapping("/{id}/{idClient}")
-    public void addClientToBill(@PathVariable Integer id, @PathVariable String idClient){
+    public void addClientToBill(@PathVariable Integer id, @PathVariable Integer idClient){
         billService.addClientToBill(id, idClient);
     }
 

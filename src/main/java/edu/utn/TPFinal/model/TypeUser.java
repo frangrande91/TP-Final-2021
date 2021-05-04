@@ -1,19 +1,19 @@
 package edu.utn.TPFinal.model;
 
-public enum TypePerson {
+public enum TypeUser {
 
     EMPLOYEE("Employee"),
     CLIENT("Client");
 
     private String description;
 
-    TypePerson(String description) {
+    TypeUser(String description) {
         this.description = description;
     }
 
-    public static TypePerson find(final String value) {
+    public static TypeUser find(final String value) {
 
-        for (TypePerson p : values()) {
+        for (TypeUser p : values()) {
             if(p.toString().equalsIgnoreCase(value)) {
                 return p;
             }

@@ -4,15 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity(name = "bills")
 public class Bill {
 
     @Id
@@ -21,7 +19,7 @@ public class Bill {
 
     @OneToOne
     @JoinColumn(name = "client_id")
-    private Client client;
+    private ClientUser client;
 
     @OneToOne
     @JoinColumn(name = "address_id")

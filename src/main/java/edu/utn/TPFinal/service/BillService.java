@@ -17,11 +17,11 @@ public class BillService {
     private BillRepository billRepository;
     private MeterService meterService;
     private MeasurementService measurementService;
-    private PersonService personService;
+    private UserService personService;
     private AddressService addressService;
 
     @Autowired
-    public BillService(BillRepository billRepository, MeterService meterService, MeasurementService measurementService, PersonService personService, AddressService addressService) {
+    public BillService(BillRepository billRepository, MeterService meterService, MeasurementService measurementService, UserService personService, AddressService addressService) {
         this.billRepository = billRepository;
         this.meterService = meterService;
         this.measurementService = measurementService;
@@ -52,11 +52,11 @@ public class BillService {
         billRepository.deleteById(id);
     }
 
-    public void addClientToBill(Integer id, String idClient) {
+    public void addClientToBill(Integer id, Integer idClient) {
         Bill bill = getBillById(id);
-        Person person = personService.getById(idClient);
-        if(person instanceof Client){
-            bill.setClient((Client)person);
+        User person = personService.getById(idClient);
+        if(person instanceof ClientUser){
+            bill.setClient((ClientUser)person);
         }
         billRepository.save(bill);
     }

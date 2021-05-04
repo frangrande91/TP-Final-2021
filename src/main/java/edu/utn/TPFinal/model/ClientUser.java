@@ -3,19 +3,23 @@ package edu.utn.TPFinal.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import javax.persistence.Entity;
+
+import javax.persistence.*;
 import java.util.List;
 
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Client extends Person {
+@Entity(name = "clients")
+public class ClientUser extends User {
 
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_client")
     private List<Address> addresses;
 
     @Override
-    public TypePerson typePerson() {
-        return TypePerson.CLIENT;
+    public TypeUser typeUser() {
+        return TypeUser.CLIENT;
     }
 }
