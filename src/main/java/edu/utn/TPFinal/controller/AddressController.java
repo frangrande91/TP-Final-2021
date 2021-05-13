@@ -1,10 +1,8 @@
 package edu.utn.TPFinal.controller;
 
 import edu.utn.TPFinal.model.Address;
-import edu.utn.TPFinal.model.Meter;
-import edu.utn.TPFinal.model.PostResponse;
+import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.service.AddressService;
-import edu.utn.TPFinal.service.MeterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

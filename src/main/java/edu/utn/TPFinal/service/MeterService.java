@@ -1,7 +1,7 @@
 package edu.utn.TPFinal.service;
 
 import edu.utn.TPFinal.model.Meter;
-import edu.utn.TPFinal.model.PostResponse;
+import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.repository.MeterRepository;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
 import org.springframework.beans.factory.annotation.Autowired;

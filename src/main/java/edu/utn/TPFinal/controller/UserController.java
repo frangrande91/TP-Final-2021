@@ -1,7 +1,7 @@
 package edu.utn.TPFinal.controller;
 
 import edu.utn.TPFinal.model.Dto.UserDto;
-import edu.utn.TPFinal.model.PostResponse;
+import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.service.UserService;
 import edu.utn.TPFinal.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
