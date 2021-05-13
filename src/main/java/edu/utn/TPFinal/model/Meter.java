@@ -4,10 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -16,12 +15,27 @@ import javax.validation.constraints.NotNull;
 public class Meter {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_meter")
     private Integer id;
 
-    @NotNull(message = "brand should not be null")
-    private String brand;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_model")
+    private Model model;
 
-    @NotNull(message = "model should not be null")
-    private String model;
+    @NotNull(message = "The serial Number can not be null")
+    private String serialNumber;
+
+    @NotNull(message = "The password can not be null")
+    private String password;
+
+    @OneToOne(mappedBy = "meter", fetch = FetchType.LAZY)
+    private Address address;
+
+    @OneToMany(mappedBy = "meter", fetch = FetchType.LAZY)
+    private List<Measurement> measurementList;
+
+    @OneToMany(mappedBy = "meter", fetch = FetchType.LAZY)
+    private List<Bill> billList;
+
 }

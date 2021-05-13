@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -14,33 +16,34 @@ import javax.validation.constraints.NotNull;
 public class Bill {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_bill")
     private Integer id;
 
-    @OneToOne
-    @JoinColumn(name = "client_id")
-    private ClientUser client;
-
-    @OneToOne
-    @JoinColumn(name = "address_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_address")
     private Address address;
 
-    @OneToOne
-    @JoinColumn(name = "meter_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_meter")
     private Meter meter;
 
-    @OneToOne
-    @JoinColumn(name = "initial_measurement_id")
-    private Measurement initialMeasurement;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_rate")
+    private Rate rate;
 
-    @OneToOne
-    @JoinColumn(name = "final_measurement_id")
-    private Measurement finalMeasurement;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_user")
+    private User userClient;
 
-    private Double totalConsuption;
+    @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)
+    private List<Measurement> measurementList;
 
-    @NotNull(message = "typeRate should not be null")
-    private TypeRate typeRate;
+    private LocalDateTime initialMeasurement;
+
+    private LocalDateTime finalMeasurement;
+
+    private Double totalConsumption;
 
     private Double totalPayable;
 }

@@ -54,9 +54,9 @@ public class BillService {
 
     public void addClientToBill(Integer id, Integer idClient) {
         Bill bill = getBillById(id);
-        User person = personService.getById(idClient);
-        if(person instanceof ClientUser){
-            bill.setClient((ClientUser)person);
+        User userClient = personService.getById(idClient);
+        if(userClient.getTypeUser().equals(TypeUser.CLIENT)){
+            bill.setUserClient(userClient);
         }
         billRepository.save(bill);
     }
@@ -78,14 +78,14 @@ public class BillService {
     public void addInitialMeasurement(Integer id, Integer idMeasurement) {
         Bill bill = getBillById(id);
         Measurement measurement = measurementService.getMeasurementById(idMeasurement);
-        bill.setInitialMeasurement(measurement);
+        //bill.setInitialMeasurement(measurement);
         billRepository.save(bill);
     }
 
     public void addFinalMeasurement(Integer id, Integer idMeasurement) {
         Bill bill = getBillById(id);
         Measurement measurement = measurementService.getMeasurementById(idMeasurement);
-        bill.setInitialMeasurement(measurement);
+        //bill.setInitialMeasurement(measurement);
         billRepository.save(bill);
     }
 

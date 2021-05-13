@@ -3,8 +3,6 @@ package edu.utn.TPFinal.controller;
 import edu.utn.TPFinal.model.Dto.UserDto;
 import edu.utn.TPFinal.model.PostResponse;
 import edu.utn.TPFinal.service.UserService;
-import edu.utn.TPFinal.model.ClientUser;
-import edu.utn.TPFinal.model.EmployeeUser;
 import edu.utn.TPFinal.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
@@ -31,12 +29,12 @@ public class UserController {
     }
 
     @GetMapping("/employees")
-    public List<EmployeeUser> getAllEmployees() {
+    public List<User> getAllEmployees() {
         return userService.getAllEmployees();
     }
 
     @GetMapping("/clients")
-    public List<ClientUser> getAllClients() {
+    public List<User> getAllClients() {
         return userService.getAllClients();
     }
 
@@ -50,7 +48,7 @@ public class UserController {
         return userService.login(username,password);
     }
 
-    @PostMapping("/")
+    @PostMapping(value = "/")
     public PostResponse addPerson(@RequestBody User user) {
         return userService.addUser(user);
     }

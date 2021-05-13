@@ -15,8 +15,17 @@ import java.time.LocalDateTime;
 public class Measurement {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_measurement")
     private Integer id;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_meter")
+    private Meter meter;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_bill")
+    private Bill bill;
 
     @NotNull(message = "quantity should not be null")
     private Double quantityKw;
@@ -24,7 +33,4 @@ public class Measurement {
     @NotNull (message = "dateTime should not be null")
     private LocalDateTime dateTime;
 
-    @OneToOne
-    @JoinColumn(name = "meter_id")
-    private Meter meter;
 }

@@ -37,12 +37,12 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public List<EmployeeUser> getAllEmployees() {
-        return (List<EmployeeUser>) userRepository.findAll().stream().filter(p -> p.typeUser().equals(TypeUser.EMPLOYEE));
+    public List<User> getAllEmployees() {
+        return (List<User>) userRepository.findAll().stream().filter(p -> p.getTypeUser().equals(TypeUser.EMPLOYEE));
     }
 
-    public List<ClientUser> getAllClients() {
-        return (List<ClientUser>) userRepository.findAll().stream().filter(p -> p.typeUser().equals(TypeUser.CLIENT));
+    public List<User> getAllClients() {
+        return (List<User>) userRepository.findAll().stream().filter(p -> p.getTypeUser().equals(TypeUser.CLIENT));
     }
 
     public User getById(Integer id) {
@@ -62,11 +62,13 @@ public class UserService {
     }
 
     public void addAddressToClientUser(Integer idClientUser,Integer id) {
-        if(getById(idClientUser) instanceof ClientUser) {
+
+        User clientUser = getById(idClientUser);
+
+        if(clientUser.getTypeUser().equals(TypeUser.CLIENT)) {
             Address address = addressService.getAddressById(id);
-            ClientUser client = (ClientUser) getById(idClientUser);
-            client.getAddresses().add(address);
-            userRepository.save(client);
+            clientUser.getAddressList().add(address);
+            userRepository.save(clientUser);
         }
         else {
             throw new ClientNotFoundException(String.format("The client with id %s ",idClientUser," do not exists"));

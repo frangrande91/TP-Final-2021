@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -14,20 +15,22 @@ import javax.validation.constraints.NotNull;
 public class Address {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_address")
     private Integer id;
 
-    @NotNull(message = "street should not be null")
-    private String street;
-
-    @NotNull(message = "number should not be null")
-    private Integer number;
-
-    private String floor;
-
-    @OneToOne
-    @JoinColumn(name = "meter_id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_meter")
     private Meter meter;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_user")
+    private User userClient;
+
+    @NotNull(message = "street should not be null")
+    private String address;
+
+    @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
+    private List<Bill> billList;
 
 }

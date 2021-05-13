@@ -51,7 +51,7 @@ public class BillController {
         billService.addMeterToBill(id, idMeter);
     }
 
-    @PatchMapping("/{id}/{idMeasurement}")
+/*    @PatchMapping("/{id}/{idMeasurement}")
     public void addInitialMeasurement(@PathVariable Integer id, Integer idMeasurement){
         billService.addInitialMeasurement(id, idMeasurement);
     }
@@ -59,6 +59,6 @@ public class BillController {
     @PatchMapping("/{id}/{idMeasurement}")
     public void addFinalalMeasurement(@PathVariable Integer id, Integer idMeasurement){
         billService.addFinalMeasurement(id, idMeasurement);
-    }
+    }*/
 
 }
