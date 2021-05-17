@@ -1,9 +1,11 @@
 package edu.utn.TPFinal.controller;
 
 import edu.utn.TPFinal.model.Rate;
+import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.service.RateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -20,19 +22,20 @@ public class RateController {
         this.rateService = rateService;
     }
 
+    @PostMapping(value = "/")
+    public PostResponse addRate(@RequestBody Rate rate) {
+        return rateService.addRate(rate);
+    }
+
     @GetMapping(value = "/")
-    public List<Rate> getAll() {
-        return rateService.getAll();
+    public ResponseEntity<List<Rate>> getAllRates() {
+        List<Rate> rates = rateService.getAll();
+        return response(rates);
     }
 
     @GetMapping(value = "/{id}")
-    public Rate getByID(@PathVariable Integer id) {
+    public Rate getRateByID(@PathVariable Integer id) {
         return rateService.getByID(id);
-    }
-
-    @PostMapping(value = "/")
-    public Rate addRate(@RequestBody Rate rate) {
-        return rateService.addRate(rate);
     }
 
     @DeleteMapping("/")
@@ -44,5 +47,10 @@ public class RateController {
     public void deleteRateById(@PathVariable Integer id) {
         rateService.deleteRateById(id);
     }
+
+    private ResponseEntity response(List list){
+        return ResponseEntity.status(list.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK).body(list);
+    }
+
 
 }

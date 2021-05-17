@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.Exceptions;
+package edu.utn.TPFinal.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

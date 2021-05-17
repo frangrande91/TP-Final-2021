@@ -76,18 +76,4 @@ public class BillService {
         billRepository.save(bill);
     }
 
-    public void addInitialMeasurement(Integer id, Integer idMeasurement) {
-        Bill bill = getBillById(id);
-        Measurement measurement = measurementService.getMeasurementById(idMeasurement);
-        //bill.setInitialMeasurement(measurement);
-        billRepository.save(bill);
-    }
-
-    public void addFinalMeasurement(Integer id, Integer idMeasurement) {
-        Bill bill = getBillById(id);
-        Measurement measurement = measurementService.getMeasurementById(idMeasurement);
-        //bill.setInitialMeasurement(measurement);
-        billRepository.save(bill);
-    }
-
 }

@@ -1,11 +1,14 @@
 package edu.utn.TPFinal.controller;
 
+import edu.utn.TPFinal.exceptions.UserNotExistsException;
 import edu.utn.TPFinal.model.Dto.UserDto;
 import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.service.UserService;
 import edu.utn.TPFinal.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,34 +26,38 @@ public class UserController {
         this.conversionService = conversionService;
     }
 
+    @PostMapping(value = "/")
+    public PostResponse addPerson(@RequestBody User user) {
+        return userService.addUser(user);
+    }
+
     @GetMapping("/")
-    public List<User> getAll() {
-        return userService.getAll();
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.getAllUsers();
+        return response(users);
     }
 
     @GetMapping("/employees")
-    public List<User> getAllEmployees() {
-        return userService.getAllEmployees();
+    public ResponseEntity<List<User>> getAllEmployees() {
+        List<User> employees = userService.getAllEmployees();
+        return response(employees);
     }
 
     @GetMapping("/clients")
-    public List<User> getAllClients() {
-        return userService.getAllClients();
+    public ResponseEntity<List<User>> getAllClients() {
+        List<User> clients = userService.getAllClients();
+        return response(clients);
     }
 
     @GetMapping("/{id}")
-    public UserDto getById(@PathVariable Integer id) {
-        return conversionService.convert(userService.getById(id),UserDto.class);
+    public ResponseEntity<UserDto> getUserById(@PathVariable Integer id) throws UserNotExistsException {
+        UserDto userDto = conversionService.convert(userService.getUserById(id),UserDto.class);
+        return ResponseEntity.ok(userDto);
     }
 
     @GetMapping("/{username}/{password}")
     public User login(@PathVariable String username, @PathVariable String password) {
         return userService.login(username,password);
-    }
-
-    @PostMapping(value = "/")
-    public PostResponse addPerson(@RequestBody User user) {
-        return userService.addUser(user);
     }
 
     @DeleteMapping("/")
@@ -67,5 +74,10 @@ public class UserController {
     public void addAddressToClientUser(@PathVariable Integer idClient, @PathVariable Integer idAddress) {
         userService.addAddressToClientUser(idClient,idAddress);
     }
+
+    private ResponseEntity response(List list){
+        return ResponseEntity.status(list.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK).body(list);
+    }
+
 
 }

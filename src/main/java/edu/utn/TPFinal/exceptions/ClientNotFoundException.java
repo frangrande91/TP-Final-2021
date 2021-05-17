@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.Exceptions;
+package edu.utn.TPFinal.exceptions;
 
 public class ClientNotFoundException extends RuntimeException {
 

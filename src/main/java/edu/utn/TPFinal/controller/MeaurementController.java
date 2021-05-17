@@ -1,9 +1,12 @@
 package edu.utn.TPFinal.controller;
 
+import edu.utn.TPFinal.exceptions.MeasurementNotExistsException;
 import edu.utn.TPFinal.model.Measurement;
 import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.service.MeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,9 +15,12 @@ import java.util.List;
 @RequestMapping("/measurement")
 public class MeaurementController {
 
-    @Autowired
     private MeasurementService measurementService;
 
+    @Autowired
+    public MeaurementController(MeasurementService measurementService) {
+        this.measurementService = measurementService;
+    }
 
     @PostMapping("/")
     public PostResponse addMeasurement(@RequestBody Measurement measurement){
@@ -22,13 +28,15 @@ public class MeaurementController {
     }
 
     @GetMapping()
-    public List<Measurement> getAllMeasurements(){
-        return measurementService.getAllMeasuremets();
+    public ResponseEntity<List<Measurement>> getAllMeasurements(){
+        List<Measurement> measurements = measurementService.getAllMeasuremets();
+        return response(measurements);
     }
 
     @GetMapping("/{id}")
-    public Measurement getMeasurementById(@PathVariable Integer id){
-        return measurementService.getMeasurementById(id);
+    public ResponseEntity<Measurement> getMeasurementById(@PathVariable Integer id) throws MeasurementNotExistsException {
+        Measurement measurement = measurementService.getMeasurementById(id);
+        return ResponseEntity.ok(measurement);
     }
 
     @DeleteMapping
@@ -39,6 +47,10 @@ public class MeaurementController {
     @PutMapping("/{id}/{idMeter}")
     public void addMeterToMeasurement(@PathVariable Integer id, @PathVariable Integer idMeter){
         measurementService.addMeterToMeasurement(id, idMeter);
+    }
+
+    private ResponseEntity response(List list){
+        return ResponseEntity.status(list.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK).body(list);
     }
 
 

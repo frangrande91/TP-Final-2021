@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.Configuration;
+package edu.utn.TPFinal.config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

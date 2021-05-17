@@ -1,9 +1,12 @@
 package edu.utn.TPFinal.controller;
 
+import edu.utn.TPFinal.exceptions.MeterNotExistsException;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.service.MeterService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,9 +15,12 @@ import java.util.List;
 @RequestMapping("/meter")
 public class MeterController {
 
-    @Autowired
     private MeterService meterService;
 
+    @Autowired
+    public MeterController(MeterService meterService) {
+        this.meterService = meterService;
+    }
 
     @PostMapping("/")
     public PostResponse addMeter(@RequestBody Meter meter){
@@ -22,13 +28,15 @@ public class MeterController {
     }
 
     @GetMapping()
-    public List<Meter> getAllMeters(){
-        return meterService.getAllMeters();
+    public ResponseEntity<List> getAllMeters() {
+        List<Meter> meters = meterService.getAllMeters();
+        return response(meters);
     }
 
     @GetMapping("/{id}")
-    public Meter getMeterById(@PathVariable Integer id){
-        return meterService.getMeterById(id);
+    public ResponseEntity<Meter> getMeterById(@PathVariable Integer id) throws MeterNotExistsException {
+        Meter meter = meterService.getMeterById(id);
+        return ResponseEntity.ok(meter);
     }
 
     @DeleteMapping("/{id}")
@@ -36,6 +44,8 @@ public class MeterController {
         meterService.deleteMeterById(id);
     }
 
-
+    private ResponseEntity response(List list){
+        return ResponseEntity.status(list.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK).body(list);
+    }
 
 }

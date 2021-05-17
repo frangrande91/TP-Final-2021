@@ -1,9 +1,12 @@
 package edu.utn.TPFinal.controller;
 
+import edu.utn.TPFinal.exceptions.BillNotExistsException;
 import edu.utn.TPFinal.model.Bill;
 import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.service.BillService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,9 +15,12 @@ import java.util.List;
 @RequestMapping("/bill")
 public class BillController {
 
-    @Autowired
     private BillService billService;
 
+    @Autowired
+    public BillController(BillService billService) {
+        this.billService = billService;
+    }
 
     @PostMapping("/")
     public PostResponse addBill(@RequestBody Bill bill){
@@ -22,13 +28,15 @@ public class BillController {
     }
 
     @GetMapping()
-    public List<Bill> getAllBills(){
-        return billService.getAllBills();
+    public ResponseEntity<Bill> getAllBills(){
+        List<Bill> bills = billService.getAllBills();
+        return response(bills);
     }
 
     @GetMapping("/{id}")
-    public Bill getBillById(@PathVariable Integer id){
-        return billService.getBillById(id);
+    public ResponseEntity getBillById(@PathVariable Integer id) throws BillNotExistsException {
+        Bill bill = billService.getBillById(id);
+        return ResponseEntity.ok(bill);
     }
 
     @DeleteMapping("/{id}")
@@ -51,14 +59,9 @@ public class BillController {
         billService.addMeterToBill(id, idMeter);
     }
 
-/*    @PatchMapping("/{id}/{idMeasurement}")
-    public void addInitialMeasurement(@PathVariable Integer id, Integer idMeasurement){
-        billService.addInitialMeasurement(id, idMeasurement);
+    private ResponseEntity response(List list){
+        return ResponseEntity.status(list.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK).body(list);
     }
 
-    @PatchMapping("/{id}/{idMeasurement}")
-    public void addFinalalMeasurement(@PathVariable Integer id, Integer idMeasurement){
-        billService.addFinalMeasurement(id, idMeasurement);
-    }*/
 
 }

@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.Converter;
+package edu.utn.TPFinal.converter;
 
 import edu.utn.TPFinal.model.Dto.UserDto;
 import edu.utn.TPFinal.model.User;

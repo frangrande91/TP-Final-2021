@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.Exceptions;
+package edu.utn.TPFinal.exceptions;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,11 +37,13 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<Object>(apiError,new HttpHeaders(),apiError.getHttpStatus());
     }
 
+    /*
     @ExceptionHandler({UserNotFoundException.class})
     public ResponseEntity<Object> handlerVehicleNotFoundException(UserNotFoundException ex, WebRequest request) {
         return handlerExceptions(ex,request);
     }
 
+     */
     @ExceptionHandler({ErrorLoginException.class})
     public ResponseEntity<Object> handlerErrorLoginException(ErrorLoginException ex,WebRequest request) {
         return handlerExceptions(ex,request);

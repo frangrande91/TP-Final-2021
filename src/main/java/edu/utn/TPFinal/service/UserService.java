@@ -1,8 +1,8 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.Exceptions.ClientNotFoundException;
-import edu.utn.TPFinal.Exceptions.ErrorLoginException;
-import edu.utn.TPFinal.Exceptions.UserNotFoundException;
+import edu.utn.TPFinal.exceptions.ClientNotFoundException;
+import edu.utn.TPFinal.exceptions.ErrorLoginException;
+import edu.utn.TPFinal.exceptions.UserNotFoundException;
 import edu.utn.TPFinal.model.*;
 import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.repository.UserRepository;
@@ -34,7 +34,7 @@ public class UserService {
                 .build();
     }
 
-    public List<User> getAll() {
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
@@ -46,7 +46,7 @@ public class UserService {
         return (List<User>) userRepository.findAll().stream().filter(p -> p.getTypeUser().equals(TypeUser.CLIENT));
     }
 
-    public User getById(Integer id) {
+    public User getUserById(Integer id) {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(String.format("There is no a user with id: %s",id)));
     }
 
@@ -64,7 +64,7 @@ public class UserService {
 
     public void addAddressToClientUser(Integer idClientUser,Integer id) {
 
-        User clientUser = getById(idClientUser);
+        User clientUser = getUserById(idClientUser);
 
         if(clientUser.getTypeUser().equals(TypeUser.CLIENT)) {
             Address address = addressService.getAddressById(id);
