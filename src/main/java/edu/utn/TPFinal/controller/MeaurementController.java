@@ -29,7 +29,7 @@ public class MeaurementController {
 
     @GetMapping()
     public ResponseEntity<List<Measurement>> getAllMeasurements(){
-        List<Measurement> measurements = measurementService.getAllMeasuremets();
+        List<Measurement> measurements = measurementService.getAllMeasurements();
         return response(measurements);
     }
 

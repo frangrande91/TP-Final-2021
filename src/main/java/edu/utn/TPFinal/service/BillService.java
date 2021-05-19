@@ -18,7 +18,7 @@ public class BillService {
     private BillRepository billRepository;
     private MeterService meterService;
     private MeasurementService measurementService;
-    private UserService personService;
+    private UserService userService;
     private AddressService addressService;
 
     @Autowired
@@ -26,7 +26,7 @@ public class BillService {
         this.billRepository = billRepository;
         this.meterService = meterService;
         this.measurementService = measurementService;
-        this.personService = personService;
+        this.userService = personService;
         this.addressService = addressService;
 
     }
@@ -55,7 +55,7 @@ public class BillService {
 
     public void addClientToBill(Integer id, Integer idClient) {
         Bill bill = getBillById(id);
-        User userClient = personService.getById(idClient);
+        User userClient = userService.getUserById(idClient);
         if(userClient.getTypeUser().equals(TypeUser.CLIENT)){
             bill.setUserClient(userClient);
         }

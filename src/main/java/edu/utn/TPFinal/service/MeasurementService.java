@@ -36,7 +36,7 @@ public class MeasurementService {
     }
 
 
-    public List<Measurement> getAllMeasuremets() {
+    public List<Measurement> getAllMeasurements() {
         return measurementRepository.findAll();
     }
 
