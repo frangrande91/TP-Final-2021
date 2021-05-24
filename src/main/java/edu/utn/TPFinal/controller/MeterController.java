@@ -4,6 +4,7 @@ import edu.utn.TPFinal.exceptions.MeterNotExistsException;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.service.MeterService;
+import edu.utn.TPFinal.utils.EntityResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +34,7 @@ public class MeterController {
                                        @RequestParam(value = "page", defaultValue = "0") Integer page) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Meter> meterPage = meterService.getAllMeters(pageable);
-        return response(meterPage);
+        return EntityResponse.response(meterPage);
     }
 
 
@@ -47,25 +48,4 @@ public class MeterController {
     public void deleteMeterById(@PathVariable Integer id){
         meterService.deleteMeterById(id);
     }
-
-    /*
-    private ResponseEntity response(List list){
-        return ResponseEntity.status(list.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK).body(list);
-    }
-     */
-
-    private ResponseEntity response(Page<Meter> meterPage){
-        if(!meterPage.getContent().isEmpty()){
-            return ResponseEntity.
-                    status(HttpStatus.OK).
-                    header("X-Total-Count", Long.toString(meterPage.getTotalElements())).
-                    header("X-Total-Pages", Long.toString(meterPage.getTotalPages())).
-                    body(meterPage.getContent());
-        }
-        else{
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(meterPage.getContent());
-        }
-
-    }
-
 }

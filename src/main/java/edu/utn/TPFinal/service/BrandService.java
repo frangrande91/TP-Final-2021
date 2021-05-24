@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.service;
 
+import edu.utn.TPFinal.exceptions.BrandNotExistsException;
 import edu.utn.TPFinal.model.Brand;
 import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.repository.BrandRepository;
@@ -10,6 +11,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+
+import java.sql.SQLIntegrityConstraintViolationException;
+
+import static java.util.Objects.isNull;
 
 @Service
 public class BrandService {
@@ -22,13 +27,8 @@ public class BrandService {
         this.brandRepository = brandRepository;
     }
 
-    public PostResponse addBrand(Brand brand) {
-        Brand b = brandRepository.save(brand);
-        return PostResponse
-                .builder()
-                .status(HttpStatus.CREATED)
-                .url(EntityURLBuilder.buildURL(BRAND_PATH, b.getId()))
-                .build();
+    public Brand addBrand(Brand brand) throws SQLIntegrityConstraintViolationException {
+            return brandRepository.save(brand);
     }
 
     public Page<Brand> getAllBrands(Pageable pageable) {
@@ -36,8 +36,8 @@ public class BrandService {
     }
 
 
-    public Brand getBrandByID(Integer id) {
-        return brandRepository.findById(id).orElseThrow(()-> new HttpClientErrorException(HttpStatus.NOT_FOUND,String.format("The Brand with ID: %d",id,"do not exists")));
+    public Brand getBrandByID(Integer id) throws BrandNotExistsException {
+        return brandRepository.findById(id).orElseThrow(BrandNotExistsException::new);
     }
 
     public void deleteBrand(Brand brand) {

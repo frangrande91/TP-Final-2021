@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.exceptions;
 
+import edu.utn.TPFinal.model.Responses.Response;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,9 +46,21 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
      */
+
     @ExceptionHandler({ErrorLoginException.class})
     public ResponseEntity<Object> handlerErrorLoginException(ErrorLoginException ex,WebRequest request) {
         return handlerExceptions(ex,request);
     }
+
+    @ExceptionHandler({BrandNotExistsException.class})
+    public ResponseEntity<Object> handlerBrandNotExistsException(BrandNotExistsException ex,WebRequest request) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response.builder().message("The brand not exits").build());
+    }
+
+    @ExceptionHandler({SQLIntegrityConstraintViolationException.class})
+    public ResponseEntity<Object> handlerSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException ex,WebRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Response.builder().message(ex.getMessage()).build());
+    }
+
 
 }

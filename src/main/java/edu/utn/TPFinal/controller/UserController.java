@@ -5,6 +5,7 @@ import edu.utn.TPFinal.model.Dto.UserDto;
 import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.model.User;
 import edu.utn.TPFinal.service.UserService;
+import edu.utn.TPFinal.utils.EntityResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
@@ -38,7 +39,7 @@ public class UserController {
                                        @RequestParam(value = "page", defaultValue = "0") Integer page) {
         Pageable pageable = PageRequest.of(page,size);
         Page<User> userPage = userService.getAllUsers(pageable);
-        return response(userPage);
+        return EntityResponse.response(userPage);
     }
     /*
     @GetMapping("/employees")
@@ -81,25 +82,5 @@ public class UserController {
         userService.addAddressToClientUser(idClient,idAddress);
     }
 
-    /*
-    private ResponseEntity response(List list){
-        return ResponseEntity.status(list.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK).body(list);
-    }
-
-     */
-
-    private ResponseEntity response(Page<User> pageUser){
-        if(!pageUser.getContent().isEmpty()){
-            return ResponseEntity.
-                    status(HttpStatus.OK).
-                    header("X-Total-Count", Long.toString(pageUser.getTotalElements())).
-                    header("X-Total-Pages", Long.toString(pageUser.getTotalPages())).
-                    body(pageUser.getContent());
-        }
-        else{
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(pageUser.getContent());
-        }
-
-    }
 
 }

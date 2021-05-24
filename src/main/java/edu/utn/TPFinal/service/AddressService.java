@@ -8,7 +8,10 @@ import edu.utn.TPFinal.repository.AddressRepository;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -29,14 +32,8 @@ public class AddressService {
         this.meterService = meterService;
     }
 
-
-    public PostResponse addAddress(Address address) {
-        Address a = addressRepository.save(address);
-        return PostResponse
-                .builder()
-                .status(HttpStatus.CREATED)
-                .url(EntityURLBuilder.buildURL(ADDRESS_PATH, a.getId()))
-                .build();
+    public Address addAddress(Address address) {
+        return addressRepository.save(address);
     }
 
     public Page<Address> getAllAddress(Pageable pageable) {
@@ -51,11 +48,19 @@ public class AddressService {
         addressRepository.deleteById(id);
     }
 
-    public void addMeterToAddress(Integer id, Integer idMeter) {
+    public Address addMeterToAddress(Integer id, Integer idMeter) {
         Address address = getAddressById(id);
         Meter meter = meterService.getMeterById(idMeter);
         address.setMeter(meter);
-        addressRepository.save(address);
+        return addressRepository.save(address);
     }
 
+    public Page<Address> getAllSpec(Specification<Address> addressSpecification, Pageable pageable) {
+        return addressRepository.findAll(addressSpecification,pageable);
+    }
+
+    public Page<Address> getAllSort(Integer page, Integer size, List<Sort.Order> orders) {
+        Pageable pageable = PageRequest.of(page,size, Sort.by(orders));
+        return addressRepository.findAll(pageable);
+    }
 }

@@ -2,16 +2,21 @@ package edu.utn.TPFinal.controller;
 
 import edu.utn.TPFinal.exceptions.BrandNotExistsException;
 import edu.utn.TPFinal.model.Brand;
-import edu.utn.TPFinal.model.Responses.PostResponse;
+import edu.utn.TPFinal.model.Responses.Response;
 import edu.utn.TPFinal.service.BrandService;
+import edu.utn.TPFinal.utils.EntityResponse;
+import edu.utn.TPFinal.utils.EntityURLBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.sql.SQLIntegrityConstraintViolationException;
 
 @RestController
 @RequestMapping("/brand")
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class BrandController {
 
     private BrandService brandService;
+    private final String BRAND_PATH = "brand";
 
     @Autowired
     public BrandController(BrandService brandService) {
@@ -26,8 +32,14 @@ public class BrandController {
     }
 
     @PostMapping(value = "/")
-    public PostResponse addBrand(@RequestBody Brand brand) {
-        return brandService.addBrand(brand);
+    public ResponseEntity addBrand(@RequestBody Brand brand) throws SQLIntegrityConstraintViolationException {
+        Brand brandCreated = brandService.addBrand(brand);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .location(EntityURLBuilder.buildURL2(BRAND_PATH,brandCreated.getId()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Response.builder().message("The brand has been created").build());
     }
 
     @GetMapping
@@ -35,7 +47,8 @@ public class BrandController {
                                        @RequestParam(value = "page", defaultValue = "0") Integer page) {
         Pageable pageable = PageRequest.of(page,size);
         Page<Brand> brandPage = brandService.getAllBrands(pageable);
-        return response(brandPage);
+        return EntityResponse.response(brandPage);
+
     }
 
     @GetMapping(value = "/{id}")
@@ -54,24 +67,4 @@ public class BrandController {
         brandService.deleteBrandByID(id);
     }
 
-    /*
-    private ResponseEntity response(List list){
-        return ResponseEntity.status(list.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK).body(list);
-    }
-
-    */
-
-    private ResponseEntity response(Page<Brand> pageBrand){
-        if(!pageBrand.getContent().isEmpty()){
-           return ResponseEntity.
-                    status(HttpStatus.OK).
-                    header("X-Total-Count", Long.toString(pageBrand.getTotalElements())).
-                    header("X-Total-Pages", Long.toString(pageBrand.getTotalPages())).
-                    body(pageBrand.getContent());
-        }
-        else{
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(pageBrand.getContent());
-        }
-
-    }
 }
