@@ -28,23 +28,14 @@ public class MeaurementController {
        return measurementService.addMeasurement(measurement);
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity getAllMeasurements(@RequestParam(value = "size", defaultValue = "10") Integer size,
                                              @RequestParam(value = "page", defaultValue = "0") Integer page){
         Pageable pageable = PageRequest.of(page, size);
         Page<Measurement> measurementPage = measurementService.getAllMeasurements(pageable);
         return response(measurementPage);
     }
-    /*
-    @GetMapping
-    public ResponseEntity getAllBrands(@RequestParam(value = "size", defaultValue = "10") Integer size,
-                                       @RequestParam(value = "page", defaultValue = "0") Integer page) {
-        Pageable pageable = PageRequest.of(page,size);
-        Page<Brand> pageBrand = brandService.getAllBrands(pageable);
-        return response(pageBrand);
-    }
 
-     */
 
     @GetMapping("/{id}")
     public ResponseEntity<Measurement> getMeasurementById(@PathVariable Integer id) throws MeasurementNotExistsException {

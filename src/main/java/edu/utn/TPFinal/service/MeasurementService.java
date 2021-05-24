@@ -12,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.List;
-
 @Service
 public class MeasurementService {
 
@@ -37,9 +35,9 @@ public class MeasurementService {
                 .build();
     }
 
-
     public Page<Measurement> getAllMeasurements(Pageable pageable) {
         return measurementRepository.findAll(pageable);
+
     }
 
     public Measurement getMeasurementById(Integer id) {

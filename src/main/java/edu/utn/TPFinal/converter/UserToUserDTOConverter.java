@@ -19,6 +19,5 @@ public class UserToUserDTOConverter implements Converter<User, UserDto> {
     public UserDto convert(User source) {
         return modelMapper.map(source,UserDto.class);
     }
-
-
 }
+
