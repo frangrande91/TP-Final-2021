@@ -5,11 +5,12 @@ import edu.utn.TPFinal.model.Bill;
 import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.service.BillService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/bill")
@@ -28,10 +29,14 @@ public class BillController {
     }
 
     @GetMapping()
-    public ResponseEntity<Bill> getAllBills(){
-        List<Bill> bills = billService.getAllBills();
-        return response(bills);
+    public ResponseEntity<Bill> getAllBills(@RequestParam(value = "size", defaultValue = "10") Integer size,
+                                            @RequestParam(value = "page", defaultValue = "0") Integer page){
+
+        Pageable pageable = PageRequest.of(page,size);
+        Page<Bill> pageBill = billService.getAllBills(pageable);
+        return response(pageBill);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity getBillById(@PathVariable Integer id) throws BillNotExistsException {
@@ -58,9 +63,23 @@ public class BillController {
     public void addMeterToBill(@PathVariable Integer id, @PathVariable Integer idMeter){
         billService.addMeterToBill(id, idMeter);
     }
-
+    /*
     private ResponseEntity response(List list){
         return ResponseEntity.status(list.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK).body(list);
+    }
+     */
+
+    private ResponseEntity response(Page<Bill> pageBrand){
+        if(!pageBrand.getContent().isEmpty()){
+            return ResponseEntity.
+                    status(HttpStatus.OK).
+                    header("X-Total-Count", Long.toString(pageBrand.getTotalElements())).
+                    header("X-Total-Pages", Long.toString(pageBrand.getTotalPages())).
+                    body(pageBrand.getContent());
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(pageBrand.getContent());
+        }
     }
 
 

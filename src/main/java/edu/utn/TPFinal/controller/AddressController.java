@@ -5,6 +5,9 @@ import edu.utn.TPFinal.model.Address;
 import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +31,12 @@ public class AddressController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Address>> getAllAddresses(){
-        List<Address> addresses = addressService.getAllAddress();
-        return response(addresses);
+    public ResponseEntity<List<Address>> getAllAddresses(@RequestParam(value = "size", defaultValue = "10") Integer size,
+                                                         @RequestParam(value = "page", defaultValue = "0") Integer page){
+        Pageable pageable = PageRequest.of(page,size);
+        Page<Address> pageAddress = addressService.getAllAddress(pageable);
+
+        return response(pageAddress);
     }
 
     @GetMapping("/{id}")
@@ -49,8 +55,23 @@ public class AddressController {
         addressService.addMeterToAddress(id, idMeter);
     }
 
+    /*
     private ResponseEntity response(List list){
         return ResponseEntity.status(list.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK).body(list);
+    }
+     */
+
+    private ResponseEntity<List<Address>> response(Page<Address> pageBrand){
+        if(!pageBrand.getContent().isEmpty()){
+            return ResponseEntity.
+                    status(HttpStatus.OK).
+                    header("X-Total-Count", Long.toString(pageBrand.getTotalElements())).
+                    header("X-Total-Pages", Long.toString(pageBrand.getTotalPages())).
+                    body(pageBrand.getContent());
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(pageBrand.getContent());
+        }
     }
 
 

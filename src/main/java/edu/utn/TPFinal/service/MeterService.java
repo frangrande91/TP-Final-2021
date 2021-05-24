@@ -5,6 +5,8 @@ import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.repository.MeterRepository;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -33,8 +35,8 @@ public class MeterService {
                 .build();
     }
 
-    public List<Meter> getAllMeters() {
-        return meterRepository.findAll();
+    public Page<Meter> getAllMeters(Pageable pageable) {
+        return meterRepository.findAll(pageable);
     }
 
     public Meter getMeterById(Integer id) {

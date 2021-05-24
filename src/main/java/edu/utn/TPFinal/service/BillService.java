@@ -5,6 +5,8 @@ import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.repository.BillRepository;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -18,7 +20,7 @@ public class BillService {
     private BillRepository billRepository;
     private MeterService meterService;
     private MeasurementService measurementService;
-    private UserService personService;
+    private UserService userService;
     private AddressService addressService;
 
     @Autowired
@@ -26,7 +28,7 @@ public class BillService {
         this.billRepository = billRepository;
         this.meterService = meterService;
         this.measurementService = measurementService;
-        this.personService = personService;
+        this.userService = personService;
         this.addressService = addressService;
 
     }
@@ -41,8 +43,8 @@ public class BillService {
                 .build();
     }
 
-    public List<Bill> getAllBills() {
-        return billRepository.findAll();
+    public Page<Bill> getAllBills(Pageable pageable) {
+        return billRepository.findAll(pageable);
     }
 
     public Bill getBillById(Integer id) {
@@ -55,7 +57,7 @@ public class BillService {
 
     public void addClientToBill(Integer id, Integer idClient) {
         Bill bill = getBillById(id);
-        User userClient = personService.getById(idClient);
+        User userClient = userService.getUserById(idClient);
         if(userClient.getTypeUser().equals(TypeUser.CLIENT)){
             bill.setUserClient(userClient);
         }

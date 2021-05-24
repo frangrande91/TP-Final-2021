@@ -1,5 +1,5 @@
 package edu.utn.TPFinal.service;
-import edu.utn.TPFinal.model.Bill;
+
 import edu.utn.TPFinal.model.Model;
 import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.repository.ModelRepository;
@@ -8,8 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 
 @Service
 public class ModelService {
@@ -31,8 +32,8 @@ public class ModelService {
                 .build();
     }
 
-    public List<Model> getAllModels() {
-        return modelRepository.findAll();
+    public Page<Model> getAllModels(Pageable pageable) {
+        return modelRepository.findAll(pageable);
     }
 
     public Model getModelByID(Integer id) {

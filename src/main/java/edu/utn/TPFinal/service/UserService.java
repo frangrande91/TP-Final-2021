@@ -3,15 +3,18 @@ package edu.utn.TPFinal.service;
 import edu.utn.TPFinal.exceptions.ClientNotFoundException;
 import edu.utn.TPFinal.exceptions.ErrorLoginException;
 import edu.utn.TPFinal.exceptions.UserNotFoundException;
-import edu.utn.TPFinal.model.*;
+import edu.utn.TPFinal.model.Address;
 import edu.utn.TPFinal.model.Responses.PostResponse;
+import edu.utn.TPFinal.model.TypeUser;
+import edu.utn.TPFinal.model.User;
 import edu.utn.TPFinal.repository.UserRepository;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,10 +37,10 @@ public class UserService {
                 .build();
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public Page<User> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
-
+    /*
     public List<User> getAllEmployees() {
         return (List<User>) userRepository.findAll().stream().filter(p -> p.getTypeUser().equals(TypeUser.EMPLOYEE));
     }
@@ -45,6 +48,7 @@ public class UserService {
     public List<User> getAllClients() {
         return (List<User>) userRepository.findAll().stream().filter(p -> p.getTypeUser().equals(TypeUser.CLIENT));
     }
+    */
 
     public User getUserById(Integer id) {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(String.format("There is no a user with id: %s",id)));

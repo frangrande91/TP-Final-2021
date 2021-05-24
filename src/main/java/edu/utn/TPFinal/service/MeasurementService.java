@@ -6,6 +6,8 @@ import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.repository.MeasurementRepository;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -36,8 +38,8 @@ public class MeasurementService {
     }
 
 
-    public List<Measurement> getAllMeasuremets() {
-        return measurementRepository.findAll();
+    public Page<Measurement> getAllMeasurements(Pageable pageable) {
+        return measurementRepository.findAll(pageable);
     }
 
     public Measurement getMeasurementById(Integer id) {

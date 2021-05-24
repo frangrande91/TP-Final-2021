@@ -1,14 +1,18 @@
 package edu.utn.TPFinal.service;
 
 import edu.utn.TPFinal.model.Address;
+
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.repository.AddressRepository;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+
 
 import java.util.List;
 
@@ -35,8 +39,8 @@ public class AddressService {
                 .build();
     }
 
-    public List<Address> getAllAddress() {
-        return addressRepository.findAll();
+    public Page<Address> getAllAddress(Pageable pageable) {
+        return addressRepository.findAll(pageable);
     }
 
     public Address getAddressById(Integer id) {

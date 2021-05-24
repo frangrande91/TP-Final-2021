@@ -5,11 +5,11 @@ import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.repository.BrandRepository;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-
-import java.util.List;
 
 @Service
 public class BrandService {
@@ -31,9 +31,10 @@ public class BrandService {
                 .build();
     }
 
-    public List<Brand> getAllBrands() {
-        return brandRepository.findAll();
+    public Page<Brand> getAllBrands(Pageable pageable) {
+        return brandRepository.findAll(pageable);
     }
+
 
     public Brand getBrandByID(Integer id) {
         return brandRepository.findById(id).orElseThrow(()-> new HttpClientErrorException(HttpStatus.NOT_FOUND,String.format("The Brand with ID: %d",id,"do not exists")));
