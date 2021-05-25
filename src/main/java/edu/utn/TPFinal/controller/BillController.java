@@ -1,6 +1,8 @@
 package edu.utn.TPFinal.controller;
 
 import edu.utn.TPFinal.exceptions.BillNotExistsException;
+import edu.utn.TPFinal.exceptions.MeterNotExistsException;
+import edu.utn.TPFinal.exceptions.UserNotExistsException;
 import edu.utn.TPFinal.model.Bill;
 import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.service.BillService;
@@ -49,7 +51,7 @@ public class BillController {
     }
 
     @PutMapping("/{id}/{idClient}")
-    public void addClientToBill(@PathVariable Integer id, @PathVariable Integer idClient){
+    public void addClientToBill(@PathVariable Integer id, @PathVariable Integer idClient) throws UserNotExistsException {
         billService.addClientToBill(id, idClient);
     }
 
@@ -59,7 +61,7 @@ public class BillController {
     }
 
     @PutMapping("/{id}/{idMeter}")
-    public void addMeterToBill(@PathVariable Integer id, @PathVariable Integer idMeter){
+    public void addMeterToBill(@PathVariable Integer id, @PathVariable Integer idMeter) throws MeterNotExistsException {
         billService.addMeterToBill(id, idMeter);
     }
 

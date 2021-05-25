@@ -1,5 +1,8 @@
 package edu.utn.TPFinal.service;
 
+import edu.utn.TPFinal.exceptions.MeasurementNotExistsException;
+import edu.utn.TPFinal.exceptions.MeterNotExistsException;
+import edu.utn.TPFinal.model.Address;
 import edu.utn.TPFinal.model.Measurement;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.Responses.PostResponse;
@@ -7,10 +10,15 @@ import edu.utn.TPFinal.repository.MeasurementRepository;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+
+import java.util.List;
 
 @Service
 public class MeasurementService {
@@ -26,13 +34,8 @@ public class MeasurementService {
         this.meterService = meterService;
     }
 
-    public PostResponse addMeasurement(Measurement measurement) {
-        Measurement m = measurementRepository.save(measurement);
-        return PostResponse
-                .builder()
-                .status(HttpStatus.CREATED)
-                .url(EntityURLBuilder.buildURL(MEASUREMENT_PATH, m.getId()))
-                .build();
+    public Measurement addMeasurement(Measurement measurement) {
+        return measurementRepository.save(measurement);
     }
 
     public Page<Measurement> getAllMeasurements(Pageable pageable) {
@@ -40,18 +43,27 @@ public class MeasurementService {
 
     }
 
-    public Measurement getMeasurementById(Integer id) {
-        return measurementRepository.findById(id).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Measurement not found"));
+    public Measurement getMeasurementById(Integer id) throws MeasurementNotExistsException{
+        return measurementRepository.findById(id).orElseThrow(MeasurementNotExistsException::new);
     }
 
     public void deleteMeasurementById(Integer id) {
         measurementRepository.deleteById(id);
     }
 
-    public void addMeterToMeasurement(Integer id, Integer idMeter) {
+    public void addMeterToMeasurement(Integer id, Integer idMeter) throws MeasurementNotExistsException, MeterNotExistsException {
         Meter meter = meterService.getMeterById(idMeter);
         Measurement measurement = getMeasurementById(id);
         measurement.setMeter(meter);
         measurementRepository.save(measurement);
+    }
+
+    public Page<Measurement> getAllSort(Integer page, Integer size, List<Sort.Order> orders) {
+        Pageable pageable = PageRequest.of(page,size,Sort.by(orders));
+        return measurementRepository.findAll(pageable);
+    }
+
+    public Page<Measurement> getAllSpec(Specification<Measurement> measurementSpecification, Pageable pageable) {
+        return measurementRepository.findAll(measurementSpecification,pageable);
     }
 }

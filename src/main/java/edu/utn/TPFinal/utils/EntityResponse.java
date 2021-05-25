@@ -4,9 +4,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 public class EntityResponse{
 
-    public static <T> ResponseEntity response(Page<T> page) {
+    public static <T> ResponseEntity<List<T>> response(Page<T> page) {
         if (!page.getContent().isEmpty()) {
             return ResponseEntity.
                     status(HttpStatus.OK).

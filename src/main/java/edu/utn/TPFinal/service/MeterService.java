@@ -1,12 +1,16 @@
 package edu.utn.TPFinal.service;
 
+import edu.utn.TPFinal.exceptions.MeterNotExistsException;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.repository.MeterRepository;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -24,27 +28,29 @@ public class MeterService {
         this.meterRepository = meterRepository;
     }
 
-
-    public PostResponse addMeter(Meter meter) {
-
-        Meter m = meterRepository.save(meter);
-        return PostResponse
-                .builder()
-                .status(HttpStatus.CREATED)
-                .url(EntityURLBuilder.buildURL(METER_PATH, m.getId()))
-                .build();
+    public Meter addMeter(Meter meter) {
+        return meterRepository.save(meter);
     }
 
     public Page<Meter> getAllMeters(Pageable pageable) {
         return meterRepository.findAll(pageable);
     }
 
-    public Meter getMeterById(Integer id) {
-        return meterRepository.findById(id).orElseThrow((() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Meter not found")));
+    public Meter getMeterById(Integer id) throws MeterNotExistsException{
+        return meterRepository.findById(id).orElseThrow(MeterNotExistsException::new);
     }
-
 
     public void deleteMeterById(Integer id) {
         meterRepository.deleteById(id);
     }
+
+    public Page<Meter> getAllSort(Integer page, Integer size, List<Sort.Order> orders) {
+        Pageable pageable = PageRequest.of(page,size,Sort.by(orders));
+        return meterRepository.findAll(pageable);
+    }
+
+    public Page<Meter> getAllSpec(Specification<Meter> meterSpecifications, Pageable pageable) {
+        return meterRepository.findAll(meterSpecifications,pageable);
+    }
+
 }

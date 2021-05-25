@@ -1,5 +1,7 @@
 package edu.utn.TPFinal.service;
 
+import edu.utn.TPFinal.exceptions.MeterNotExistsException;
+import edu.utn.TPFinal.exceptions.UserNotExistsException;
 import edu.utn.TPFinal.model.*;
 import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.repository.BillRepository;
@@ -55,7 +57,7 @@ public class BillService {
         billRepository.deleteById(id);
     }
 
-    public void addClientToBill(Integer id, Integer idClient) {
+    public void addClientToBill(Integer id, Integer idClient) throws UserNotExistsException {
         Bill bill = getBillById(id);
         User userClient = userService.getUserById(idClient);
         if(userClient.getTypeUser().equals(TypeUser.CLIENT)){
@@ -71,7 +73,7 @@ public class BillService {
         billRepository.save(bill);
     }
 
-    public void addMeterToBill(Integer id, Integer idMeter) {
+    public void addMeterToBill(Integer id, Integer idMeter) throws MeterNotExistsException {
         Bill bill = getBillById(id);
         Meter meter = meterService.getMeterById(idMeter);
         bill.setMeter(meter);

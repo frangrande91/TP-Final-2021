@@ -2,6 +2,7 @@ package edu.utn.TPFinal.service;
 
 import edu.utn.TPFinal.exceptions.ClientNotFoundException;
 import edu.utn.TPFinal.exceptions.ErrorLoginException;
+import edu.utn.TPFinal.exceptions.UserNotExistsException;
 import edu.utn.TPFinal.exceptions.UserNotFoundException;
 import edu.utn.TPFinal.model.Address;
 import edu.utn.TPFinal.model.Responses.PostResponse;
@@ -11,10 +12,14 @@ import edu.utn.TPFinal.repository.UserRepository;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,29 +34,24 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public PostResponse addUser(User user) {
-        User p = userRepository.save(user);
-        return PostResponse.builder()
-                .status(HttpStatus.CREATED)
-                .url(EntityURLBuilder.buildURL(USER_PATH,user.getId()))
-                .build();
+    public User addUser(User user) {
+        return userRepository.save(user);
     }
 
     public Page<User> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
-    /*
+
     public List<User> getAllEmployees() {
-        return (List<User>) userRepository.findAll().stream().filter(p -> p.getTypeUser().equals(TypeUser.EMPLOYEE));
+        return userRepository.findAllByTypeUser(TypeUser.EMPLOYEE);
     }
 
     public List<User> getAllClients() {
-        return (List<User>) userRepository.findAll().stream().filter(p -> p.getTypeUser().equals(TypeUser.CLIENT));
+        return userRepository.findAllByTypeUser(TypeUser.CLIENT);
     }
-    */
 
-    public User getUserById(Integer id) {
-        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(String.format("There is no a user with id: %s",id)));
+    public User getUserById(Integer id) throws UserNotExistsException{
+        return userRepository.findById(id).orElseThrow(UserNotExistsException::new);
     }
 
     public User login(String username, String password) {
@@ -66,7 +66,7 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public void addAddressToClientUser(Integer idClientUser,Integer id) {
+    public void addAddressToClientUser(Integer idClientUser,Integer id) throws UserNotExistsException{
 
         User clientUser = getUserById(idClientUser);
 
@@ -81,4 +81,12 @@ public class UserService {
     }
 
 
+    public Page<User> getAllSort(Integer page, Integer size, List<Sort.Order> orders) {
+        Pageable pageable = PageRequest.of(page,size,Sort.by(orders));
+        return userRepository.findAll(pageable);
+    }
+
+    public Page<User> getAllSpec(Specification<User> userSpecification, Pageable pageable) {
+        return userRepository.findAll(userSpecification,pageable);
+    }
 }
