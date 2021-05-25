@@ -1,14 +1,14 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.exceptions.MeterNotExistsException;
-import edu.utn.TPFinal.exceptions.UserNotExistsException;
+import edu.utn.TPFinal.exceptions.*;
 import edu.utn.TPFinal.model.*;
-import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.repository.BillRepository;
-import edu.utn.TPFinal.utils.EntityURLBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -18,7 +18,6 @@ import java.util.List;
 @Service
 public class BillService {
 
-    private static final String BILL_PATH = "bill";
     private BillRepository billRepository;
     private MeterService meterService;
     private MeasurementService measurementService;
@@ -32,52 +31,69 @@ public class BillService {
         this.measurementService = measurementService;
         this.userService = personService;
         this.addressService = addressService;
-
     }
 
-
-    public PostResponse addBill(Bill bill) {
-        Bill b = billRepository.save(bill);
-        return PostResponse
-                .builder()
-                .status(HttpStatus.CREATED)
-                .url(EntityURLBuilder.buildURL(BILL_PATH, b.getId()))
-                .build();
+    public Bill addBill(Bill bill) {
+        return billRepository.save(bill);
     }
 
     public Page<Bill> getAllBills(Pageable pageable) {
         return billRepository.findAll(pageable);
     }
 
+    public Page<Bill> getAllSort(Integer page, Integer size, List<Sort.Order> orders) {
+        Pageable pageable = PageRequest.of(page,size, Sort.by(orders));
+        return billRepository.findAll(pageable);
+    }
+
+    public Page<Bill> getAllSpec(Specification<Bill> billSpecification, Pageable pageable) {
+        return billRepository.findAll(billSpecification, pageable);
+    }
+
+    /*
+    public Bill getBillById(Integer id) throws BillNotExistsException {
+        return billRepository.findById(id).orElseThrow(BillNotExistsException::new);
+    }
+     */
+
     public Bill getBillById(Integer id) {
         return billRepository.findById(id).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Bill not found"));
     }
 
-    public void deleteBillById(Integer id) {
-        billRepository.deleteById(id);
-    }
-
-    public void addClientToBill(Integer id, Integer idClient) throws UserNotExistsException {
+    /** USAR EL RETORNO **/
+    public Bill addClientToBill(Integer id, Integer idClient) throws UserNotExistsException {
         Bill bill = getBillById(id);
         User userClient = userService.getUserById(idClient);
         if(userClient.getTypeUser().equals(TypeUser.CLIENT)){
             bill.setUserClient(userClient);
         }
-        billRepository.save(bill);
+        return billRepository.save(bill);
     }
 
-    public void addAddressToBill(Integer id, Integer idAddress) {
+    /** USAR EL RETORNO **/
+    public Bill addAddressToBill(Integer id, Integer idAddress) throws AddressNotExistsException {
         Bill bill = getBillById(id);
         Address address = addressService.getAddressById(idAddress);
         bill.setAddress(address);
-        billRepository.save(bill);
+        return billRepository.save(bill);
     }
 
-    public void addMeterToBill(Integer id, Integer idMeter) throws MeterNotExistsException {
+    /** USAR EL RETORNO **/
+    public Bill addMeterToBill(Integer id, Integer idMeter) throws MeterNotExistsException {
         Bill bill = getBillById(id);
         Meter meter = meterService.getMeterById(idMeter);
         bill.setMeter(meter);
-        billRepository.save(bill);
+        return billRepository.save(bill);
     }
+
+    /** VER COMO AGREGAR LAS MEDIDICONES INICIAL Y FINAL **/
+
+    /*
+    public void deleteBillById(Integer id) {
+        billRepository.deleteById(id);
+    }
+     */
+
+
 
 }

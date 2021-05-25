@@ -28,9 +28,9 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserService userService;
-    private final ConversionService conversionService;
-    private final String USER_PATH = "users";
+    private UserService userService;
+    private ConversionService conversionService;
+    private static final String USER_PATH = "users";
 
     @Autowired
     public UserController(UserService userService, ConversionService conversionService) {
@@ -96,6 +96,13 @@ public class UserController {
         return userService.login(username,password);
     }
 
+    @PutMapping("/{idClient}/addresses/{idAddress}")
+    public ResponseEntity<Response> addAddressToClientUser(@PathVariable Integer idClient, @PathVariable Integer idAddress) throws UserNotExistsException {
+        userService.addAddressToClientUser(idClient,idAddress);
+        return ResponseEntity.ok(Response.builder().message("The user has been modified").build());
+    }
+
+    /*
     @DeleteMapping("/")
     public void deletePerson(@RequestBody User user) {
         userService.delete(user);
@@ -105,11 +112,7 @@ public class UserController {
     public void deletePerson(@PathVariable Integer idUser) {
         userService.deleteById(idUser);
     }
+     */
 
-    @PutMapping("/{idClient}/addresses/{idAddress}")
-    public ResponseEntity<Response> addAddressToClientUser(@PathVariable Integer idClient, @PathVariable Integer idAddress) throws UserNotExistsException {
-        userService.addAddressToClientUser(idClient,idAddress);
-        return ResponseEntity.ok(Response.builder().message("The user has been modified").build());
-    }
 
 }

@@ -60,6 +60,19 @@ public class MeterController {
         return EntityResponse.response(meterDtoPage);
     }
 
+    @GetMapping("/spec")
+    public ResponseEntity<List<MeterDto>> getAllSpec(
+            @And({
+                    @Spec(path = "address", spec = Equal.class),
+                    @Spec(path = "userClient", spec = Equal.class),
+                    @Spec(path = "meter", spec = Equal.class)
+            }) Specification<Meter> meterSpecifications, Pageable pageable ) {
+
+        Page<Meter> meterPage = meterService.getAllSpec(meterSpecifications,pageable);
+        Page<MeterDto> meterDtoPage = meterPage.map(meter -> conversionService.convert(meter,MeterDto.class));
+        return EntityResponse.response(meterDtoPage);
+    }
+
     @GetMapping("/sort")
     public ResponseEntity<List<MeterDto>> getAllSorted(@RequestParam(value = "size", defaultValue = "10") Integer size,
                                        @RequestParam(value = "page", defaultValue = "0") Integer page,
@@ -74,27 +87,17 @@ public class MeterController {
 
     }
 
-    @GetMapping("/spec")
-    public ResponseEntity<List<MeterDto>> getAllSpec(
-            @And({
-                    @Spec(path = "address", spec = Equal.class),
-                    @Spec(path = "userClient", spec = Equal.class),
-                    @Spec(path = "meter", spec = Equal.class)
-            }) Specification<Meter> meterSpecifications, Pageable pageable ) {
-
-        Page<Meter> meterPage = meterService.getAllSpec(meterSpecifications,pageable);
-        Page<MeterDto> meterDtoPage = meterPage.map(meter -> conversionService.convert(meter,MeterDto.class));
-        return EntityResponse.response(meterDtoPage);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<MeterDto> getMeterById(@PathVariable Integer id) throws MeterNotExistsException {
         MeterDto meterDto = conversionService.convert(meterService.getMeterById(id), MeterDto.class);
         return ResponseEntity.ok(meterDto);
     }
 
+    /*
     @DeleteMapping("/{id}")
     public void deleteMeterById(@PathVariable Integer id){
         meterService.deleteMeterById(id);
     }
+
+     */
 }

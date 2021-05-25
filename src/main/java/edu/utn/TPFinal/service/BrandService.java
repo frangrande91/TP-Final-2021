@@ -1,20 +1,19 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.exceptions.BrandNotExistsException;
 import edu.utn.TPFinal.model.Brand;
-import edu.utn.TPFinal.model.Responses.PostResponse;
 import edu.utn.TPFinal.repository.BrandRepository;
-import edu.utn.TPFinal.utils.EntityURLBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
-
-import static java.util.Objects.isNull;
+import java.util.List;
 
 @Service
 public class BrandService {
@@ -35,11 +34,27 @@ public class BrandService {
         return brandRepository.findAll(pageable);
     }
 
+    public Page<Brand> getAllSpec(Specification<Brand> brandSpecification, Pageable pageable) {
+        return brandRepository.findAll(brandSpecification, pageable);
+    }
 
-    public Brand getBrandByID(Integer id) throws BrandNotExistsException {
+    public Page<Brand> getAllSort(Integer page, Integer size, List<Sort.Order> orders) {
+        Pageable pageable = PageRequest.of(page,size, Sort.by(orders));
+        return brandRepository.findAll(pageable);
+    }
+
+    /*
+    public Brand getBrandById(Integer id) throws BrandNotExistsException {
         return brandRepository.findById(id).orElseThrow(BrandNotExistsException::new);
     }
 
+     */
+
+    public Brand getBrandById(Integer id) {
+        return brandRepository.findById(id).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Brand not found"));
+    }
+
+    /*
     public void deleteBrand(Brand brand) {
         brandRepository.delete(brand);
     }
@@ -47,5 +62,7 @@ public class BrandService {
     public void deleteBrandByID(Integer id) {
         brandRepository.deleteById(id);
     }
+
+     */
     
 }

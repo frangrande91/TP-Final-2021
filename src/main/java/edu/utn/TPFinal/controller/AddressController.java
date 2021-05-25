@@ -23,6 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +31,9 @@ import java.util.List;
 @RequestMapping("/address")
 public class AddressController {
 
-    private final AddressService addressService;
-    private final ConversionService conversionService;
-    private final String ADDRESS_PATH = "address";
+    private AddressService addressService;
+    private ConversionService conversionService;
+    private static final String ADDRESS_PATH = "address";
 
     @Autowired
     public AddressController(AddressService addressService,ConversionService conversionService) {
@@ -41,7 +42,7 @@ public class AddressController {
     }
 
     @PostMapping(value = "/")
-    public ResponseEntity<Response> addAddress(@RequestBody Address address) {
+    public ResponseEntity<Response> addAddress(@RequestBody Address address) throws SQLIntegrityConstraintViolationException {
         Address addressCreated = addressService.addAddress(address);
 
         return ResponseEntity
@@ -60,18 +61,6 @@ public class AddressController {
         return EntityResponse.response(addressDtoPage);
     }
 
-    @GetMapping("/sort")
-    public ResponseEntity<List<AddressDto>> getAllSorted(@RequestParam(value = "size", defaultValue = "10") Integer size,
-                                       @RequestParam(value = "page", defaultValue = "0") Integer page,
-                                       @RequestParam String field1, @RequestParam String field2) {
-        List<Order> orders = new ArrayList<>();
-        orders.add(new Order(Sort.Direction.DESC,field1));
-        orders.add(new Order(Sort.Direction.DESC,field2));
-        Page<Address> addressPage = addressService.getAllSort(page,size,orders);
-        Page<AddressDto> addressDtoPage = addressPage.map(address -> conversionService.convert(address,AddressDto.class));
-        return EntityResponse.response(addressDtoPage);
-    }
-
     @GetMapping("/spec")
     public ResponseEntity<List<AddressDto>> getAllSpec(
             @And({
@@ -80,9 +69,22 @@ public class AddressController {
                     @Spec(path = "meter", spec = Equal.class)
             }) Specification<Address> newsSpecification, Pageable pageable ){
         Page<Address> addressPage = addressService.getAllSpec(newsSpecification,pageable);
+        Page<AddressDto> addressDtoPage = addressPage.map(address -> conversionService.convert(address, AddressDto.class));
+        return EntityResponse.response(addressDtoPage);
+    }
+
+    @GetMapping("/sort")
+    public ResponseEntity<List<AddressDto>> getAllSorted(@RequestParam(value = "size", defaultValue = "10") Integer size,
+                                                         @RequestParam(value = "page", defaultValue = "0") Integer page,
+                                                         @RequestParam String field1, @RequestParam String field2) {
+        List<Order> orders = new ArrayList<>();
+        orders.add(new Order(Sort.Direction.DESC,field1));
+        orders.add(new Order(Sort.Direction.DESC,field2));
+        Page<Address> addressPage = addressService.getAllSort(page,size,orders);
         Page<AddressDto> addressDtoPage = addressPage.map(address -> conversionService.convert(address,AddressDto.class));
         return EntityResponse.response(addressDtoPage);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Address> getAddressById(@PathVariable Integer id) throws AddressNotExistsException {
@@ -90,15 +92,19 @@ public class AddressController {
         return ResponseEntity.ok(address);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteAddressById(@PathVariable Integer id){
-        addressService.deleteAddressById(id);
-    }
-
     @PutMapping("/{id}/{idMeter}")
     public ResponseEntity<Response> addMeterToAddress(@PathVariable Integer id, @PathVariable Integer idMeter){
         addressService.addMeterToAddress(id, idMeter);
         return ResponseEntity.status(HttpStatus.OK).body(Response.builder().message("The address has been modified").build());
     }
+
+    /*
+    @DeleteMapping("/{id}")
+    public void deleteAddressById(@PathVariable Integer id){
+        addressService.deleteAddressById(id);
+    }
+
+     */
+
 
 }
