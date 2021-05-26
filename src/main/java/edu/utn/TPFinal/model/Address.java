@@ -27,6 +27,10 @@ public class Address {
     @JoinColumn(name = "id_user")
     private User userClient;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_rate")
+    private Rate rate;
+
     @NotNull(message = "street should not be null")
     private String address;
 

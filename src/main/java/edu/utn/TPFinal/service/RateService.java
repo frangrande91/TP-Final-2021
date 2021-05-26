@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.service;
 
+import edu.utn.TPFinal.exceptions.RateNotExistsException;
 import edu.utn.TPFinal.model.Rate;
 import edu.utn.TPFinal.repository.RateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,15 +44,10 @@ public class RateService {
         return rateRepository.findAll(pageable);
     }
 
-    public Rate getByID(Integer id) {
-        return rateRepository.findById(id).orElseThrow(()-> new HttpClientErrorException(HttpStatus.NOT_FOUND,String.format("The rate with ID: %d",id,"do not exists")));
-    }
-
-    /*
     public Rate getRateById(Integer id) throws RateNotExistsException {
         return rateRepository.findById(id).orElseThrow(RateNotExistsException::new);
     }
-     */
+
 
     /*
     public void deleteRate(Rate rate) {

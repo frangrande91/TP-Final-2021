@@ -95,29 +95,23 @@ public class BillController {
     }
 
     @PutMapping("/{id}/{idClient}")
-    public ResponseEntity<Response> addClientToBill(@PathVariable Integer id, @PathVariable Integer idClient) throws UserNotExistsException {
+    public ResponseEntity<Response> addClientToBill(@PathVariable Integer id, @PathVariable Integer idClient) throws UserNotExistsException, BillNotExistsException {
         billService.addClientToBill(id, idClient);
         return ResponseEntity.status(HttpStatus.OK).body(Response.builder().message("The bill has been modified").build());
     }
 
 
     @PutMapping("/{id}/{idAddress}")
-    public ResponseEntity<Response> addAddressToBill(@PathVariable Integer id, @PathVariable Integer idAddress) throws AddressNotExistsException{
+    public ResponseEntity<Response> addAddressToBill(@PathVariable Integer id, @PathVariable Integer idAddress) throws AddressNotExistsException, BillNotExistsException{
         billService.addAddressToBill(id, idAddress);
         return ResponseEntity.status(HttpStatus.OK).body(Response.builder().message("The bill has been modified").build());
     }
 
     @PutMapping("/{id}/{idMeter}")
-    public ResponseEntity<Response> addMeterToBill(@PathVariable Integer id, @PathVariable Integer idMeter) throws MeterNotExistsException {
+    public ResponseEntity<Response> addMeterToBill(@PathVariable Integer id, @PathVariable Integer idMeter) throws MeterNotExistsException, BillNotExistsException {
         billService.addMeterToBill(id, idMeter);
         return ResponseEntity.status(HttpStatus.OK).body(Response.builder().message("The bill has been modified").build());
     }
-
-
-
-    /* AGREGAR ADD MEASUREMENTS */
-
-
 
     /*
     @DeleteMapping("/{id}")

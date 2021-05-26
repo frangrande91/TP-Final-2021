@@ -50,18 +50,14 @@ public class BillService {
         return billRepository.findAll(billSpecification, pageable);
     }
 
-    /*
+
     public Bill getBillById(Integer id) throws BillNotExistsException {
         return billRepository.findById(id).orElseThrow(BillNotExistsException::new);
     }
-     */
 
-    public Bill getBillById(Integer id) {
-        return billRepository.findById(id).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Bill not found"));
-    }
 
     /** USAR EL RETORNO **/
-    public Bill addClientToBill(Integer id, Integer idClient) throws UserNotExistsException {
+    public Bill addClientToBill(Integer id, Integer idClient) throws UserNotExistsException, BillNotExistsException {
         Bill bill = getBillById(id);
         User userClient = userService.getUserById(idClient);
         if(userClient.getTypeUser().equals(TypeUser.CLIENT)){
@@ -71,7 +67,7 @@ public class BillService {
     }
 
     /** USAR EL RETORNO **/
-    public Bill addAddressToBill(Integer id, Integer idAddress) throws AddressNotExistsException {
+    public Bill addAddressToBill(Integer id, Integer idAddress) throws AddressNotExistsException, BillNotExistsException {
         Bill bill = getBillById(id);
         Address address = addressService.getAddressById(idAddress);
         bill.setAddress(address);
@@ -79,7 +75,7 @@ public class BillService {
     }
 
     /** USAR EL RETORNO **/
-    public Bill addMeterToBill(Integer id, Integer idMeter) throws MeterNotExistsException {
+    public Bill addMeterToBill(Integer id, Integer idMeter) throws MeterNotExistsException, BillNotExistsException {
         Bill bill = getBillById(id);
         Meter meter = meterService.getMeterById(idMeter);
         bill.setMeter(meter);

@@ -1,6 +1,8 @@
 package edu.utn.TPFinal.controller;
 
 import edu.utn.TPFinal.exceptions.AddressNotExistsException;
+import edu.utn.TPFinal.exceptions.MeterNotExistsException;
+import edu.utn.TPFinal.exceptions.RateNotExistsException;
 import edu.utn.TPFinal.model.Address;
 import edu.utn.TPFinal.model.Dto.AddressDto;
 import edu.utn.TPFinal.model.Responses.Response;
@@ -93,8 +95,14 @@ public class AddressController {
     }
 
     @PutMapping("/{id}/{idMeter}")
-    public ResponseEntity<Response> addMeterToAddress(@PathVariable Integer id, @PathVariable Integer idMeter){
+    public ResponseEntity<Response> addMeterToAddress(@PathVariable Integer id, @PathVariable Integer idMeter) throws AddressNotExistsException, MeterNotExistsException {
         addressService.addMeterToAddress(id, idMeter);
+        return ResponseEntity.status(HttpStatus.OK).body(Response.builder().message("The address has been modified").build());
+    }
+
+    @PutMapping("/{id}/{idRate}")
+    public ResponseEntity<Response> addRateToAddress(@PathVariable Integer id, @PathVariable Integer idRate) throws AddressNotExistsException, RateNotExistsException {
+        addressService.addRateToAddress(id, idRate);
         return ResponseEntity.status(HttpStatus.OK).body(Response.builder().message("The address has been modified").build());
     }
 

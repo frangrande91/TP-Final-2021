@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.service;
 
+import edu.utn.TPFinal.exceptions.MeterNotExistsException;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.repository.MeterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,16 +43,11 @@ public class MeterService {
         return meterRepository.findAll(pageable);
     }
 
-    /*
-    public Meter getMeterById(Integer id) throws MeterNotExistsException{
+
+    public Meter getMeterById(Integer id) throws MeterNotExistsException {
         return meterRepository.findById(id).orElseThrow(MeterNotExistsException::new);
     }
 
-     */
-
-    public Meter getMeterById(Integer id) {
-        return meterRepository.findById(id).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Meter not found"));
-    }
 
     /*
     public void deleteMeterById(Integer id) {

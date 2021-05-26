@@ -1,7 +1,11 @@
 package edu.utn.TPFinal.service;
 
+import edu.utn.TPFinal.exceptions.AddressNotExistsException;
+import edu.utn.TPFinal.exceptions.MeterNotExistsException;
+import edu.utn.TPFinal.exceptions.RateNotExistsException;
 import edu.utn.TPFinal.model.Address;
 import edu.utn.TPFinal.model.Meter;
+import edu.utn.TPFinal.model.Rate;
 import edu.utn.TPFinal.repository.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,11 +25,13 @@ public class AddressService {
 
     private AddressRepository addressRepository;
     private MeterService meterService;
+    private RateService rateService;
 
     @Autowired
-    public AddressService(AddressRepository addressRepository, MeterService meterService) {
+    public AddressService(AddressRepository addressRepository, MeterService meterService, RateService rateService) {
         this.addressRepository = addressRepository;
         this.meterService = meterService;
+        this.rateService = rateService;
     }
 
     public Address addAddress(Address address) throws SQLIntegrityConstraintViolationException {
@@ -45,22 +51,23 @@ public class AddressService {
         return addressRepository.findAll(pageable);
     }
 
-    public Address getAddressById(Integer id) {
-        return addressRepository.findById(id).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Address not found"));
-    }
 
-    /*
     public Address getAddressById(Integer id) throws AddressNotExistsException {
         return addressRepository.findById(id).orElseThrow(AddressNotExistsException::new);
     }
-     */
-
 
     /** USAR EL RETORNO **/
-    public Address addMeterToAddress(Integer id, Integer idMeter) {
+    public Address addMeterToAddress(Integer id, Integer idMeter) throws MeterNotExistsException, AddressNotExistsException {
         Address address = getAddressById(id);
         Meter meter = meterService.getMeterById(idMeter);
         address.setMeter(meter);
+        return addressRepository.save(address);
+    }
+
+    public Address addRateToAddress(Integer id, Integer idRate) throws RateNotExistsException, AddressNotExistsException {
+        Address address = getAddressById(id);
+        Rate rate = rateService.getRateById(idRate);
+        address.setRate(rate);
         return addressRepository.save(address);
     }
 

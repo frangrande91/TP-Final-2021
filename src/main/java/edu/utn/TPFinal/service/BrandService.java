@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.service;
 
+import edu.utn.TPFinal.exceptions.BrandNotExistsException;
 import edu.utn.TPFinal.model.Brand;
 import edu.utn.TPFinal.repository.BrandRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,15 +44,9 @@ public class BrandService {
         return brandRepository.findAll(pageable);
     }
 
-    /*
+
     public Brand getBrandById(Integer id) throws BrandNotExistsException {
         return brandRepository.findById(id).orElseThrow(BrandNotExistsException::new);
-    }
-
-     */
-
-    public Brand getBrandById(Integer id) {
-        return brandRepository.findById(id).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Brand not found"));
     }
 
     /*

@@ -1,4 +1,5 @@
 package edu.utn.TPFinal.controller;
+import edu.utn.TPFinal.exceptions.AddressNotExistsException;
 import edu.utn.TPFinal.exceptions.UserNotExistsException;
 import edu.utn.TPFinal.model.Dto.UserDto;
 import edu.utn.TPFinal.model.Responses.Response;
@@ -97,7 +98,7 @@ public class UserController {
     }
 
     @PutMapping("/{idClient}/addresses/{idAddress}")
-    public ResponseEntity<Response> addAddressToClientUser(@PathVariable Integer idClient, @PathVariable Integer idAddress) throws UserNotExistsException {
+    public ResponseEntity<Response> addAddressToClientUser(@PathVariable Integer idClient, @PathVariable Integer idAddress) throws UserNotExistsException, AddressNotExistsException {
         userService.addAddressToClientUser(idClient,idAddress);
         return ResponseEntity.ok(Response.builder().message("The user has been modified").build());
     }

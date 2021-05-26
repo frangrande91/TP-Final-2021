@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.service;
 
+import edu.utn.TPFinal.exceptions.ModelNotExistsException;
 import edu.utn.TPFinal.model.Model;
 import edu.utn.TPFinal.repository.ModelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +44,8 @@ public class ModelService {
         return modelRepository.findAll(modelSpecification,pageable);
     }
 
-    public Model getModelById(Integer id) {
-        return modelRepository.findById(id).orElseThrow(()-> new HttpClientErrorException(HttpStatus.NOT_FOUND,String.format("The model with ID: %d",id,"do not exists")));
+    public Model getModelById(Integer id) throws ModelNotExistsException {
+        return modelRepository.findById(id).orElseThrow(ModelNotExistsException::new);
     }
 
     /*

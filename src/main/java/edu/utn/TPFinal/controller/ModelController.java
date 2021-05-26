@@ -90,8 +90,6 @@ public class ModelController {
         return ResponseEntity.ok(model);
     }
 
-    /*** POR QUÉ EL MODEL TIENE UNA LISTA DE MEDIDORES?? ***/
-
     /*
     @DeleteMapping(value = "/")
     public void deleteModel(@RequestBody Model model) {

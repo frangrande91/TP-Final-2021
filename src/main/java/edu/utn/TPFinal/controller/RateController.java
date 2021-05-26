@@ -83,12 +83,10 @@ public class RateController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Rate> getRateByID(@PathVariable Integer id) throws RateNotExistsException {
-        Rate rate = rateService.getByID(id);
+    public ResponseEntity<Rate> getRateById(@PathVariable Integer id) throws RateNotExistsException {
+        Rate rate = rateService.getRateById(id);
         return ResponseEntity.ok(rate);
     }
-
-    /** El rate tiene una lista de Bills **/
 
     /*
     @DeleteMapping("/")

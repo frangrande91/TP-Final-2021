@@ -29,10 +29,6 @@ public class Bill {
     private Meter meter;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_rate")
-    private Rate rate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user")
     private User userClient;
 

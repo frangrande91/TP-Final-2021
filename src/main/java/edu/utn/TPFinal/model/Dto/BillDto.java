@@ -16,7 +16,6 @@ public class BillDto {
     private Integer id;
     private Address address;
     private Meter meter;
-    private Rate rate;
     private User userClient;
     private LocalDateTime initialMeasurement;
     private LocalDateTime finalMeasurement;

@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.service;
 
+import edu.utn.TPFinal.exceptions.AddressNotExistsException;
 import edu.utn.TPFinal.exceptions.ClientNotFoundException;
 import edu.utn.TPFinal.exceptions.ErrorLoginException;
 import edu.utn.TPFinal.exceptions.UserNotExistsException;
@@ -65,7 +66,7 @@ public class UserService {
         return Optional.ofNullable(userRepository.findByUsernameAndPassword(username,password)).orElseThrow(() -> new ErrorLoginException("The username and/or password are incorrect"));
     }
 
-    public void addAddressToClientUser(Integer idClientUser,Integer id) throws UserNotExistsException{
+    public void addAddressToClientUser(Integer idClientUser,Integer id) throws UserNotExistsException, AddressNotExistsException {
 
         User clientUser = getUserById(idClientUser);
 
