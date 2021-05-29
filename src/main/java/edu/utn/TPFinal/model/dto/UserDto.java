@@ -1,13 +1,8 @@
-package edu.utn.TPFinal.model.Dto;
+package edu.utn.TPFinal.model.dto;
 
 import edu.utn.TPFinal.model.TypeUser;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.AccessType;
-
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
 
 @Data
 @NoArgsConstructor

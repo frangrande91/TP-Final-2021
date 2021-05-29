@@ -1,6 +1,6 @@
 package edu.utn.TPFinal.converter;
 
-import edu.utn.TPFinal.model.Dto.UserDto;
+import edu.utn.TPFinal.model.dto.UserDto;
 import edu.utn.TPFinal.model.User;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;

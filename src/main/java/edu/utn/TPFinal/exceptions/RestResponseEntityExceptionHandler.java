@@ -1,6 +1,8 @@
 package edu.utn.TPFinal.exceptions;
 
-import edu.utn.TPFinal.model.Responses.Response;
+import edu.utn.TPFinal.exceptions.notFound.*;
+import edu.utn.TPFinal.model.responses.Response;
+import edu.utn.TPFinal.utils.EntityResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,35 +34,57 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<Object>(apiError, new HttpHeaders(),apiError.getHttpStatus());
     }
 
-    public <E extends Exception> ResponseEntity<Object> handlerExceptions(E ex, WebRequest request) {
-        List<String> errors = new ArrayList<>();
-        errors.add(ex.getMessage());
-        ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, ex.getLocalizedMessage(),errors);
-        return new ResponseEntity<Object>(apiError,new HttpHeaders(),apiError.getHttpStatus());
+    private <E extends Exception> ResponseEntity<Object> ResponseNotFound(E ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(EntityResponse.messageResponse(ex.getMessage()));
     }
-
-    /*
-    @ExceptionHandler({UserNotFoundException.class})
-    public ResponseEntity<Object> handlerVehicleNotFoundException(UserNotFoundException ex, WebRequest request) {
-        return handlerExceptions(ex,request);
-    }
-
-     */
 
     @ExceptionHandler({ErrorLoginException.class})
     public ResponseEntity<Object> handlerErrorLoginException(ErrorLoginException ex,WebRequest request) {
-        return handlerExceptions(ex,request);
+        return ResponseNotFound(ex);
     }
 
     @ExceptionHandler({BrandNotExistsException.class})
     public ResponseEntity<Object> handlerBrandNotExistsException(BrandNotExistsException ex,WebRequest request) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Response.builder().message("The brand not exits").build());
+        return ResponseNotFound(ex);
+    }
+
+    @ExceptionHandler({AddressNotExistsException.class})
+    public ResponseEntity<Object> handlerAddressNotExistsException(AddressNotExistsException ex,WebRequest request) {
+        return ResponseNotFound(ex);
+    }
+
+    @ExceptionHandler({BillNotExistsException.class})
+    public ResponseEntity<Object> handlerBillNotExistsException(BillNotExistsException ex,WebRequest request) {
+        return ResponseNotFound(ex);
+    }
+
+    @ExceptionHandler({MeasurementNotExistsException.class})
+    public ResponseEntity<Object> handlerMeasurementNotExistsException(MeasurementNotExistsException ex,WebRequest request) {
+        return ResponseNotFound(ex);
+    }
+
+    @ExceptionHandler({MeterNotExistsException.class})
+    public ResponseEntity<Object> handlerMeterNotExistsException(MeterNotExistsException ex,WebRequest request) {
+        return ResponseNotFound(ex);
+    }
+
+    @ExceptionHandler({ModelNotExistsException.class})
+    public ResponseEntity<Object> handlerModelNotExistsException(BrandNotExistsException ex,WebRequest request) {
+        return ResponseNotFound(ex);
+    }
+
+    @ExceptionHandler({RateNotExistsException.class})
+    public ResponseEntity<Object> handlerRateNotExistsException(RateNotExistsException ex,WebRequest request) {
+        return ResponseNotFound(ex);
+    }
+
+    @ExceptionHandler({UserNotExistsException.class})
+    public ResponseEntity<Object> handlerUserNotExistsException(UserNotExistsException ex,WebRequest request) {
+        return ResponseNotFound(ex);
     }
 
     @ExceptionHandler({SQLIntegrityConstraintViolationException.class})
     public ResponseEntity<Object> handlerSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException ex,WebRequest request) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Response.builder().message(ex.getMessage()).build());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
-
-
 }

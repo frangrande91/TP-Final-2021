@@ -1,11 +1,11 @@
 package edu.utn.TPFinal.controller;
 
-import edu.utn.TPFinal.exceptions.AddressNotExistsException;
-import edu.utn.TPFinal.exceptions.MeterNotExistsException;
-import edu.utn.TPFinal.exceptions.RateNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.Address;
-import edu.utn.TPFinal.model.Dto.AddressDto;
-import edu.utn.TPFinal.model.Responses.Response;
+import edu.utn.TPFinal.model.dto.AddressDto;
+import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.service.AddressService;
 import edu.utn.TPFinal.utils.EntityResponse;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
@@ -51,7 +51,7 @@ public class AddressController {
                 .status(HttpStatus.CREATED)
                 .location(EntityURLBuilder.buildURL2(ADDRESS_PATH,addressCreated.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(Response.builder().message("The address has been created").build());
+                .body(EntityResponse.messageResponse("The address has been created"));
     }
 
     @GetMapping
@@ -60,7 +60,7 @@ public class AddressController {
         Pageable pageable = PageRequest.of(page,size);
         Page<Address> addressPage = addressService.getAllAddress(pageable);
         Page<AddressDto> addressDtoPage = addressPage.map(address -> conversionService.convert(address,AddressDto.class));
-        return EntityResponse.response(addressDtoPage);
+        return EntityResponse.listResponse(addressDtoPage);
     }
 
     @GetMapping("/spec")
@@ -72,7 +72,7 @@ public class AddressController {
             }) Specification<Address> newsSpecification, Pageable pageable ){
         Page<Address> addressPage = addressService.getAllSpec(newsSpecification,pageable);
         Page<AddressDto> addressDtoPage = addressPage.map(address -> conversionService.convert(address, AddressDto.class));
-        return EntityResponse.response(addressDtoPage);
+        return EntityResponse.listResponse(addressDtoPage);
     }
 
     @GetMapping("/sort")
@@ -84,7 +84,7 @@ public class AddressController {
         orders.add(new Order(Sort.Direction.DESC,field2));
         Page<Address> addressPage = addressService.getAllSort(page,size,orders);
         Page<AddressDto> addressDtoPage = addressPage.map(address -> conversionService.convert(address,AddressDto.class));
-        return EntityResponse.response(addressDtoPage);
+        return EntityResponse.listResponse(addressDtoPage);
     }
 
 
@@ -97,22 +97,19 @@ public class AddressController {
     @PutMapping("/{id}/{idMeter}")
     public ResponseEntity<Response> addMeterToAddress(@PathVariable Integer id, @PathVariable Integer idMeter) throws AddressNotExistsException, MeterNotExistsException {
         addressService.addMeterToAddress(id, idMeter);
-        return ResponseEntity.status(HttpStatus.OK).body(Response.builder().message("The address has been modified").build());
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(EntityResponse.messageResponse("The address has been modified"));
     }
 
     @PutMapping("/{id}/{idRate}")
     public ResponseEntity<Response> addRateToAddress(@PathVariable Integer id, @PathVariable Integer idRate) throws AddressNotExistsException, RateNotExistsException {
         addressService.addRateToAddress(id, idRate);
-        return ResponseEntity.status(HttpStatus.OK).body(Response.builder().message("The address has been modified").build());
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(EntityResponse.messageResponse("The address has been modified"));
     }
 
-    /*
     @DeleteMapping("/{id}")
-    public void deleteAddressById(@PathVariable Integer id){
+    public ResponseEntity<Object> deleteAddressById(@PathVariable Integer id) throws AddressNotExistsException{
         addressService.deleteAddressById(id);
+        return ResponseEntity.accepted().build();
     }
-
-     */
-
 
 }

@@ -1,6 +1,7 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.exceptions.ModelNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.ModelNotExistsException;
 import edu.utn.TPFinal.model.Model;
 import edu.utn.TPFinal.repository.ModelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
@@ -45,17 +44,12 @@ public class ModelService {
     }
 
     public Model getModelById(Integer id) throws ModelNotExistsException {
-        return modelRepository.findById(id).orElseThrow(ModelNotExistsException::new);
+        return modelRepository.findById(id).orElseThrow(() -> new ModelNotExistsException("Model not exists"));
     }
 
-    /*
-    public void deleteModel(Model model) {
-        modelRepository.delete(model);
-    }
-
-    public void deleteModelById(Integer id) {
+    public void deleteModelById(Integer id) throws ModelNotExistsException{
+        getModelById(id);
         modelRepository.deleteById(id);
     }
-     */
 
 }

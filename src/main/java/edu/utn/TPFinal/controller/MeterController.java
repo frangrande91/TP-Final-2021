@@ -1,9 +1,9 @@
 package edu.utn.TPFinal.controller;
 
-import edu.utn.TPFinal.exceptions.MeterNotExistsException;
-import edu.utn.TPFinal.model.Dto.MeterDto;
+import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.model.dto.MeterDto;
 import edu.utn.TPFinal.model.Meter;
-import edu.utn.TPFinal.model.Responses.Response;
+import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.service.MeterService;
 import edu.utn.TPFinal.utils.EntityResponse;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
@@ -48,7 +48,7 @@ public class MeterController {
                 .status(HttpStatus.CREATED)
                 .location(EntityURLBuilder.buildURL2(METER_PATH,meterCreated.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(Response.builder().message("The meter has been created").build());
+                .body(EntityResponse.messageResponse("The meter has been created"));
     }
 
     @GetMapping()
@@ -57,7 +57,7 @@ public class MeterController {
         Pageable pageable = PageRequest.of(page, size);
         Page<Meter> meterPage = meterService.getAllMeters(pageable);
         Page<MeterDto> meterDtoPage = meterPage.map(meter -> conversionService.convert(meter,MeterDto.class));
-        return EntityResponse.response(meterDtoPage);
+        return EntityResponse.listResponse(meterDtoPage);
     }
 
     @GetMapping("/spec")
@@ -70,7 +70,7 @@ public class MeterController {
 
         Page<Meter> meterPage = meterService.getAllSpec(meterSpecifications,pageable);
         Page<MeterDto> meterDtoPage = meterPage.map(meter -> conversionService.convert(meter,MeterDto.class));
-        return EntityResponse.response(meterDtoPage);
+        return EntityResponse.listResponse(meterDtoPage);
     }
 
     @GetMapping("/sort")
@@ -83,7 +83,7 @@ public class MeterController {
         orders.add(new Order(Sort.Direction.DESC,field2));
         Page<Meter> meterPage = meterService.getAllSort(page,size,orders);
         Page<MeterDto> meterDtoPage = meterPage.map(meter -> conversionService.convert(meter,MeterDto.class));
-        return EntityResponse.response(meterDtoPage);
+        return EntityResponse.listResponse(meterDtoPage);
 
     }
 
@@ -93,11 +93,10 @@ public class MeterController {
         return ResponseEntity.ok(meterDto);
     }
 
-    /*
     @DeleteMapping("/{id}")
-    public void deleteMeterById(@PathVariable Integer id){
+    public ResponseEntity<Object> deleteMeterById(@PathVariable Integer id) throws MeterNotExistsException{
         meterService.deleteMeterById(id);
+        return ResponseEntity.accepted().build();
     }
 
-     */
 }

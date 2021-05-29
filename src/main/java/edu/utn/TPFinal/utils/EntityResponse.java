@@ -1,5 +1,7 @@
 package edu.utn.TPFinal.utils;
 
+import edu.utn.TPFinal.model.responses.Response;
+import org.apache.logging.log4j.message.Message;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +10,7 @@ import java.util.List;
 
 public class EntityResponse{
 
-    public static <T> ResponseEntity<List<T>> response(Page<T> page) {
+    public static <T> ResponseEntity<List<T>> listResponse(Page<T> page) {
         if (!page.getContent().isEmpty()) {
             return ResponseEntity.
                     status(HttpStatus.OK).
@@ -18,6 +20,9 @@ public class EntityResponse{
         } else {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(page.getContent());
         }
+    }
 
+    public static Response messageResponse(String message) {
+        return Response.builder().message(message).build();
     }
 }

@@ -1,8 +1,6 @@
 package edu.utn.TPFinal.converter;
 
-import edu.utn.TPFinal.model.Dto.MeterDto;
-import edu.utn.TPFinal.model.Dto.ModelDto;
-import edu.utn.TPFinal.model.Meter;
+import edu.utn.TPFinal.model.dto.ModelDto;
 import edu.utn.TPFinal.model.Model;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.convert.converter.Converter;

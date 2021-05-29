@@ -1,8 +1,9 @@
 package edu.utn.TPFinal.controller;
-import edu.utn.TPFinal.exceptions.AddressNotExistsException;
-import edu.utn.TPFinal.exceptions.UserNotExistsException;
-import edu.utn.TPFinal.model.Dto.UserDto;
-import edu.utn.TPFinal.model.Responses.Response;
+import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.ClientNotFoundException;
+import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
+import edu.utn.TPFinal.model.dto.UserDto;
+import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.model.User;
 import edu.utn.TPFinal.service.UserService;
 import edu.utn.TPFinal.utils.EntityResponse;
@@ -47,7 +48,7 @@ public class UserController {
                 .status(HttpStatus.CREATED)
                 .location(EntityURLBuilder.buildURL2(USER_PATH,userCreated.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(Response.builder().message("The user has been created").build());
+                .body(EntityResponse.messageResponse("The user has been created"));
     }
 
     @GetMapping
@@ -56,7 +57,7 @@ public class UserController {
         Pageable pageable = PageRequest.of(page,size);
         Page<User> userPage = userService.getAllUsers(pageable);
         Page<UserDto> userDtoPage = userPage.map(user -> conversionService.convert(user,UserDto.class));
-        return EntityResponse.response(userDtoPage);
+        return EntityResponse.listResponse(userDtoPage);
     }
 
     @GetMapping("/sort")
@@ -69,7 +70,7 @@ public class UserController {
         orders.add(new Order(Sort.Direction.DESC,field2));
         Page<User> userPage = userService.getAllSort(page,size,orders);
         Page<UserDto> userDtoPage = userPage.map(user -> conversionService.convert(user,UserDto.class));
-        return EntityResponse.response(userDtoPage);
+        return EntityResponse.listResponse(userDtoPage);
     }
 
     @GetMapping("/spec")
@@ -83,7 +84,7 @@ public class UserController {
 
         Page<User> userPage = userService.getAllSpec(userSpecification,pageable);
         Page<UserDto> userDtoPage = userPage.map(user -> conversionService.convert(user,UserDto.class));
-        return EntityResponse.response(userDtoPage);
+        return EntityResponse.listResponse(userDtoPage);
     }
 
     @GetMapping("/{id}")
@@ -98,22 +99,16 @@ public class UserController {
     }
 
     @PutMapping("/{idClient}/addresses/{idAddress}")
-    public ResponseEntity<Response> addAddressToClientUser(@PathVariable Integer idClient, @PathVariable Integer idAddress) throws UserNotExistsException, AddressNotExistsException {
+    public ResponseEntity<Response> addAddressToClientUser(@PathVariable Integer idClient, @PathVariable Integer idAddress) throws UserNotExistsException, AddressNotExistsException, ClientNotFoundException {
         userService.addAddressToClientUser(idClient,idAddress);
-        return ResponseEntity.ok(Response.builder().message("The user has been modified").build());
-    }
-
-    /*
-    @DeleteMapping("/")
-    public void deletePerson(@RequestBody User user) {
-        userService.delete(user);
+        return ResponseEntity.status(HttpStatus.ACCEPTED)
+                .body(EntityResponse.messageResponse("The user has been modified"));
     }
 
     @DeleteMapping("/{idUser}")
-    public void deletePerson(@PathVariable Integer idUser) {
+    public ResponseEntity<Object> deleteUser(@PathVariable Integer idUser) throws UserNotExistsException {
         userService.deleteById(idUser);
+        return ResponseEntity.accepted().build();
     }
-     */
-
 
 }

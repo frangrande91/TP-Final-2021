@@ -1,7 +1,7 @@
 package edu.utn.TPFinal.converter;
 
 import edu.utn.TPFinal.model.Address;
-import edu.utn.TPFinal.model.Dto.AddressDto;
+import edu.utn.TPFinal.model.dto.AddressDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;

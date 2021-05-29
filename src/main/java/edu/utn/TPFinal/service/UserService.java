@@ -1,9 +1,9 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.exceptions.AddressNotExistsException;
-import edu.utn.TPFinal.exceptions.ClientNotFoundException;
+import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
 import edu.utn.TPFinal.exceptions.ErrorLoginException;
-import edu.utn.TPFinal.exceptions.UserNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.ClientNotFoundException;
+import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
 import edu.utn.TPFinal.model.Address;
 import edu.utn.TPFinal.model.TypeUser;
 import edu.utn.TPFinal.model.User;
@@ -48,25 +48,15 @@ public class UserService {
         return userRepository.findAll(userSpecification,pageable);
     }
 
-    /*
-    public List<User> getAllEmployees() {
-        return userRepository.findAllByTypeUser(TypeUser.EMPLOYEE);
-    }
-
-    public List<User> getAllClients() {
-        return userRepository.findAllByTypeUser(TypeUser.CLIENT);
-    }
-     */
-
     public User getUserById(Integer id) throws UserNotExistsException{
-        return userRepository.findById(id).orElseThrow(UserNotExistsException::new);
+        return userRepository.findById(id).orElseThrow(() -> new UserNotExistsException("Rate not exists"));
     }
 
     public User login(String username, String password) {
         return Optional.ofNullable(userRepository.findByUsernameAndPassword(username,password)).orElseThrow(() -> new ErrorLoginException("The username and/or password are incorrect"));
     }
 
-    public void addAddressToClientUser(Integer idClientUser,Integer id) throws UserNotExistsException, AddressNotExistsException {
+    public void addAddressToClientUser(Integer idClientUser,Integer id) throws UserNotExistsException, AddressNotExistsException, ClientNotFoundException {
 
         User clientUser = getUserById(idClientUser);
 
@@ -80,14 +70,8 @@ public class UserService {
         }
     }
 
-    /*
-    public void delete(User user) {
-        userRepository.delete(user);
-    }
-
-    public void deleteById(Integer id) {
+    public void deleteById(Integer id) throws UserNotExistsException{
+        getUserById(id);
         userRepository.deleteById(id);
     }
-
-     */
 }

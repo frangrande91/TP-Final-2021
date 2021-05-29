@@ -1,8 +1,7 @@
-package edu.utn.TPFinal.model.Dto;
+package edu.utn.TPFinal.model.dto;
 
 import edu.utn.TPFinal.model.Address;
 import edu.utn.TPFinal.model.Meter;
-import edu.utn.TPFinal.model.Rate;
 import edu.utn.TPFinal.model.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.model.Dto;
+package edu.utn.TPFinal.model.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

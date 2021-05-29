@@ -1,6 +1,7 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.exceptions.MeterNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.MeasurementNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.repository.MeterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 
@@ -43,18 +42,13 @@ public class MeterService {
         return meterRepository.findAll(pageable);
     }
 
-
     public Meter getMeterById(Integer id) throws MeterNotExistsException {
-        return meterRepository.findById(id).orElseThrow(MeterNotExistsException::new);
+        return meterRepository.findById(id).orElseThrow(() -> new MeterNotExistsException("Meter not exists"));
     }
 
-
-    /*
-    public void deleteMeterById(Integer id) {
+    public void deleteMeterById(Integer id) throws MeterNotExistsException {
+        getMeterById(id);
         meterRepository.deleteById(id);
     }
-     */
-
-
 
 }

@@ -1,6 +1,9 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.exceptions.*;
+import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.BillNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
 import edu.utn.TPFinal.model.*;
 import edu.utn.TPFinal.repository.BillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 
@@ -52,9 +53,8 @@ public class BillService {
 
 
     public Bill getBillById(Integer id) throws BillNotExistsException {
-        return billRepository.findById(id).orElseThrow(BillNotExistsException::new);
+        return billRepository.findById(id).orElseThrow(() -> new BillNotExistsException("Bill not exists"));
     }
-
 
     /** USAR EL RETORNO **/
     public Bill addClientToBill(Integer id, Integer idClient) throws UserNotExistsException, BillNotExistsException {
@@ -83,13 +83,9 @@ public class BillService {
     }
 
     /** VER COMO AGREGAR LAS MEDIDICONES INICIAL Y FINAL **/
-
-    /*
-    public void deleteBillById(Integer id) {
+    public void deleteBillById(Integer id) throws BillNotExistsException{
+        getBillById(id);
         billRepository.deleteById(id);
     }
-     */
-
-
 
 }

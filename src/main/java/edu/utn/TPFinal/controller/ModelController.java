@@ -1,9 +1,9 @@
 package edu.utn.TPFinal.controller;
 
-import edu.utn.TPFinal.exceptions.ModelNotExistsException;
-import edu.utn.TPFinal.model.Dto.ModelDto;
+import edu.utn.TPFinal.exceptions.notFound.ModelNotExistsException;
+import edu.utn.TPFinal.model.dto.ModelDto;
 import edu.utn.TPFinal.model.Model;
-import edu.utn.TPFinal.model.Responses.Response;
+import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.service.ModelService;
 import edu.utn.TPFinal.utils.EntityResponse;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
@@ -48,7 +48,7 @@ public class ModelController {
                 .status(HttpStatus.CREATED)
                 .location(EntityURLBuilder.buildURL2(MODEL_PATH, modelCreated.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(Response.builder().message("The model has been created").build());
+                .body(EntityResponse.messageResponse("The model has been created"));
     }
 
     @GetMapping
@@ -57,7 +57,7 @@ public class ModelController {
         Pageable pageable = PageRequest.of(page,size);
         Page<Model> modelPage = modelService.getAllModels(pageable);
         Page<ModelDto> modelDtoPage = modelPage.map(model -> conversionService.convert(model, ModelDto.class));
-        return EntityResponse.response(modelDtoPage);
+        return EntityResponse.listResponse(modelDtoPage);
     }
 
     @GetMapping("/spec")
@@ -68,7 +68,7 @@ public class ModelController {
             }) Specification<Model> newsSpecification, Pageable pageable ){
         Page<Model> modelPage = modelService.getAllSpec(newsSpecification,pageable);
         Page<ModelDto> modelDtoPage = modelPage.map(model -> conversionService.convert(model, ModelDto.class));
-        return EntityResponse.response(modelDtoPage);
+        return EntityResponse.listResponse(modelDtoPage);
     }
 
 
@@ -81,7 +81,7 @@ public class ModelController {
         orders.add(new Sort.Order(Sort.Direction.DESC,field2));
         Page<Model> modelPage = modelService.getAllSort(page,size,orders);
         Page<ModelDto> modelDtoPage = modelPage.map(model -> conversionService.convert(model, ModelDto.class));
-        return EntityResponse.response(modelDtoPage);
+        return EntityResponse.listResponse(modelDtoPage);
     }
 
     @GetMapping(value = "/{id}")
@@ -90,16 +90,10 @@ public class ModelController {
         return ResponseEntity.ok(model);
     }
 
-    /*
-    @DeleteMapping(value = "/")
-    public void deleteModel(@RequestBody Model model) {
-        modelService.deleteModel(model);
-    }
-
     @DeleteMapping(value = "/{id}")
-    public void deleteModelById(@PathVariable Integer id) {
+    public ResponseEntity<Object> deleteModelById(@PathVariable Integer id) throws ModelNotExistsException{
         modelService.deleteModelById(id);
+        return ResponseEntity.accepted().build();
     }
-     */
 
 }

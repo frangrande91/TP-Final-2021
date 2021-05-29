@@ -1,12 +1,12 @@
 package edu.utn.TPFinal.controller;
 
-import edu.utn.TPFinal.exceptions.AddressNotExistsException;
-import edu.utn.TPFinal.exceptions.BillNotExistsException;
-import edu.utn.TPFinal.exceptions.MeterNotExistsException;
-import edu.utn.TPFinal.exceptions.UserNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.BillNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
 import edu.utn.TPFinal.model.Bill;
-import edu.utn.TPFinal.model.Dto.BillDto;
-import edu.utn.TPFinal.model.Responses.Response;
+import edu.utn.TPFinal.model.dto.BillDto;
+import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.service.BillService;
 import edu.utn.TPFinal.utils.EntityResponse;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
@@ -60,7 +60,7 @@ public class BillController {
         Pageable pageable = PageRequest.of(page,size);
         Page<Bill> billPage = billService.getAllBills(pageable);
         Page<BillDto> billDtoPage = billPage.map(bill -> conversionService.convert(bill, BillDto.class));
-        return EntityResponse.response(billDtoPage);
+        return EntityResponse.listResponse(billDtoPage);
     }
 
     @GetMapping("/sort")
@@ -72,7 +72,7 @@ public class BillController {
         orders.add(new Sort.Order(Sort.Direction.DESC,field2));
         Page<Bill> billPage = billService.getAllSort(page,size,orders);
         Page<BillDto> billDtoPage = billPage.map(bill -> conversionService.convert(bill,BillDto.class));
-        return EntityResponse.response(billDtoPage);
+        return EntityResponse.listResponse(billDtoPage);
     }
 
     @GetMapping("/spec")
@@ -84,7 +84,7 @@ public class BillController {
             }) Specification<Bill> newsSpecification, Pageable pageable ){
         Page<Bill> billPage = billService.getAllSpec(newsSpecification,pageable);
         Page<BillDto> billDtoPage = billPage.map(bill -> conversionService.convert(bill, BillDto.class));
-        return EntityResponse.response(billDtoPage);
+        return EntityResponse.listResponse(billDtoPage);
     }
 
 
@@ -97,28 +97,26 @@ public class BillController {
     @PutMapping("/{id}/{idClient}")
     public ResponseEntity<Response> addClientToBill(@PathVariable Integer id, @PathVariable Integer idClient) throws UserNotExistsException, BillNotExistsException {
         billService.addClientToBill(id, idClient);
-        return ResponseEntity.status(HttpStatus.OK).body(Response.builder().message("The bill has been modified").build());
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(Response.builder().message("The bill has been modified").build());
     }
 
 
     @PutMapping("/{id}/{idAddress}")
     public ResponseEntity<Response> addAddressToBill(@PathVariable Integer id, @PathVariable Integer idAddress) throws AddressNotExistsException, BillNotExistsException{
         billService.addAddressToBill(id, idAddress);
-        return ResponseEntity.status(HttpStatus.OK).body(Response.builder().message("The bill has been modified").build());
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(Response.builder().message("The bill has been modified").build());
     }
 
     @PutMapping("/{id}/{idMeter}")
     public ResponseEntity<Response> addMeterToBill(@PathVariable Integer id, @PathVariable Integer idMeter) throws MeterNotExistsException, BillNotExistsException {
         billService.addMeterToBill(id, idMeter);
-        return ResponseEntity.status(HttpStatus.OK).body(Response.builder().message("The bill has been modified").build());
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(Response.builder().message("The bill has been modified").build());
     }
 
-    /*
     @DeleteMapping("/{id}")
-    public void deleteBillById(@PathVariable Integer id){
+    public ResponseEntity<Object> deleteBillById(@PathVariable Integer id) throws BillNotExistsException{
         billService.deleteBillById(id);
+        return ResponseEntity.accepted().build();
     }
-     */
-
 
 }

@@ -1,7 +1,7 @@
 package edu.utn.TPFinal.converter;
 
 import edu.utn.TPFinal.model.Bill;
-import edu.utn.TPFinal.model.Dto.BillDto;
+import edu.utn.TPFinal.model.dto.BillDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.model.Dto;
+package edu.utn.TPFinal.model.dto;
 
 import edu.utn.TPFinal.model.Bill;
 import edu.utn.TPFinal.model.Meter;

@@ -1,9 +1,9 @@
 package edu.utn.TPFinal.controller;
 
-import edu.utn.TPFinal.exceptions.BrandNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.BrandNotExistsException;
 import edu.utn.TPFinal.model.Brand;
-import edu.utn.TPFinal.model.Dto.BrandDto;
-import edu.utn.TPFinal.model.Responses.Response;
+import edu.utn.TPFinal.model.dto.BrandDto;
+import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.service.BrandService;
 import edu.utn.TPFinal.utils.EntityResponse;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
@@ -51,7 +51,7 @@ public class BrandController {
                 .status(HttpStatus.OK)
                 .location(EntityURLBuilder.buildURL2(BRAND_PATH,brandCreated.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(Response.builder().message("The brand has been created").build());
+                .body(EntityResponse.messageResponse("The brand has been created"));
     }
 
     @GetMapping
@@ -60,7 +60,7 @@ public class BrandController {
         Pageable pageable = PageRequest.of(page,size);
         Page<Brand> brandPage = brandService.getAllBrands(pageable);
         Page<BrandDto> brandDtoPage = brandPage.map(brand -> conversionService.convert(brand, BrandDto.class));
-        return EntityResponse.response(brandDtoPage);
+        return EntityResponse.listResponse(brandDtoPage);
 
     }
 
@@ -73,7 +73,7 @@ public class BrandController {
         orders.add(new Sort.Order(Sort.Direction.DESC,field2));
         Page<Brand> brandPage = brandService.getAllSort(page,size,orders);
         Page<BrandDto> brandDtoPage = brandPage.map(brand -> conversionService.convert(brand, BrandDto.class));
-        return EntityResponse.response(brandDtoPage);
+        return EntityResponse.listResponse(brandDtoPage);
     }
 
     @GetMapping("/spec")
@@ -83,7 +83,7 @@ public class BrandController {
             }) Specification<Brand> newsSpecification, Pageable pageable ){
         Page<Brand> brandPage = brandService.getAllSpec(newsSpecification,pageable);
         Page<BrandDto> brandDtoPage = brandPage.map(brand -> conversionService.convert(brand, BrandDto.class));
-        return EntityResponse.response(brandDtoPage);
+        return EntityResponse.listResponse(brandDtoPage);
     }
 
     @GetMapping(value = "/{id}")
@@ -92,17 +92,10 @@ public class BrandController {
         return ResponseEntity.ok(brand);
     }
 
-    /*
-    @DeleteMapping(value = "/")
-    public void deleteBrand(@RequestBody Brand brand) {
-        brandService.deleteBrand(brand);
-    }
-
     @DeleteMapping(value = "/{id}")
-    public void deleteBrandID(@PathVariable Integer id) {
+    public ResponseEntity<Object> deleteBrandById(@PathVariable Integer id) throws BrandNotExistsException {
         brandService.deleteBrandByID(id);
+        return ResponseEntity.accepted().build();
     }
-
-     */
 
 }

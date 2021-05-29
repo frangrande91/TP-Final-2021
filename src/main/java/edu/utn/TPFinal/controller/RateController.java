@@ -1,9 +1,9 @@
 package edu.utn.TPFinal.controller;
 
-import edu.utn.TPFinal.exceptions.RateNotExistsException;
-import edu.utn.TPFinal.model.Dto.RateDto;
+import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
+import edu.utn.TPFinal.model.dto.RateDto;
 import edu.utn.TPFinal.model.Rate;
-import edu.utn.TPFinal.model.Responses.Response;
+import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.service.RateService;
 import edu.utn.TPFinal.utils.EntityResponse;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
@@ -48,7 +48,7 @@ public class RateController {
                 .status(HttpStatus.CREATED)
                 .location(EntityURLBuilder.buildURL2(RATE_PATH, rateCreated.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(Response.builder().message("The rate has been created").build());
+                .body(EntityResponse.messageResponse("The rate has been created"));
     }
 
     @GetMapping
@@ -57,7 +57,7 @@ public class RateController {
         Pageable pageable = PageRequest.of(page,size);
         Page<Rate> ratePage = rateService.getAllRates(pageable);
         Page<RateDto> rateDtoPage = ratePage.map(rate -> conversionService.convert(rate, RateDto.class));
-        return EntityResponse.response(rateDtoPage);
+        return EntityResponse.listResponse(rateDtoPage);
     }
 
     @GetMapping("/spec")
@@ -67,7 +67,7 @@ public class RateController {
             }) Specification<Rate> newsSpecification, Pageable pageable ){
         Page<Rate> ratePage = rateService.getAllSpec(newsSpecification,pageable);
         Page<RateDto> rateDtoPage = ratePage.map(rate -> conversionService.convert(rate, RateDto.class));
-        return EntityResponse.response(rateDtoPage);
+        return EntityResponse.listResponse(rateDtoPage);
     }
 
     @GetMapping("/sort")
@@ -79,7 +79,7 @@ public class RateController {
         orders.add(new Sort.Order(Sort.Direction.DESC,field2));
         Page<Rate> ratePage = rateService.getAllSort(page, size, orders);
         Page<RateDto> rateDtoPage = ratePage.map(rate -> conversionService.convert(rate, RateDto.class));
-        return EntityResponse.response(rateDtoPage);
+        return EntityResponse.listResponse(rateDtoPage);
     }
 
     @GetMapping(value = "/{id}")
@@ -88,15 +88,10 @@ public class RateController {
         return ResponseEntity.ok(rate);
     }
 
-    /*
-    @DeleteMapping("/")
-    public void deleteRate(@RequestBody Rate rate) {
-        rateService.deleteRate(rate);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteRateById(@PathVariable Integer id) throws RateNotExistsException{
+        rateService.deleteRateById(id);
+        return ResponseEntity.accepted().build();
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteRateById(@PathVariable Integer id) {
-        rateService.deleteRateById(id);
-    }
-     */
 }

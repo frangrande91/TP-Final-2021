@@ -1,8 +1,9 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.exceptions.AddressNotExistsException;
-import edu.utn.TPFinal.exceptions.MeterNotExistsException;
-import edu.utn.TPFinal.exceptions.RateNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.BrandNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.Address;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.Rate;
@@ -13,9 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
@@ -53,7 +52,7 @@ public class AddressService {
 
 
     public Address getAddressById(Integer id) throws AddressNotExistsException {
-        return addressRepository.findById(id).orElseThrow(AddressNotExistsException::new);
+        return addressRepository.findById(id).orElseThrow(() -> new AddressNotExistsException("Address not exists"));
     }
 
     /** USAR EL RETORNO **/
@@ -71,14 +70,9 @@ public class AddressService {
         return addressRepository.save(address);
     }
 
-    /*
-    public void deleteAddressById(Integer id) {
+    public void deleteAddressById(Integer id) throws AddressNotExistsException {
+        getAddressById(id);
         addressRepository.deleteById(id);
     }
-
-     */
-
-
-
 
 }

@@ -1,6 +1,7 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.exceptions.RateNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.ModelNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.Rate;
 import edu.utn.TPFinal.repository.RateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
@@ -45,20 +44,12 @@ public class RateService {
     }
 
     public Rate getRateById(Integer id) throws RateNotExistsException {
-        return rateRepository.findById(id).orElseThrow(RateNotExistsException::new);
+        return rateRepository.findById(id).orElseThrow(() -> new RateNotExistsException("Rate not exists"));
     }
 
-
-    /*
-    public void deleteRate(Rate rate) {
-        rateRepository.delete(rate);
-    }
-
-    public void deleteRateById(Integer id) {
+    public void deleteRateById(Integer id) throws RateNotExistsException{
+        getRateById(id);
         rateRepository.deleteById(id);
     }
-
-     */
-
 
 }

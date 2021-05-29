@@ -1,7 +1,8 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.exceptions.MeasurementNotExistsException;
-import edu.utn.TPFinal.exceptions.MeterNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.BillNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.MeasurementNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.model.Measurement;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.repository.MeasurementRepository;
@@ -47,7 +48,7 @@ public class MeasurementService {
     }
 
     public Measurement getMeasurementById(Integer id) throws MeasurementNotExistsException{
-        return measurementRepository.findById(id).orElseThrow(MeasurementNotExistsException::new);
+        return measurementRepository.findById(id).orElseThrow(() -> new MeasurementNotExistsException("Measurement not exists"));
     }
 
     public void addMeterToMeasurement(Integer id, Integer idMeter) throws MeasurementNotExistsException, MeterNotExistsException {
@@ -57,10 +58,9 @@ public class MeasurementService {
         measurementRepository.save(measurement);
     }
 
-    /*
-    public void deleteMeasurementById(Integer id) {
+    public void deleteMeasurementById(Integer id) throws MeasurementNotExistsException{
+        getMeasurementById(id);
         measurementRepository.deleteById(id);
     }
 
-     */
 }

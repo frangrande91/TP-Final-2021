@@ -1,6 +1,6 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.exceptions.BrandNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.BrandNotExistsException;
 import edu.utn.TPFinal.model.Brand;
 import edu.utn.TPFinal.repository.BrandRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
@@ -44,20 +42,13 @@ public class BrandService {
         return brandRepository.findAll(pageable);
     }
 
-
     public Brand getBrandById(Integer id) throws BrandNotExistsException {
-        return brandRepository.findById(id).orElseThrow(BrandNotExistsException::new);
+        return brandRepository.findById(id).orElseThrow(() -> new BrandNotExistsException("Brand not exists"));
     }
 
-    /*
-    public void deleteBrand(Brand brand) {
-        brandRepository.delete(brand);
-    }
-
-    public void deleteBrandByID(Integer id) {
+    public void deleteBrandByID(Integer id) throws BrandNotExistsException{
+        getBrandById(id);
         brandRepository.deleteById(id);
     }
 
-     */
-    
 }
