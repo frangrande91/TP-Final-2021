@@ -32,5 +32,7 @@ public class Measurement {
 
     @NotNull (message = "dateTime should not be null")
     private LocalDateTime dateTime;
+    
+    private Double priceMeasurement;
 
 }

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class MeasurementDto {
 
     private Integer id;
-    private Meter meter;
+    private MeterDto meter;
     private Bill bill;
     private Double quantityKw;
     private LocalDateTime dateTime;

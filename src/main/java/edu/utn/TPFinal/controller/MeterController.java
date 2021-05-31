@@ -51,7 +51,7 @@ public class MeterController {
                 .body(EntityResponse.messageResponse("The meter has been created"));
     }
 
-    @GetMapping()
+    @GetMapping("/")
     public ResponseEntity<List<MeterDto>> getAllMeters(@RequestParam(value = "size", defaultValue = "10") Integer size,
                                        @RequestParam(value = "page", defaultValue = "0") Integer page) {
         Pageable pageable = PageRequest.of(page, size);
@@ -63,9 +63,8 @@ public class MeterController {
     @GetMapping("/spec")
     public ResponseEntity<List<MeterDto>> getAllSpec(
             @And({
-                    @Spec(path = "address", spec = Equal.class),
-                    @Spec(path = "userClient", spec = Equal.class),
-                    @Spec(path = "meter", spec = Equal.class)
+                    @Spec(path = "id", spec = Equal.class),
+                    @Spec(path = "serialNumber", spec = Equal.class)
             }) Specification<Meter> meterSpecifications, Pageable pageable ) {
 
         Page<Meter> meterPage = meterService.getAllSpec(meterSpecifications,pageable);
@@ -76,7 +75,7 @@ public class MeterController {
     @GetMapping("/sort")
     public ResponseEntity<List<MeterDto>> getAllSorted(@RequestParam(value = "size", defaultValue = "10") Integer size,
                                        @RequestParam(value = "page", defaultValue = "0") Integer page,
-                                       @RequestParam String field1, @RequestParam String field2) {
+                                       @RequestParam(value = "field1") String field1, @RequestParam(value = "field2") String field2) {
 
         List<Order> orders = new ArrayList<>();
         orders.add(new Order(Sort.Direction.DESC,field1));

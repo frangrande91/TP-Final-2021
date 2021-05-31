@@ -1,6 +1,7 @@
 package edu.utn.TPFinal.model.dto;
 
 import edu.utn.TPFinal.model.Model;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class MeterDto {
 
     private Integer id;
-    private Model model;
+    private ModelDto model;
     private String serialNumber;
     private String password;
 
