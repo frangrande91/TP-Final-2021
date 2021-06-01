@@ -41,7 +41,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/")
-    public ResponseEntity<Response> addPerson(@RequestBody User user) {
+    public ResponseEntity<Response> addUser(@RequestBody User user) {
         User userCreated = userService.addUser(user);
 
         return ResponseEntity
@@ -51,7 +51,7 @@ public class UserController {
                 .body(EntityResponse.messageResponse("The user has been created"));
     }
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<List<UserDto>> getAllUsers(@RequestParam(value = "size", defaultValue = "10") Integer size,
                                        @RequestParam(value = "page", defaultValue = "0") Integer page) {
         Pageable pageable = PageRequest.of(page,size);

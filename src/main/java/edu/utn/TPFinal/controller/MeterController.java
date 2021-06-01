@@ -27,12 +27,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/meter")
+@RequestMapping("/meters")
 public class MeterController {
 
     private final MeterService meterService;
     private final ConversionService conversionService;
-    private final String METER_PATH = "meter";
+    private final String METER_PATH = "meters";
 
     @Autowired
     public MeterController(MeterService meterService,ConversionService conversionService) {
