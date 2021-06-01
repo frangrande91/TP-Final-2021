@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RateRepository extends JpaRepository<Rate,Integer>, JpaSpecificationExecutor<Rate> {
-
+    Rate findByIdOrTypeRate(Integer id, String typeRate);
 }

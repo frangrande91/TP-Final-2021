@@ -1,5 +1,7 @@
 package edu.utn.TPFinal.service;
 
+import edu.utn.TPFinal.exceptions.alreadyExists.MeterAlreadyExistsException;
+import edu.utn.TPFinal.exceptions.alreadyExists.RateAlreadyExists;
 import edu.utn.TPFinal.exceptions.notFound.ModelNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.Rate;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Service;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Service
 public class RateService {
 
@@ -25,9 +29,13 @@ public class RateService {
         this.rateRepository = rateRepository;
     }
 
-
-    public Rate addRate(Rate rate) throws SQLIntegrityConstraintViolationException {
-        return rateRepository.save(rate);
+    public Rate addRate(Rate rate) throws RateAlreadyExists {
+        if(isNull(rateRepository.findByIdOrTypeRate(rate.getId(),rate.getTypeRate()))) {
+            return rateRepository.save(rate);
+        }
+        else {
+            throw new RateAlreadyExists("Rate already exists");
+        }
     }
 
     public Page<Rate> getAllRates(Pageable pageable) {

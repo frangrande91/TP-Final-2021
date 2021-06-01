@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.exceptions;
 
+import edu.utn.TPFinal.exceptions.alreadyExists.RateAlreadyExists;
 import edu.utn.TPFinal.exceptions.notFound.*;
 import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.utils.EntityResponse;
@@ -83,8 +84,14 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return ResponseNotFound(ex);
     }
 
-    @ExceptionHandler({SQLIntegrityConstraintViolationException.class})
+/*    @ExceptionHandler({SQLIntegrityConstraintViolationException.class})
     public ResponseEntity<Object> handlerSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException ex,WebRequest request) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }*/
+
+    @ExceptionHandler({RateAlreadyExists.class})
+    public ResponseEntity<Object> handlerRateAlreadyExists(RateAlreadyExists ex,WebRequest request) {
+        System.out.println("TIPO DE EXCEPCION:"+ex.getClass());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(EntityResponse.messageResponse(ex.getMessage()));
     }
 }

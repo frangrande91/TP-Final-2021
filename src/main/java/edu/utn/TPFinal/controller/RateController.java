@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.controller;
 
+import edu.utn.TPFinal.exceptions.alreadyExists.RateAlreadyExists;
 import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.dto.RateDto;
 import edu.utn.TPFinal.model.Rate;
@@ -41,7 +42,7 @@ public class RateController {
     }
 
     @PostMapping(value = "/")
-    public ResponseEntity<Response> addRate(@RequestBody Rate rate) throws SQLIntegrityConstraintViolationException {
+    public ResponseEntity<Response> addRate(@RequestBody Rate rate) throws RateAlreadyExists {
         Rate rateCreated = rateService.addRate(rate);
 
         return ResponseEntity

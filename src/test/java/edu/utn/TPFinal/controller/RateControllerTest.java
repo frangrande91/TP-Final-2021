@@ -1,6 +1,5 @@
 package edu.utn.TPFinal.controller;
 
-import edu.utn.TPFinal.AbstractController;
 import edu.utn.TPFinal.service.RateService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static edu.utn.TPFinal.utils.TestUtils.*;
+import static edu.utn.TPFinal.utils.RateTestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;

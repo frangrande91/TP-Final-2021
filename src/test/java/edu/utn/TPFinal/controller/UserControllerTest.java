@@ -1,6 +1,5 @@
 package edu.utn.TPFinal.controller;
 
-import edu.utn.TPFinal.AbstractController;
 import edu.utn.TPFinal.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -10,12 +9,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.bind.annotation.GetMapping;
-
-import static edu.utn.TPFinal.utils.TestUtils.*;
+import static edu.utn.TPFinal.utils.UserTestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;

@@ -1,4 +1,4 @@
-package edu.utn.TPFinal;
+package edu.utn.TPFinal.controller;
 
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;

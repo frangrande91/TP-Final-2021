@@ -1,5 +1,4 @@
 package edu.utn.TPFinal.controller;
-import edu.utn.TPFinal.AbstractController;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.repositories.ClassRepository;
 import edu.utn.TPFinal.repository.MeterRepository;
@@ -20,14 +19,12 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Predicate;
-import static edu.utn.TPFinal.utils.TestUtils.*;
+import static edu.utn.TPFinal.utils.MeterTestUtils.*;
 import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import org.junit.Assert.*;
-
 
 
 @SpringBootTest(classes = MeterController.class)

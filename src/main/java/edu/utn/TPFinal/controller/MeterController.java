@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.controller;
 
+import edu.utn.TPFinal.exceptions.alreadyExists.MeterAlreadyExistsException;
 import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.model.dto.MeterDto;
 import edu.utn.TPFinal.model.Meter;
@@ -41,7 +42,7 @@ public class MeterController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Response> addMeter(@RequestBody Meter meter){
+    public ResponseEntity<Response> addMeter(@RequestBody Meter meter) throws MeterAlreadyExistsException {
         Meter meterCreated = meterService.addMeter(meter);
 
         return ResponseEntity
