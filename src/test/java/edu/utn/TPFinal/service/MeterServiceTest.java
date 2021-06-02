@@ -1,48 +1,54 @@
 package edu.utn.TPFinal.service;
-
 import edu.utn.TPFinal.exceptions.alreadyExists.MeterAlreadyExistsException;
 import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.repository.MeterRepository;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.junit.jupiter.api.BeforeAll;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 import static edu.utn.TPFinal.utils.MeterTestUtils.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 public class MeterServiceTest {
 
-    @InjectMocks
-    private MeterService meterService;
+    private static MeterService meterService;
+    private static MeterRepository meterRepository;
 
-    @Mock
-    private MeterRepository meterRepository;
+
+    @BeforeAll
+    public static void setUp() {
+        meterRepository = Mockito.mock(MeterRepository.class);
+        meterService = new MeterService(meterRepository);
+    }
 
     @Test
     public void addMeterOk() {
         try {
+           Mockito.when(meterRepository.findByIdOrSerialNumber(aMeter().getId(),aMeter().getSerialNumber())).thenReturn(null);
            Mockito.when(meterRepository.save(aMeter())).thenReturn(aMeter());
            Meter meter = meterService.addMeter(aMeter());
-           Mockito.verify(meterRepository,Mockito.times(1)).save(meter);
+
+           assertEquals(aMeter().getId(),meter.getId());
+           assertEquals(aMeter().getSerialNumber(),meter.getSerialNumber());
+           assertEquals(aMeter().getModel(),meter.getModel());
+           assertEquals(aMeter().getPassword(),meter.getPassword());
+
+          /* Mockito.verify(meterRepository,Mockito.times(1)).findByIdOrSerialNumber(meter.getId(),meter.getSerialNumber());
+           Mockito.verify(meterRepository,Mockito.times(1)).save(meter);*/
         }
         catch (MeterAlreadyExistsException ex) {
-            ex.printStackTrace();
+            fail(ex);
         }
     }
 
@@ -50,14 +56,23 @@ public class MeterServiceTest {
     public void addMeterAlreadyExists() {
         Meter meter = aMeter();
         Mockito.when(meterRepository.findByIdOrSerialNumber(meter.getId(),meter.getSerialNumber())).thenReturn(meter);
+
         Assertions.assertThrows(MeterAlreadyExistsException.class, () -> meterService.addMeter(meter));
+
+       /* Mockito.verify(meterRepository,Mockito.times(1)).findByIdOrSerialNumber(meter.getId(),meter.getSerialNumber());
+        Mockito.verify(meterRepository,Mockito.times(0)).save(meter);*/
     }
 
     @Test
     public void getAllMeters() {
         Pageable pageable = PageRequest.of(1,1);
         Mockito.when(meterRepository.findAll(pageable)).thenReturn(aMeterPage());
-        meterService.getAllMeters(pageable);
+        Page<Meter> meterPage = meterService.getAllMeters(pageable);
+
+        assertEquals(aMeterPage().getTotalElements(),meterPage.getTotalElements());
+        assertEquals(aMeterPage().getTotalPages(), meterPage.getTotalElements());
+        assertEquals(aMeterPage().getContent().size(),meterPage.getContent().size());
+
         Mockito.verify(meterRepository,Mockito.times(1)).findAll(pageable);
     }
 
@@ -65,8 +80,14 @@ public class MeterServiceTest {
     public void getAllSpec() {
         Pageable pageable = PageRequest.of(1,1);
         Specification<Meter> meterSpecification = specMeter("12345");
+
         Mockito.when(meterRepository.findAll(meterSpecification,pageable)).thenReturn(aMeterPage());
-        meterService.getAllSpec(meterSpecification,pageable);
+        Page<Meter> meterPage = meterService.getAllSpec(meterSpecification,pageable);
+
+        assertEquals(aMeterPage().getTotalElements(),meterPage.getTotalElements());
+        assertEquals(aMeterPage().getTotalPages(), meterPage.getTotalElements());
+        assertEquals(aMeterPage().getContent().size(),meterPage.getContent().size());
+
         Mockito.verify(meterRepository,Mockito.times(1)).findAll(meterSpecification,pageable);
     }
 
@@ -76,8 +97,17 @@ public class MeterServiceTest {
         orders.add(new Order(Sort.Direction.DESC,"id"));
         orders.add(new Order(Sort.Direction.DESC,"serialNumber"));
         Pageable pageable = PageRequest.of(1,1,Sort.by(orders));
+
         Mockito.when(meterRepository.findAll(pageable)).thenReturn(aMeterPage());
-        meterService.getAllSort(1,1,orders);
+        Page<Meter> meterPage = meterService.getAllSort(1,1,orders);
+
+        assertEquals(aMeterPage().getTotalElements(),meterPage.getTotalElements());
+        assertEquals(aMeterPage().getTotalPages(), meterPage.getTotalElements());
+        assertEquals(aMeterPage().getContent().size(),meterPage.getContent().size());
+        assertEquals(pageable.getSort().toList().size(), orders.size());
+        assertEquals(pageable.getSort().toList().get(0), orders.get(0));
+        assertEquals(pageable.getSort().toList().get(1), orders.get(1));
+
         Mockito.verify(meterRepository,Mockito.times(1)).findAll(pageable);
     }
 
@@ -87,11 +117,17 @@ public class MeterServiceTest {
         try {
             Integer id = 1234;
             Mockito.when(meterRepository.findById(id)).thenReturn(Optional.of(aMeter()));
-            meterService.getMeterById(id);
+            Meter meter = meterService.getMeterById(id);
+
+            assertEquals(aMeter().getId(),meter.getId());
+            assertEquals(aMeter().getSerialNumber(),meter.getSerialNumber());
+            assertEquals(aMeter().getPassword(),meter.getPassword());
+            assertEquals(aMeter().getModel(),meter.getModel());
+
             Mockito.verify(meterRepository,Mockito.times(1)).findById(id);
         }
         catch (MeterNotExistsException ex) {
-            ex.printStackTrace();
+            fail(ex);
         }
     }
 
@@ -99,20 +135,27 @@ public class MeterServiceTest {
     public void getMeterByIdNotFound() {
             Integer id = 1234;
             Mockito.when(meterRepository.findById(id)).thenReturn(Optional.empty());
+
             Assertions.assertThrows(MeterNotExistsException.class, () -> meterService.getMeterById(id));
+
+            /*Mockito.verify(meterRepository,Mockito.times(1)).findById(id);*/
     }
 
     @Test
     public void deleteMeterByIdOk() {
         Integer id = 1234;
         try {
+
             Mockito.when(meterRepository.findById(id)).thenReturn(Optional.of(aMeter()));
-            meterService.getMeterById(id);
-            meterRepository.deleteById(id);
             Mockito.doNothing().when(meterRepository).deleteById(id);
+
             meterService.deleteMeterById(id);
+
+           /* Mockito.verify(meterRepository, Mockito.times(1)).findById(id);
+            Mockito.verify(meterRepository, Mockito.times(1)).deleteById(id);*/
+
         } catch (MeterNotExistsException e) {
-            e.printStackTrace();
+            fail(e);
         }
     }
 
@@ -120,11 +163,11 @@ public class MeterServiceTest {
     public void deleteMeterByIdNotFound() {
         Integer id = 1234;
         Mockito.when(meterRepository.findById(id)).thenReturn(Optional.empty());
-        Assertions.assertThrows(MeterNotExistsException.class, ()-> {
-            meterService.getMeterById(id);
-            meterService.deleteMeterById(id);
-            }
-        );
+        Mockito.doNothing().when(meterRepository).deleteById(id);
+
+        Assertions.assertThrows(MeterNotExistsException.class, ()-> { meterService.deleteMeterById(id); } );
+
+       /* Mockito.verify(meterRepository,Mockito.times(1)).findById(id);*/
     }
 
 }

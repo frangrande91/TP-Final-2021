@@ -9,6 +9,7 @@ import edu.utn.TPFinal.utils.localdate.LocalDateDeserializer;
 import edu.utn.TPFinal.utils.localdate.LocalDateSerializer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
 import javax.persistence.criteria.JoinType;
@@ -35,6 +36,10 @@ public class MeterTestUtils {
     }
 
     public static Page<Meter> aMeterPage() {
+        return new PageImpl<>(List.of(aMeter()));
+    }
+
+    public static Page<Meter> aMeterPageWithSpecifications() {
         return new PageImpl<>(List.of(aMeter()));
     }
 

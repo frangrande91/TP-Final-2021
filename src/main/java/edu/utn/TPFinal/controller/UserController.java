@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.controller;
 import edu.utn.TPFinal.exceptions.ErrorLoginException;
+import edu.utn.TPFinal.exceptions.alreadyExists.UserAlreadyExists;
 import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.ClientNotFoundException;
 import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
@@ -42,7 +43,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/")
-    public ResponseEntity<Response> addUser(@RequestBody User user) {
+    public ResponseEntity<Response> addUser(@RequestBody User user) throws UserAlreadyExists {
         User userCreated = userService.addUser(user);
 
         return ResponseEntity

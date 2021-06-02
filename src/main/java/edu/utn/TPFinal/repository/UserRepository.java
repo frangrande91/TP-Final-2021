@@ -12,5 +12,5 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User> {
     User findByUsernameAndPassword (String username, String password);
-    List<User> findAllByTypeUser(TypeUser typeUser);
+    User findByIdOrUsername(Integer id, String username);
 }

@@ -152,6 +152,9 @@
 									</limits>
 								</rule>
 							</rules>
+							<excludes>
+								<exclude>src\main\java\edu\utn\TPFinal\model\Bill.java</exclude>
+							</excludes>
 						</configuration>
 					</execution>
 				</executions>

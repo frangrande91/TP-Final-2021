@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.service;
 
+import edu.utn.TPFinal.exceptions.alreadyExists.UserAlreadyExists;
 import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
 import edu.utn.TPFinal.exceptions.ErrorLoginException;
 import edu.utn.TPFinal.exceptions.notFound.ClientNotFoundException;
@@ -19,20 +20,28 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Objects.isNull;
+
 @Service
 public class UserService {
 
     private final String USER_PATH = "user";
-    UserRepository userRepository;
-    AddressService addressService;
+    private UserRepository userRepository;
+    private AddressService addressService;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, AddressService addressService ) {
         this.userRepository = userRepository;
+        this.addressService = addressService;
     }
 
-    public User addUser(User user) {
-        return userRepository.save(user);
+    public User addUser(User user) throws UserAlreadyExists {
+        if(isNull(userRepository.findByIdOrUsername(user.getId(),user.getUsername()))) {
+            return userRepository.save(user);
+        }
+        else {
+            throw new UserAlreadyExists("User already exists");
+        }
     }
 
     public Page<User> getAllUsers(Pageable pageable) {
@@ -56,12 +65,12 @@ public class UserService {
         return Optional.ofNullable(userRepository.findByUsernameAndPassword(username,password)).orElseThrow(() -> new ErrorLoginException("The username and/or password are incorrect"));
     }
 
-    public void addAddressToClientUser(Integer idClientUser,Integer id) throws UserNotExistsException, AddressNotExistsException, ClientNotFoundException {
+    public void addAddressToClientUser(Integer idClientUser,Integer id) throws UserNotExistsException, ClientNotFoundException, AddressNotExistsException {
 
         User clientUser = getUserById(idClientUser);
+        Address address = addressService.getAddressById(id);
 
         if(clientUser.getTypeUser().equals(TypeUser.CLIENT)) {
-            Address address = addressService.getAddressById(id);
             clientUser.getAddressList().add(address);
             userRepository.save(clientUser);
         }
