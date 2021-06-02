@@ -18,6 +18,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -95,6 +96,18 @@ public class UserControllerTest {
     @Test
     public void getAllSpec() {
 
+        Specification<User> userSpecification = Mockito.mock(Specification.class);
+
+        Page<User> userPage = aUserPage();
+        Pageable pageable = PageRequest.of(1,1);
+
+        Mockito.when(userService.getAllSpec(userSpecification,pageable)).thenReturn(userPage);
+        ResponseEntity<List<UserDto>> responseEntity = userController.getAllSpec(userSpecification,pageable);
+
+        assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
+        assertEquals(userPage.getContent().size(),responseEntity.getBody().size());
+        assertEquals(userPage.getTotalElements(),Long.parseLong(responseEntity.getHeaders().get("X-Total-Count").get(0)));
+        assertEquals(userPage.getTotalPages(),Long.parseLong(responseEntity.getHeaders().get("X-Total-Pages").get(0)));
     }
 
     @Test

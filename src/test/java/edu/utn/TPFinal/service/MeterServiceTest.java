@@ -3,13 +3,13 @@ import edu.utn.TPFinal.exceptions.alreadyExists.MeterAlreadyExistsException;
 import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.repository.MeterRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import static edu.utn.TPFinal.utils.MeterTestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
-import org.junit.jupiter.api.Test;
+
+import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
@@ -32,6 +32,12 @@ public class MeterServiceTest {
         meterService = new MeterService(meterRepository);
     }
 
+    @AfterEach
+    public void after() {
+        Mockito.reset(meterRepository);
+    }
+
+
     @Test
     public void addMeterOk() {
         try {
@@ -44,8 +50,8 @@ public class MeterServiceTest {
            assertEquals(aMeter().getModel(),meter.getModel());
            assertEquals(aMeter().getPassword(),meter.getPassword());
 
-          /* Mockito.verify(meterRepository,Mockito.times(1)).findByIdOrSerialNumber(meter.getId(),meter.getSerialNumber());
-           Mockito.verify(meterRepository,Mockito.times(1)).save(meter);*/
+           Mockito.verify(meterRepository,Mockito.times(1)).findByIdOrSerialNumber(meter.getId(),meter.getSerialNumber());
+           Mockito.verify(meterRepository,Mockito.times(1)).save(meter);
         }
         catch (MeterAlreadyExistsException ex) {
             fail(ex);
@@ -59,8 +65,8 @@ public class MeterServiceTest {
 
         Assertions.assertThrows(MeterAlreadyExistsException.class, () -> meterService.addMeter(meter));
 
-       /* Mockito.verify(meterRepository,Mockito.times(1)).findByIdOrSerialNumber(meter.getId(),meter.getSerialNumber());
-        Mockito.verify(meterRepository,Mockito.times(0)).save(meter);*/
+        Mockito.verify(meterRepository,Mockito.times(1)).findByIdOrSerialNumber(meter.getId(),meter.getSerialNumber());
+        Mockito.verify(meterRepository,Mockito.times(0)).save(meter);
     }
 
     @Test
@@ -138,7 +144,7 @@ public class MeterServiceTest {
 
             Assertions.assertThrows(MeterNotExistsException.class, () -> meterService.getMeterById(id));
 
-            /*Mockito.verify(meterRepository,Mockito.times(1)).findById(id);*/
+            Mockito.verify(meterRepository,Mockito.times(1)).findById(id);
     }
 
     @Test
@@ -151,8 +157,8 @@ public class MeterServiceTest {
 
             meterService.deleteMeterById(id);
 
-           /* Mockito.verify(meterRepository, Mockito.times(1)).findById(id);
-            Mockito.verify(meterRepository, Mockito.times(1)).deleteById(id);*/
+            Mockito.verify(meterRepository, Mockito.times(1)).findById(id);
+            Mockito.verify(meterRepository, Mockito.times(1)).deleteById(id);
 
         } catch (MeterNotExistsException e) {
             fail(e);
@@ -167,7 +173,7 @@ public class MeterServiceTest {
 
         Assertions.assertThrows(MeterNotExistsException.class, ()-> { meterService.deleteMeterById(id); } );
 
-       /* Mockito.verify(meterRepository,Mockito.times(1)).findById(id);*/
+        Mockito.verify(meterRepository,Mockito.times(1)).findById(id);
     }
 
 }

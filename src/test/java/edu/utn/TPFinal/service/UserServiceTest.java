@@ -8,6 +8,7 @@ import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
 import edu.utn.TPFinal.model.Address;
 import edu.utn.TPFinal.model.User;
 import edu.utn.TPFinal.repository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
@@ -40,6 +41,12 @@ public class UserServiceTest {
         userService = new UserService(userRepository,addressService);
     }
 
+    @AfterEach
+    public void after() {
+        Mockito.reset(userRepository);
+        Mockito.reset(addressService);
+    }
+
     @Test
     public void addUserOk() {
 
@@ -55,8 +62,8 @@ public class UserServiceTest {
            assertEquals(aUser().getTypeUser(),user.getTypeUser());
            assertEquals(aUser().getPassword(),user.getPassword());
 
-           /*Mockito.verify(userRepository,Mockito.times(1)).findByIdOrUsername(aUser().getId(),aUser().getUsername());
-           Mockito.verify(userRepository,Mockito.times(1)).save(user);*/
+           Mockito.verify(userRepository,Mockito.times(1)).findByIdOrUsername(aUser().getId(),aUser().getUsername());
+           Mockito.verify(userRepository,Mockito.times(1)).save(user);
         }
         catch (UserAlreadyExists ex) {
             fail(ex);
@@ -136,7 +143,7 @@ public class UserServiceTest {
             assertEquals(aUser().getTypeUser(),user.getTypeUser());
             assertEquals(aUser().getPassword(),user.getPassword());
 
-            /*Mockito.verify(userRepository,Mockito.times(1)).findById(id);*/
+            Mockito.verify(userRepository,Mockito.times(1)).findById(id);
         }
         catch (UserNotExistsException ex) {
             fail(ex);
@@ -150,7 +157,7 @@ public class UserServiceTest {
 
         assertThrows(UserNotExistsException.class, () -> userService.getUserById(id));
 
-        /*Mockito.verify(userRepository, Mockito.times(1)).findById(id);*/
+        Mockito.verify(userRepository, Mockito.times(1)).findById(id);
     }
 
     @Test
@@ -167,7 +174,7 @@ public class UserServiceTest {
             assertEquals(aUser().getTypeUser(),user.getTypeUser());
             assertEquals(aUser().getPassword(),user.getPassword());
 
-           /* Mockito.verify(userRepository,Mockito.times(1)).findByUsernameAndPassword(aUser().getUsername(),aUser().getPassword());*/
+            Mockito.verify(userRepository,Mockito.times(1)).findByUsernameAndPassword(aUser().getUsername(),aUser().getPassword());
         }
         catch (ErrorLoginException ex) {
             fail(ex);
@@ -181,7 +188,7 @@ public class UserServiceTest {
 
         assertThrows(ErrorLoginException.class, () -> userService.login(aUser().getUsername(),aUser().getPassword()));
 
-        /*Mockito.verify(userRepository, Mockito.times(1)).findByUsernameAndPassword(aUser().getUsername(),aUser().getPassword());*/
+        Mockito.verify(userRepository, Mockito.times(1)).findByUsernameAndPassword(aUser().getUsername(),aUser().getPassword());
     }
 
 
@@ -197,8 +204,8 @@ public class UserServiceTest {
 
             userService.addAddressToClientUser(idUser, idAddress);
 
-            /*Mockito.verify(userRepository, Mockito.times(1)).findById(idUser);
-            Mockito.verify(addressService, Mockito.times(1)).getAddressById(idAddress);*/
+            Mockito.verify(userRepository, Mockito.times(1)).findById(idUser);
+            Mockito.verify(addressService, Mockito.times(1)).getAddressById(idAddress);
         }
         catch (UserNotExistsException | ClientNotFoundException | AddressNotExistsException ex) {
             fail(ex);
@@ -215,7 +222,7 @@ public class UserServiceTest {
 
             assertThrows(UserNotExistsException.class , () -> userService.addAddressToClientUser(aUser().getId(),idAddress) );
 
-            /*Mockito.verify(userRepository,Mockito.times(1)).findById(idUser);*/
+            Mockito.verify(userRepository,Mockito.times(1)).findById(idUser);
     }
 
     @Test
@@ -229,7 +236,7 @@ public class UserServiceTest {
 
         assertThrows(ClientNotFoundException.class , () -> userService.addAddressToClientUser(aUser().getId(),idAddress) );
 
-        /*Mockito.verify(userRepository,Mockito.times(1)).findById(idUser);*/
+        Mockito.verify(userRepository,Mockito.times(1)).findById(idUser);
     }
 
     @Test
@@ -242,8 +249,8 @@ public class UserServiceTest {
 
             userService.deleteById(id);
 
-            /*Mockito.verify(userRepository, Mockito.times(1)).findById(id);
-            Mockito.verify(userRepository, Mockito.times(1)).deleteById(id);*/
+            Mockito.verify(userRepository, Mockito.times(1)).findById(id);
+            Mockito.verify(userRepository, Mockito.times(1)).deleteById(id);
 
         } catch (UserNotExistsException e) {
             fail(e);
@@ -258,7 +265,7 @@ public class UserServiceTest {
 
         Assertions.assertThrows(UserNotExistsException.class, ()-> { userService.deleteById(id); } );
 
-       /* Mockito.verify(userRepository,Mockito.times(1)).findById(id);*/
+        Mockito.verify(userRepository,Mockito.times(1)).findById(id);
     }
 
 }

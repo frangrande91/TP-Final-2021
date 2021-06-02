@@ -6,9 +6,7 @@ import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.Rate;
 
 import edu.utn.TPFinal.repository.RateRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -16,6 +14,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -45,6 +44,12 @@ public class RateServiceTest {
     public static void setUp() {
         rateRepository = Mockito.mock(RateRepository.class);
         rateService = new RateService(rateRepository);
+    }
+
+
+    @AfterEach
+    public void after() {
+        Mockito.reset(rateRepository);
     }
 
     @Test
@@ -135,7 +140,7 @@ public class RateServiceTest {
             assertEquals(aRate().getValue(),rate.getValue());
             assertEquals(aRate().getTypeRate(),rate.getTypeRate());
 
-            /*Mockito.verify(rateRepository,Mockito.times(1)).findById(id);*/
+            Mockito.verify(rateRepository,Mockito.times(1)).findById(id);
         }
         catch (RateNotExistsException ex) {
             fail(ex);
@@ -158,8 +163,8 @@ public class RateServiceTest {
 
             rateService.deleteRateById(id);
 
-            /*Mockito.verify(rateRepository,Mockito.times(1)).findById(id);
-            Mockito.verify(rateRepository,Mockito.times(1)).deleteById(id);*/
+            Mockito.verify(rateRepository,Mockito.times(1)).findById(id);
+            Mockito.verify(rateRepository,Mockito.times(1)).deleteById(id);
         }
         catch (RateNotExistsException ex) {
             fail(ex);
@@ -176,6 +181,6 @@ public class RateServiceTest {
             rateService.deleteRateById(id);
         });
 
-        /*Mockito.verify(rateRepository,Mockito.times(1)).findById(id);*/
+        Mockito.verify(rateRepository,Mockito.times(1)).findById(id);
     }
 }

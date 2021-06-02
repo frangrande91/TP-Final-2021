@@ -1,6 +1,8 @@
 package edu.utn.TPFinal.controller;
 import edu.utn.TPFinal.model.Meter;
+import edu.utn.TPFinal.model.Rate;
 import edu.utn.TPFinal.model.dto.MeterDto;
+import edu.utn.TPFinal.model.dto.RateDto;
 import edu.utn.TPFinal.model.dto.UserDto;
 import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.service.MeterService;
@@ -12,6 +14,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +25,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static edu.utn.TPFinal.utils.MeterTestUtils.*;
-import static edu.utn.TPFinal.utils.RateTestUtils.aRate;
+import static edu.utn.TPFinal.utils.RateTestUtils.*;
+import static edu.utn.TPFinal.utils.RateTestUtils.specRates;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import java.util.*;
@@ -59,31 +63,20 @@ public class MeterControllerTest {
     @Test
     public void getAllSpec() throws Exception {
 
-      /*  Mockito.when(meterSpecification.toPredicate(root, query, builder)).thenReturn(predicate);
-        String searchString = "123456";
+        Specification<Meter> meterSpecification = Mockito.mock(Specification.class);
 
-        List<Meter> meterList = meterRepository.findAll(Specification.where(hasString(searchString)));
-                .or(hasClasses(searchString,classRepository))))
+        Page<Meter> meterPage  = aMeterPage();
+        Pageable pageable = PageRequest.of(1,1);
 
-        System.out.println(meterList);
-
-        final ResultActions resultActions = givenController()
-                .perform(MockMvcRequestBuilders
-                        .get("/meter/spec?serialNumber=123456")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                ;
+        Mockito.when(meterService.getAllSpec(meterSpecification,pageable)).thenReturn(meterPage);
+        ResponseEntity<List<MeterDto>> responseEntity = meterController.getAllSpec(meterSpecification,pageable);
 
 
-
-        assertEquals(0, meterList.size());
-        assertEquals(meterSpecification, is(notNullValue()));
-        assertEquals(meterSpecification.toPredicate(root,query,builder), is(notNullValue()));*/
-
-      //  assertEquals(HttpStatus.OK.value(), resultActions.andReturn().getResponse().getStatus());
+        assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
+        assertEquals(meterPage.getContent().size(),responseEntity.getBody().size());
+        assertEquals(meterPage.getTotalElements(),Long.parseLong(responseEntity.getHeaders().get("X-Total-Count").get(0)));
+        assertEquals(meterPage.getTotalPages(),Long.parseLong(responseEntity.getHeaders().get("X-Total-Pages").get(0)));
     }
-
-
 
     @Test
     public void getAllSorted() throws Exception {

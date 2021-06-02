@@ -6,6 +6,7 @@ import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.service.RateService;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,6 +16,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -39,6 +41,7 @@ public class RateControllerTest {
         rateController = new RateController(rateService,conversionService);
     }
 
+
     @Test
     public void getAllRates() throws Exception {
 
@@ -57,20 +60,20 @@ public class RateControllerTest {
 
     @Test
     public void getAllSpec() {
-      /* MockHttpServletRequest request = new MockHttpServletRequest();
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+
+        Specification<Rate> rateSpecification = Mockito.mock(Specification.class);
 
         Page<Rate> ratePage = aRatePage();
         Pageable pageable = PageRequest.of(1,1);
 
-        Mockito.when(rateService.getAllSpec(specRates(300.00),pageable)).thenReturn(ratePage);
-        ResponseEntity<List<RateDto>> responseEntity = rateController.getAllSpec(specRates(300.00),pageable);
+        Mockito.when(rateService.getAllSpec(rateSpecification,pageable)).thenReturn(ratePage);
+        ResponseEntity<List<RateDto>> responseEntity = rateController.getAllSpec(rateSpecification,pageable);
 
 
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
         assertEquals(ratePage.getContent().size(),responseEntity.getBody().size());
         assertEquals(ratePage.getTotalElements(),Long.parseLong(responseEntity.getHeaders().get("X-Total-Count").get(0)));
-        assertEquals(ratePage.getTotalPages(),Long.parseLong(responseEntity.getHeaders().get("X-Total-Pages").get(0)));*/
+        assertEquals(ratePage.getTotalPages(),Long.parseLong(responseEntity.getHeaders().get("X-Total-Pages").get(0)));
     }
 
     @Test
