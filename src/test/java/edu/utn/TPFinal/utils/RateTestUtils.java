@@ -3,6 +3,7 @@ package edu.utn.TPFinal.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import edu.utn.TPFinal.model.Rate;
+import edu.utn.TPFinal.model.dto.RateDto;
 import edu.utn.TPFinal.utils.localdate.LocalDateDeserializer;
 import edu.utn.TPFinal.utils.localdate.LocalDateSerializer;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,13 @@ public class RateTestUtils {
 
     public static Page<Rate> aRatePage() {
         return new PageImpl<>(List.of(aRate()));
+    }
+
+    public static RateDto aRateDto() {
+        return new RateDto(1,300.00,"A");
+    }
+    public static List<Rate> aRateList() {
+        return List.of(aRate());
     }
 
     public static Specification<Rate> specRates(Double value) {

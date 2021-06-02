@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS users(
 
 SELECT * FROM users;
 
-ALTER TABLE users CHANGE COLUMN type_user type_user INT NOT NULL DEFAULT 2;
+ALTER TABLE users CHANGE COLUMN type_user type_user INT NOT NULL DEFAULT 1;
 
 CREATE TABLE IF NOT EXISTS rates(
 	id_rate INT NOT NULL AUTO_INCREMENT,
@@ -70,12 +70,18 @@ CREATE TABLE IF NOT EXISTS bills(
 	final_measurement DATETIME NOT NULL,
 	total_consumption DOUBLE NOT NULL,
 	total_payable DOUBLE,
-    expiration DATETIME,
+	expiration DATETIME default ( now() + DAY*15 ),
 	CONSTRAINT pk_bill PRIMARY KEY (id_bill),
 	CONSTRAINT fk_bill_address FOREIGN KEY (id_address) REFERENCES addresses(id_address),
 	CONSTRAINT fk_bil_meter FOREIGN KEY (id_meter) REFERENCES meters(id_meter),
 	CONSTRAINT fk_bill_user FOREIGN KEY (id_user) REFERENCES users(id_user)
 );
+
+alter table bills add column `date` datetime default now();
+alter table bills change column expiration expiration datetime default ( now() + DAY*15 );
+/*alter table bills change column expiration expiration datetime default DATE_ADD("2017-06-15", INTERVAL 10 DAY)*/
+
+/*select DATE_ADD("2017-06-15", INTERVAL 10 DAY) * from biills;*/
 
 CREATE TABLE IF NOT EXISTS measurements(
 	id_measurement INT NOT NULL AUTO_INCREMENT,
@@ -313,7 +319,8 @@ INSERT INTO `measurements` (`id_meter`,`id_bill`,`date_time`,`quantity_kw`) VALU
 (3,NULL,NOW(),3);
 
 
-SELECT * FROM measurements;
+SELECT * FROM rates;
+insert into rates values (10,400,"C");
 
 
 

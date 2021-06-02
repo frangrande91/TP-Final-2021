@@ -3,6 +3,7 @@ package edu.utn.TPFinal.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import edu.utn.TPFinal.model.Meter;
+import edu.utn.TPFinal.model.dto.MeterDto;
 import edu.utn.TPFinal.repositories.ClassRepository;
 import edu.utn.TPFinal.utils.localdate.LocalDateDeserializer;
 import edu.utn.TPFinal.utils.localdate.LocalDateSerializer;
@@ -35,6 +36,10 @@ public class MeterTestUtils {
 
     public static Page<Meter> aMeterPage() {
         return new PageImpl<>(List.of(aMeter()));
+    }
+
+    public static MeterDto aMeterDto() {
+        return new MeterDto();
     }
 
     public static Specification<Meter> specMeter(String serialNumber) {

@@ -39,7 +39,14 @@ public class Bill {
 
     private LocalDateTime finalMeasurement;
 
+    private LocalDateTime date;
+
+    private LocalDateTime expiration;
+    
     private Double totalConsumption;
 
     private Double totalPayable;
+
+
+
 }

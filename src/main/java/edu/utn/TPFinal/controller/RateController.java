@@ -84,9 +84,10 @@ public class RateController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Rate> getRateById(@PathVariable Integer id) throws RateNotExistsException {
+    public ResponseEntity<RateDto> getRateById(@PathVariable Integer id) throws RateNotExistsException {
         Rate rate = rateService.getRateById(id);
-        return ResponseEntity.ok(rate);
+        RateDto rateDto = conversionService.convert(rate,RateDto.class);
+        return ResponseEntity.ok(rateDto);
     }
 
     @DeleteMapping("/{id}")

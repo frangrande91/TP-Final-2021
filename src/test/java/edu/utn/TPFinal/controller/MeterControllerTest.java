@@ -1,68 +1,59 @@
 package edu.utn.TPFinal.controller;
 import edu.utn.TPFinal.model.Meter;
-import edu.utn.TPFinal.repositories.ClassRepository;
-import edu.utn.TPFinal.repository.MeterRepository;
+import edu.utn.TPFinal.model.dto.MeterDto;
+import edu.utn.TPFinal.model.dto.UserDto;
+import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.service.MeterService;
-import lombok.extern.slf4j.Slf4j;
+import edu.utn.TPFinal.utils.EntityURLBuilder;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.format.support.FormattingConversionService;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Predicate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
 import static edu.utn.TPFinal.utils.MeterTestUtils.*;
-import static net.bytebuddy.matcher.ElementMatchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static edu.utn.TPFinal.utils.RateTestUtils.aRate;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.util.*;
 
 
-@SpringBootTest(classes = MeterController.class)
-@Slf4j
-public class MeterControllerTest extends AbstractController {
+public class MeterControllerTest {
 
 
-    @MockBean
-    MeterRepository meterRepository;
-    @MockBean
-    ClassRepository classRepository;
-    @MockBean
-    private MeterService meterService;
-    @MockBean
-    private FormattingConversionService formattingConversionService;
-    @Mock
-    Root<Meter> root;
-	@Mock
-    CriteriaQuery<?> query;
-	@Mock
-    CriteriaBuilder builder;
-	@Mock
-    Predicate predicate;
+    private static MeterService meterService;
+    private static ConversionService conversionService;
+    private static MeterController meterController;
 
-    @Mock Specification<Meter> meterSpecification;
+    @BeforeAll
+    public static void setUp() {
+        meterService = Mockito.mock(MeterService.class);
+        conversionService = Mockito.mock(ConversionService.class);
+        meterController = new MeterController(meterService,conversionService);
+    }
+
 
     @Test
     public void getAllMeters() throws Exception {
 
-        Mockito.when(meterService.getAllMeters(any())).thenReturn(aMeterPage());
+        Page<Meter> meterPage = aMeterPage();
+        Mockito.when(meterService.getAllMeters(any())).thenReturn(meterPage);
+        ResponseEntity<List<MeterDto>> responseEntity = meterController.getAllMeters(1,1);
 
-        final ResultActions resultActions = givenController()
-                .perform(MockMvcRequestBuilders
-                .get("/meters/")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
-        assertEquals(HttpStatus.OK.value(), resultActions.andReturn().getResponse().getStatus());
+        assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
+        assertEquals(meterPage.getContent().size(),responseEntity.getBody().size());
+        assertEquals(meterPage.getTotalElements(),Long.parseLong(responseEntity.getHeaders().get("X-Total-Count").get(0)));
+        assertEquals(meterPage.getTotalPages(),Long.parseLong(responseEntity.getHeaders().get("X-Total-Pages").get(0)));
     }
 
     @Test
@@ -97,51 +88,51 @@ public class MeterControllerTest extends AbstractController {
     @Test
     public void getAllSorted() throws Exception {
 
+        Page<Meter> meterPage = aMeterPage();
+        Pageable pageable = PageRequest.of(1,1);
+
         Mockito.when(meterService.getAllSort(any(),any(),anyList())).thenReturn(aMeterPage());
+        ResponseEntity<List<MeterDto>> responseEntity = meterController.getAllSorted(pageable.getPageNumber(),pageable.getPageSize(),"id","serialNumber");
 
-        final ResultActions resultActions = givenController()
-                .perform(MockMvcRequestBuilders
-                        .get("/meters/sort?field1=serialNumber&field2=id")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                ;
-
-        assertEquals(HttpStatus.OK.value(), resultActions.andReturn().getResponse().getStatus());
+        assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
+        assertEquals(meterPage.getContent().size(),responseEntity.getBody().size());
+        assertEquals(meterPage.getTotalElements(),Long.parseLong(responseEntity.getHeaders().get("X-Total-Count").get(0)));
+        assertEquals(meterPage.getTotalPages(),Long.parseLong(responseEntity.getHeaders().get("X-Total-Pages").get(0)));
     }
 
     @Test
     public void getMeterById() throws Exception {
-        final ResultActions resultActions = givenController().perform(MockMvcRequestBuilders
-                .get("/meters/1")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-        assertEquals(HttpStatus.OK.value(), resultActions.andReturn().getResponse().getStatus());
+
+        Mockito.when(meterService.getMeterById(anyInt())).thenReturn(aMeter());
+        Mockito.when(conversionService.convert(aMeter(),MeterDto.class)).thenReturn(aMeterDto());
+        ResponseEntity<MeterDto> responseEntity = meterController.getMeterById(1);
+
+        assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
+        assertEquals(aMeterDto().getId(), responseEntity.getBody().getId());
+        assertEquals(aMeterDto().getModel(), responseEntity.getBody().getModel());
+        assertEquals(aMeterDto().getPassword(), responseEntity.getBody().getPassword());
+        assertEquals(aMeterDto().getSerialNumber(), responseEntity.getBody().getSerialNumber());
+
     }
 
     @Test
     public void addMeter() throws Exception{
 
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+
         Mockito.when(meterService.addMeter(aMeter())).thenReturn(aMeter());
+        ResponseEntity<Response> responseEntity = meterController.addMeter(aMeter());
 
-        ResultActions resultActions = givenController().perform(MockMvcRequestBuilders
-                .post("/meters/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(aMeterJSON()))
-                .andExpect(status().isCreated())
-                ;
-
-        assertEquals(HttpStatus.CREATED.value(), resultActions.andReturn().getResponse().getStatus());
+        assertEquals(EntityURLBuilder.buildURL2("meters", aRate().getId()).toString(),responseEntity.getHeaders().get("Location").get(0));
+        assertEquals(HttpStatus.CREATED.value(),responseEntity.getStatusCode().value());
     }
 
     @Test
     public void deleteMeterById() throws Exception{
-
-        ResultActions resultActions = givenController().perform(MockMvcRequestBuilders
-                .delete("/meters/1")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isAccepted());
-
-        assertEquals(HttpStatus.ACCEPTED.value(), resultActions.andReturn().getResponse().getStatus());
+        Mockito.doNothing().when(meterService).deleteMeterById(1);
+        ResponseEntity<Object> responseEntity = meterController.deleteMeterById(1);
+        assertEquals(HttpStatus.ACCEPTED.value(),responseEntity.getStatusCode().value());
     }
 
 }

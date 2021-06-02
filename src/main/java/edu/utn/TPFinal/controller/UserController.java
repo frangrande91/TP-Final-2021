@@ -1,4 +1,5 @@
 package edu.utn.TPFinal.controller;
+import edu.utn.TPFinal.exceptions.ErrorLoginException;
 import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.ClientNotFoundException;
 import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
@@ -94,8 +95,11 @@ public class UserController {
     }
 
     @GetMapping("/{username}/{password}")
-    public User login(@PathVariable String username, @PathVariable String password) {
-        return userService.login(username,password);
+    public ResponseEntity<UserDto> login(@PathVariable String username, @PathVariable String password) throws ErrorLoginException {
+        UserDto userDto = conversionService.convert(userService.login(username,password),UserDto.class);
+        return ResponseEntity.status(HttpStatus.OK).body(userDto);
+
+
     }
 
     @PutMapping("/{idClient}/addresses/{idAddress}")

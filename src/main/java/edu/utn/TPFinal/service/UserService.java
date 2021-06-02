@@ -52,7 +52,7 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() -> new UserNotExistsException("Rate not exists"));
     }
 
-    public User login(String username, String password) {
+    public User login(String username, String password) throws ErrorLoginException{
         return Optional.ofNullable(userRepository.findByUsernameAndPassword(username,password)).orElseThrow(() -> new ErrorLoginException("The username and/or password are incorrect"));
     }
 
