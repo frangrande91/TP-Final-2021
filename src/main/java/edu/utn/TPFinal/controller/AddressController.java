@@ -56,7 +56,7 @@ public class AddressController {
 
     @GetMapping
     public ResponseEntity<List<AddressDto>> getAllAddresses(@RequestParam(value = "size", defaultValue = "10") Integer size,
-                                                         @RequestParam(value = "page", defaultValue = "0") Integer page){
+                                                            @RequestParam(value = "page", defaultValue = "0") Integer page){
         Pageable pageable = PageRequest.of(page,size);
         Page<Address> addressPage = addressService.getAllAddress(pageable);
         Page<AddressDto> addressDtoPage = addressPage.map(address -> conversionService.convert(address,AddressDto.class));

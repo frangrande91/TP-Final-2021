@@ -13,7 +13,7 @@ import org.springframework.web.context.WebApplicationContext;
 @AutoConfigureMockMvc
 @ContextConfiguration
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class AbstractController {
+public abstract class AbstractController {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
