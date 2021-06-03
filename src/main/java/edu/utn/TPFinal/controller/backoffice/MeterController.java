@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.controller;
+package edu.utn.TPFinal.controller.backoffice;
 
 import edu.utn.TPFinal.exceptions.alreadyExists.MeterAlreadyExistsException;
 import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
@@ -21,6 +21,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Sort.Order;
 
@@ -41,6 +42,7 @@ public class MeterController {
         this.conversionService = conversionService;
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @PostMapping("/")
     public ResponseEntity<Response> addMeter(@RequestBody Meter meter) throws MeterAlreadyExistsException {
         Meter meterCreated = meterService.addMeter(meter);
@@ -52,6 +54,7 @@ public class MeterController {
                 .body(EntityResponse.messageResponse("The meter has been created"));
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("/")
     public ResponseEntity<List<MeterDto>> getAllMeters(@RequestParam(value = "size", defaultValue = "10") Integer size,
                                        @RequestParam(value = "page", defaultValue = "0") Integer page) {
@@ -61,6 +64,7 @@ public class MeterController {
         return EntityResponse.listResponse(meterDtoPage);
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("/spec")
     public ResponseEntity<List<MeterDto>> getAllSpec(
             @And({
@@ -73,6 +77,7 @@ public class MeterController {
         return EntityResponse.listResponse(meterDtoPage);
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("/sort")
     public ResponseEntity<List<MeterDto>> getAllSorted(@RequestParam(value = "size", defaultValue = "10") Integer size,
                                        @RequestParam(value = "page", defaultValue = "0") Integer page,
@@ -87,12 +92,14 @@ public class MeterController {
 
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("/{id}")
     public ResponseEntity<MeterDto> getMeterById(@PathVariable Integer id) throws MeterNotExistsException {
         MeterDto meterDto = conversionService.convert(meterService.getMeterById(id), MeterDto.class);
         return ResponseEntity.ok(meterDto);
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteMeterById(@PathVariable Integer id) throws MeterNotExistsException{
         meterService.deleteMeterById(id);

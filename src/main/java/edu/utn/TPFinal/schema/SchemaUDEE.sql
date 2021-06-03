@@ -141,6 +141,8 @@ INSERT INTO addresses(`id_meter`,`id_user`,`address`,`id_rate`) VALUES
 (3,2,"Juan J. Paso 2056",2)
 ;
 
+select * from addresses;
+
 INSERT INTO `measurements` (`id_meter`,`id_bill`,`date_time`,`quantity_kw`) VALUES
 (1,null,NOW(),2),
 (1,NULL,NOW(),5),

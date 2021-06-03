@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 public class AddressDto {
 
     private Integer id;
-    private Meter meter;
-    private User userClient;
+    private MeterDto meter;
+    private UserDto userClient;
     private String address;
-    private Rate rate;
+    private RateDto rate;
 }

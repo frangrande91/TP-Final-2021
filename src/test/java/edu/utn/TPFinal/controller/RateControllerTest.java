@@ -1,17 +1,14 @@
 package edu.utn.TPFinal.controller;
 
+import edu.utn.TPFinal.controller.backoffice.RateController;
 import edu.utn.TPFinal.model.Rate;
 import edu.utn.TPFinal.model.dto.RateDto;
 import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.service.RateService;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

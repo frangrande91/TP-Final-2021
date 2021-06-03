@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.controller;
+package edu.utn.TPFinal.controller.backoffice;
 
 import edu.utn.TPFinal.exceptions.alreadyExists.RateAlreadyExists;
 import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
@@ -21,6 +21,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -41,6 +42,7 @@ public class RateController {
         this.conversionService = conversionService;
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @PostMapping(value = "/")
     public ResponseEntity<Response> addRate(@RequestBody Rate rate) throws RateAlreadyExists {
         Rate rateCreated = rateService.addRate(rate);
@@ -52,6 +54,7 @@ public class RateController {
                 .body(EntityResponse.messageResponse("The rate has been created"));
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping
     public ResponseEntity<List<RateDto>> getAllRates(@RequestParam(value = "size", defaultValue = "10") Integer size,
                                                   @RequestParam(value = "page", defaultValue = "0") Integer page) {
@@ -61,6 +64,7 @@ public class RateController {
         return EntityResponse.listResponse(rateDtoPage);
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("/spec")
     public ResponseEntity<List<RateDto>> getAllSpec(
             @And({
@@ -71,6 +75,7 @@ public class RateController {
         return EntityResponse.listResponse(rateDtoPage);
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("/sort")
     public ResponseEntity<List<RateDto>> getAllSorted(@RequestParam(value = "size", defaultValue = "10") Integer size,
                                                          @RequestParam(value = "page", defaultValue = "0") Integer page,
@@ -83,6 +88,7 @@ public class RateController {
         return EntityResponse.listResponse(rateDtoPage);
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<RateDto> getRateById(@PathVariable Integer id) throws RateNotExistsException {
         Rate rate = rateService.getRateById(id);
@@ -90,6 +96,7 @@ public class RateController {
         return ResponseEntity.ok(rateDto);
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteRateById(@PathVariable Integer id) throws RateNotExistsException{
         rateService.deleteRateById(id);

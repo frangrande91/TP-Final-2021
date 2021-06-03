@@ -1,9 +1,7 @@
 package edu.utn.TPFinal.controller;
+import edu.utn.TPFinal.controller.backoffice.MeterController;
 import edu.utn.TPFinal.model.Meter;
-import edu.utn.TPFinal.model.Rate;
 import edu.utn.TPFinal.model.dto.MeterDto;
-import edu.utn.TPFinal.model.dto.RateDto;
-import edu.utn.TPFinal.model.dto.UserDto;
 import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.service.MeterService;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
@@ -16,17 +14,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static edu.utn.TPFinal.utils.MeterTestUtils.*;
 import static edu.utn.TPFinal.utils.RateTestUtils.*;
-import static edu.utn.TPFinal.utils.RateTestUtils.specRates;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import java.util.*;
