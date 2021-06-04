@@ -5,7 +5,6 @@ import edu.utn.TPFinal.model.dto.AddressDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,10 +16,6 @@ public class AddressTestUtils {
 
     public static AddressDto aAddressDto(){
         return new AddressDto();
-    }
-
-    public static List<AddressDto> aListAddressDto(){
-        return new ArrayList<AddressDto>();
     }
 
     public static Page<Address> aAddressPage() {

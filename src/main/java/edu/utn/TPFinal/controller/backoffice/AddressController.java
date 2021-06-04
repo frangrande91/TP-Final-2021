@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.controller;
+package edu.utn.TPFinal.controller.backoffice;
 
 import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
@@ -23,6 +23,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/address")
+@RequestMapping("backoffice/address")
 public class AddressController {
 
     private AddressService addressService;
@@ -43,6 +44,7 @@ public class AddressController {
         this.conversionService = conversionService;
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @PostMapping(value = "/")
     public ResponseEntity<Response> addAddress(@RequestBody Address address) throws SQLIntegrityConstraintViolationException {
         Address addressCreated = addressService.addAddress(address);
@@ -54,7 +56,8 @@ public class AddressController {
                 .body(EntityResponse.messageResponse("The address has been created"));
     }
 
-    @GetMapping
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @GetMapping("/")
     public ResponseEntity<List<AddressDto>> getAllAddresses(@RequestParam(value = "size", defaultValue = "10") Integer size,
                                                             @RequestParam(value = "page", defaultValue = "0") Integer page){
         Pageable pageable = PageRequest.of(page,size);
@@ -63,6 +66,7 @@ public class AddressController {
         return EntityResponse.listResponse(addressDtoPage);
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("/spec")
     public ResponseEntity<List<AddressDto>> getAllSpec(
             @And({
@@ -75,6 +79,7 @@ public class AddressController {
         return EntityResponse.listResponse(addressDtoPage);
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("/sort")
     public ResponseEntity<List<AddressDto>> getAllSorted(@RequestParam(value = "size", defaultValue = "10") Integer size,
                                                          @RequestParam(value = "page", defaultValue = "0") Integer page,
@@ -87,29 +92,34 @@ public class AddressController {
         return EntityResponse.listResponse(addressDtoPage);
     }
 
-
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("/{id}")
-    public ResponseEntity<Address> getAddressById(@PathVariable Integer id) throws AddressNotExistsException {
-        Address address = addressService.getAddressById(id);
-        return ResponseEntity.ok(address);
+    public ResponseEntity<AddressDto> getAddressById(@PathVariable Integer id) throws AddressNotExistsException {
+        AddressDto addressDto = conversionService.convert(addressService.getAddressById(id), AddressDto.class);
+        return ResponseEntity.ok(addressDto);
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @PutMapping("/{id}/{idMeter}")
     public ResponseEntity<Response> addMeterToAddress(@PathVariable Integer id, @PathVariable Integer idMeter) throws AddressNotExistsException, MeterNotExistsException {
         addressService.addMeterToAddress(id, idMeter);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(EntityResponse.messageResponse("The address has been modified"));
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @PutMapping("/{id}/{idRate}")
     public ResponseEntity<Response> addRateToAddress(@PathVariable Integer id, @PathVariable Integer idRate) throws AddressNotExistsException, RateNotExistsException {
         addressService.addRateToAddress(id, idRate);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(EntityResponse.messageResponse("The address has been modified"));
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteAddressById(@PathVariable Integer id) throws AddressNotExistsException{
         addressService.deleteAddressById(id);
         return ResponseEntity.accepted().build();
     }
+
+
 
 }

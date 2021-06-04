@@ -89,9 +89,10 @@ public class BillController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<Bill> getBillById(@PathVariable Integer id) throws BillNotExistsException {
+    public ResponseEntity<BillDto> getBillById(@PathVariable Integer id) throws BillNotExistsException {
         Bill bill = billService.getBillById(id);
-        return ResponseEntity.ok(bill);
+        BillDto billDto = conversionService.convert(billService.getBillById(id), BillDto.class);
+        return ResponseEntity.ok(billDto);
     }
 
     @PutMapping("/{id}/{idClient}")

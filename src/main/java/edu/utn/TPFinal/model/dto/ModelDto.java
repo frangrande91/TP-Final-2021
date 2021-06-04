@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class ModelDto {
 
     private Integer id;
-    private Brand brand;
+    private BrandDto brand;
     private String name;
 
 }

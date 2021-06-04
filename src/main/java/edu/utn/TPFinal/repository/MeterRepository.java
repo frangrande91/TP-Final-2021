@@ -7,4 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MeterRepository extends JpaRepository<Meter, Integer>, JpaSpecificationExecutor<Meter> {
+
+    Meter findByIdOrSerialNumber(Integer id, String serialNumber);
+
 }

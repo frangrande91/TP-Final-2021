@@ -1,6 +1,7 @@
 package edu.utn.TPFinal.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity(name = "bills")
 public class Bill {
 
@@ -39,7 +41,14 @@ public class Bill {
 
     private LocalDateTime finalMeasurement;
 
+    private LocalDateTime date;
+
+    private LocalDateTime expiration;
+    
     private Double totalConsumption;
 
     private Double totalPayable;
+
+
+
 }

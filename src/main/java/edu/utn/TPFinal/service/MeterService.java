@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.service;
 
+import edu.utn.TPFinal.exceptions.alreadyExists.MeterAlreadyExistsException;
 import edu.utn.TPFinal.exceptions.notFound.MeasurementNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.model.Meter;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Service
 public class MeterService {
 
@@ -25,8 +28,13 @@ public class MeterService {
         this.meterRepository = meterRepository;
     }
 
-    public Meter addMeter(Meter meter) {
-        return meterRepository.save(meter);
+    public Meter addMeter(Meter meter) throws MeterAlreadyExistsException {
+         if(isNull(meterRepository.findByIdOrSerialNumber(meter.getId(),meter.getSerialNumber()))) {
+             return meterRepository.save(meter);
+         }
+         else {
+             throw new MeterAlreadyExistsException("Meter already exists");
+         }
     }
 
     public Page<Meter> getAllMeters(Pageable pageable) {

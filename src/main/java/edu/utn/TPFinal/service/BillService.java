@@ -56,33 +56,30 @@ public class BillService {
         return billRepository.findById(id).orElseThrow(() -> new BillNotExistsException("Bill not exists"));
     }
 
-    /** USAR EL RETORNO **/
-    public Bill addClientToBill(Integer id, Integer idClient) throws UserNotExistsException, BillNotExistsException {
+    public void addClientToBill(Integer id, Integer idClient) throws UserNotExistsException, BillNotExistsException {
         Bill bill = getBillById(id);
         User userClient = userService.getUserById(idClient);
         if(userClient.getTypeUser().equals(TypeUser.CLIENT)){
             bill.setUserClient(userClient);
         }
-        return billRepository.save(bill);
+        billRepository.save(bill);
     }
 
-    /** USAR EL RETORNO **/
-    public Bill addAddressToBill(Integer id, Integer idAddress) throws AddressNotExistsException, BillNotExistsException {
+    public void addAddressToBill(Integer id, Integer idAddress) throws AddressNotExistsException, BillNotExistsException {
         Bill bill = getBillById(id);
         Address address = addressService.getAddressById(idAddress);
         bill.setAddress(address);
-        return billRepository.save(bill);
+        billRepository.save(bill);
     }
 
-    /** USAR EL RETORNO **/
-    public Bill addMeterToBill(Integer id, Integer idMeter) throws MeterNotExistsException, BillNotExistsException {
+    public void addMeterToBill(Integer id, Integer idMeter) throws MeterNotExistsException, BillNotExistsException {
         Bill bill = getBillById(id);
         Meter meter = meterService.getMeterById(idMeter);
         bill.setMeter(meter);
-        return billRepository.save(bill);
+        billRepository.save(bill);
     }
 
-    /** VER COMO AGREGAR LAS MEDIDICONES INICIAL Y FINAL **/
+
     public void deleteBillById(Integer id) throws BillNotExistsException{
         getBillById(id);
         billRepository.deleteById(id);

@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
 public class BillDto {
 
     private Integer id;
-    private Address address;
-    private Meter meter;
-    private User userClient;
+    private AddressDto address;
+    private MeterDto meter;
+    private UserDto userClient;
     private LocalDateTime initialMeasurement;
     private LocalDateTime finalMeasurement;
     private Double totalConsumption;
