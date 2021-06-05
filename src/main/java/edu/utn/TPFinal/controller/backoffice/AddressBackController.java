@@ -71,7 +71,7 @@ public class AddressBackController {
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("/")
     public ResponseEntity<List<AddressDto>> getAllAddresses(@RequestParam(value = "size", defaultValue = "10") Integer size,
-                                                         @RequestParam(value = "page", defaultValue = "0") Integer page){
+                                                            @RequestParam(value = "page", defaultValue = "0") Integer page){
         Pageable pageable = PageRequest.of(page,size);
         Page<Address> addressPage = addressService.getAllAddress(pageable);
         Page<AddressDto> addressDtoPage = addressPage.map(address -> conversionService.convert(address,AddressDto.class));
@@ -106,9 +106,9 @@ public class AddressBackController {
 
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("/{id}")
-    public ResponseEntity<Address> getAddressById(@PathVariable Integer id) throws AddressNotExistsException {
-        Address address = addressService.getAddressById(id);
-        return ResponseEntity.ok(address);
+    public ResponseEntity<AddressDto> getAddressById(@PathVariable Integer id) throws AddressNotExistsException {
+        AddressDto addressDto = conversionService.convert(addressService.getAddressById(id), AddressDto.class);
+        return ResponseEntity.ok(addressDto);
     }
 
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
@@ -131,5 +131,7 @@ public class AddressBackController {
         addressService.deleteAddressById(id);
         return ResponseEntity.accepted().build();
     }
+
+
 
 }

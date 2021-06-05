@@ -2,7 +2,6 @@ package edu.utn.TPFinal.service;
 
 import edu.utn.TPFinal.exceptions.ViolationChangeKeyAttributeException;
 import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.BrandNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.Address;
@@ -64,19 +63,19 @@ public class AddressService {
         return addressRepository.findById(id).orElseThrow(() -> new AddressNotExistsException("Address not exists"));
     }
 
-    /** USAR EL RETORNO **/
-    public Address addMeterToAddress(Integer id, Integer idMeter) throws MeterNotExistsException, AddressNotExistsException {
+
+    public void addMeterToAddress(Integer id, Integer idMeter) throws MeterNotExistsException, AddressNotExistsException {
         Address address = getAddressById(id);
         Meter meter = meterService.getMeterById(idMeter);
         address.setMeter(meter);
-        return addressRepository.save(address);
+        addressRepository.save(address);
     }
 
-    public Address addRateToAddress(Integer id, Integer idRate) throws RateNotExistsException, AddressNotExistsException {
+    public void addRateToAddress(Integer id, Integer idRate) throws RateNotExistsException, AddressNotExistsException {
         Address address = getAddressById(id);
         Rate rate = rateService.getRateById(idRate);
         address.setRate(rate);
-        return addressRepository.save(address);
+        addressRepository.save(address);
     }
 
     public void deleteAddressById(Integer id) throws AddressNotExistsException {
