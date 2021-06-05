@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/meters")
+@RequestMapping("/backoffice/meters")
 public class MeterController {
 
     private final MeterService meterService;

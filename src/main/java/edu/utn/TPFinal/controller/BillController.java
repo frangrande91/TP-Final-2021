@@ -1,11 +1,10 @@
 package edu.utn.TPFinal.controller;
 
-import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.BillNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.*;
 import edu.utn.TPFinal.model.Bill;
+import edu.utn.TPFinal.model.TypeUser;
 import edu.utn.TPFinal.model.dto.BillDto;
+import edu.utn.TPFinal.model.dto.UserDto;
 import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.service.BillService;
 import edu.utn.TPFinal.utils.EntityResponse;
@@ -20,21 +19,27 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/bill")
+@RequestMapping("/bills")
 public class BillController {
 
     private BillService billService;
     private ConversionService conversionService;
-    private static final String BILL_PATH = "bill";
+    private static final String BILL_PATH = "bills";
 
     @Autowired
     public BillController(BillService billService, ConversionService conversionService) {
@@ -53,20 +58,60 @@ public class BillController {
                 .body(Response.builder().message("The bill has been created").build());
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE') OR hasAuthority('CLIENT')")
+    @GetMapping("/users/{idClient}")
+    public ResponseEntity<List<BillDto>> getAllBillsByUserClientAndBetweenDate(@PathVariable Integer idClient,
+                                                    @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                                    @RequestParam(value = "page", defaultValue = "0") Integer page,
+                                                    @RequestParam(value = "from", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd")Date from,
+                                                    @RequestParam(value = "to", defaultValue = "2020-01-05") @DateTimeFormat(pattern = "yyyy-MM-dd")Date to,
+                                                    Authentication authentication) throws UserNotExistsException, ClientNotFoundException {
 
-    @GetMapping()
-    public ResponseEntity<List<BillDto>> getAllBills(@RequestParam(value = "size", defaultValue = "10") Integer size,
-                                                     @RequestParam(value = "page", defaultValue = "0") Integer page){
-        Pageable pageable = PageRequest.of(page,size);
-        Page<Bill> billPage = billService.getAllBills(pageable);
-        Page<BillDto> billDtoPage = billPage.map(bill -> conversionService.convert(bill, BillDto.class));
-        return EntityResponse.listResponse(billDtoPage);
+        UserDto userDto = (UserDto) authentication.getPrincipal();
+
+            if(userDto.getId().equals(idClient) || userDto.getTypeUser().equals(TypeUser.EMPLOYEE)) {
+                Pageable pageable = PageRequest.of(page, size);
+                Page<Bill> billPage = billService.getAllBillsByUserClientAndBetweenDate(idClient, from, to, pageable);
+                Page<BillDto> billDtoPage = billPage.map(bill -> conversionService.convert(bill, BillDto.class));
+                return EntityResponse.listResponse(billDtoPage);
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
     }
 
-    @GetMapping("/sort")
-    public ResponseEntity<List<BillDto>> getAllSorted(@RequestParam(value = "size", defaultValue = "10") Integer size,
-                                                         @RequestParam(value = "page", defaultValue = "0") Integer page,
-                                                         @RequestParam String field1, @RequestParam String field2) {
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE') OR hasAuthority('CLIENT')")
+    @GetMapping("/users/{idClient}/sort")
+    public ResponseEntity<List<BillDto>> getAllSortBillsByUserClientAndBetweenDate(@PathVariable Integer idClient,
+                                                                                   @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                                                                   @RequestParam(value = "page", defaultValue = "0") Integer page,
+                                                                                   @RequestParam(value = "field1") String field1, @RequestParam(value = "field2") String field2,
+                                                                                   @RequestParam(value = "from", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd")Date from,
+                                                                                   @RequestParam(value = "to", defaultValue = "2020-01-05") @DateTimeFormat(pattern = "yyyy-MM-dd")Date to,
+                                                                                   Authentication authentication) throws UserNotExistsException, ClientNotFoundException {
+        UserDto userDto = (UserDto) authentication.getPrincipal();
+
+        if(userDto.getId().equals(idClient) || userDto.getTypeUser().equals(TypeUser.EMPLOYEE)) {
+            List<Sort.Order> orders = new ArrayList<>();
+            orders.add(new Sort.Order(Sort.Direction.DESC, field1));
+            orders.add(new Sort.Order(Sort.Direction.DESC, field2));
+            Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
+            Page<Bill> billPage = billService.getAllBillsByUserClientAndBetweenDate(idClient, from, to, pageable);
+            Page<BillDto> billDtoPage = billPage.map(bill -> conversionService.convert(bill, BillDto.class));
+            return EntityResponse.listResponse(billDtoPage);
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+    }
+
+
+    /*@GetMapping("/sort")
+    public ResponseEntity<List<BillDto>> getAllSorted( @RequestParam(value = "from", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd")Date from,
+                                                       @RequestParam(value = "to", defaultValue = "2020-01-05") @DateTimeFormat(pattern = "yyyy-MM-dd")Date to,
+                                                       @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                                       @RequestParam(value = "page", defaultValue = "0") Integer page,
+                                                       @RequestParam String field1, @RequestParam String field2) {
         List<Sort.Order> orders = new ArrayList<>();
         orders.add(new Sort.Order(Sort.Direction.DESC,field1));
         orders.add(new Sort.Order(Sort.Direction.DESC,field2));
@@ -85,7 +130,7 @@ public class BillController {
         Page<Bill> billPage = billService.getAllSpec(newsSpecification,pageable);
         Page<BillDto> billDtoPage = billPage.map(bill -> conversionService.convert(bill, BillDto.class));
         return EntityResponse.listResponse(billDtoPage);
-    }
+    }*/
 
 
     @GetMapping("/{id}")
