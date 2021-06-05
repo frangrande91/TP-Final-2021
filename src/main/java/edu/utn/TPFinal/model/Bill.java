@@ -3,10 +3,12 @@ package edu.utn.TPFinal.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -35,18 +37,18 @@ public class Bill {
     @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)
     private List<Measurement> measurementList;
 
-    private LocalDateTime initialMeasurement;
+    private Date initialMeasurement;
 
-    private LocalDateTime finalMeasurement;
+    private Date finalMeasurement;
 
-    private LocalDateTime date;
+    private Date date;
 
-    private LocalDateTime expiration;
+    private Boolean payed;
+
+    private Date expiration;
     
     private Double totalConsumption;
 
     private Double totalPayable;
-
-
 
 }

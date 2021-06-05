@@ -6,6 +6,7 @@ import edu.utn.TPFinal.exceptions.ErrorLoginException;
 import edu.utn.TPFinal.exceptions.notFound.ClientNotFoundException;
 import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
 import edu.utn.TPFinal.model.Address;
+import edu.utn.TPFinal.model.Bill;
 import edu.utn.TPFinal.model.TypeUser;
 import edu.utn.TPFinal.model.User;
 import edu.utn.TPFinal.repository.UserRepository;
@@ -65,19 +66,27 @@ public class UserService {
         return userRepository.findByUsernameAndPassword(username,password);
     }
 
-    public void addAddressToClientUser(Integer idClientUser,Integer id) throws UserNotExistsException, ClientNotFoundException, AddressNotExistsException {
+    public User addAddressToClientUser(Integer idClientUser,Integer id) throws UserNotExistsException, ClientNotFoundException, AddressNotExistsException {
 
         User clientUser = getUserById(idClientUser);
         Address address = addressService.getAddressById(id);
 
         if(clientUser.getTypeUser().equals(TypeUser.CLIENT)) {
             clientUser.getAddressList().add(address);
-            userRepository.save(clientUser);
+            return userRepository.save(clientUser);
         }
         else {
             throw new ClientNotFoundException(String.format("The client with id %s ",idClientUser," do not exists"));
         }
     }
+
+/*    public List<Bill> getAllBills(Integer idClientUser) throws UserNotExistsException, ClientNotFoundException {
+        User clientUser = getUserById(idClientUser);
+        if(!clientUser.getTypeUser().equals(TypeUser.CLIENT)) {
+            throw new ClientNotFoundException(String.format("The client with id %s ",idClientUser," do not exists"));
+        }
+        return clientUser.getBillList();
+    }*/
 
     public void deleteById(Integer id) throws UserNotExistsException{
         getUserById(id);

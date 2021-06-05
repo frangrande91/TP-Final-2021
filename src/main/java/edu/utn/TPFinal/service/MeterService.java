@@ -1,7 +1,7 @@
 package edu.utn.TPFinal.service;
 
+import edu.utn.TPFinal.exceptions.ViolationChangeKeyAttributeException;
 import edu.utn.TPFinal.exceptions.alreadyExists.MeterAlreadyExistsException;
-import edu.utn.TPFinal.exceptions.notFound.MeasurementNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.repository.MeterRepository;
@@ -35,6 +35,14 @@ public class MeterService {
          else {
              throw new MeterAlreadyExistsException("Meter already exists");
          }
+    }
+
+    public Meter updateMeter(Integer id, Meter newMeter) throws ViolationChangeKeyAttributeException, MeterNotExistsException {
+        Meter currentMeter = getMeterById(id);
+        if(!(currentMeter.getId().equals(newMeter.getId())) || !(currentMeter.getSerialNumber().equals(newMeter.getSerialNumber()))) {
+            throw new ViolationChangeKeyAttributeException("You can not change the id or serial number");
+        }
+        return meterRepository.save(newMeter);
     }
 
     public Page<Meter> getAllMeters(Pageable pageable) {

@@ -84,10 +84,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return ResponseNotFound(ex);
     }
 
-/*    @ExceptionHandler({SQLIntegrityConstraintViolationException.class})
-    public ResponseEntity<Object> handlerSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException ex,WebRequest request) {
+    @ExceptionHandler({ViolationChangeKeyAttributeException.class})
+    public ResponseEntity<Object> handlerViolationChangeKeyAttributeException(ViolationChangeKeyAttributeException ex,WebRequest request) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-    }*/
+    }
 
     @ExceptionHandler({RateAlreadyExists.class})
     public ResponseEntity<Object> handlerRateAlreadyExists(RateAlreadyExists ex,WebRequest request) {

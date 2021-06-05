@@ -1,9 +1,11 @@
 package edu.utn.TPFinal.controller.backoffice;
 
+import edu.utn.TPFinal.exceptions.ViolationChangeKeyAttributeException;
 import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.Address;
+import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.dto.AddressDto;
 import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.service.AddressService;
@@ -31,15 +33,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("backoffice/address")
-public class AddressController {
+@RequestMapping("/backoffice/address")
+public class AddressBackController {
 
     private AddressService addressService;
     private ConversionService conversionService;
     private static final String ADDRESS_PATH = "address";
 
     @Autowired
-    public AddressController(AddressService addressService,ConversionService conversionService) {
+    public AddressBackController(AddressService addressService, ConversionService conversionService) {
         this.addressService = addressService;
         this.conversionService = conversionService;
     }
@@ -54,6 +56,16 @@ public class AddressController {
                 .location(EntityURLBuilder.buildURL2(ADDRESS_PATH,addressCreated.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(EntityResponse.messageResponse("The address has been created"));
+    }
+
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<Response> updateRate(@PathVariable Integer id,@RequestBody Address address) throws AddressNotExistsException, ViolationChangeKeyAttributeException {
+        addressService.updateAddress(id,address);
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(EntityResponse.messageResponse("The address has been updated"));
     }
 
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")

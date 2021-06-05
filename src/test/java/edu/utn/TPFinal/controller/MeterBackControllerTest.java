@@ -1,5 +1,5 @@
 package edu.utn.TPFinal.controller;
-import edu.utn.TPFinal.controller.backoffice.MeterController;
+import edu.utn.TPFinal.controller.backoffice.MeterBackController;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.dto.MeterDto;
 import edu.utn.TPFinal.model.responses.Response;
@@ -26,18 +26,18 @@ import static org.mockito.ArgumentMatchers.*;
 import java.util.*;
 
 
-public class MeterControllerTest {
+public class MeterBackControllerTest {
 
 
     private static MeterService meterService;
     private static ConversionService conversionService;
-    private static MeterController meterController;
+    private static MeterBackController meterBackController;
 
     @BeforeAll
     public static void setUp() {
         meterService = Mockito.mock(MeterService.class);
         conversionService = Mockito.mock(ConversionService.class);
-        meterController = new MeterController(meterService,conversionService);
+        meterBackController = new MeterBackController(meterService,conversionService);
     }
 
 
@@ -46,7 +46,7 @@ public class MeterControllerTest {
 
         Page<Meter> meterPage = aMeterPage();
         Mockito.when(meterService.getAllMeters(any())).thenReturn(meterPage);
-        ResponseEntity<List<MeterDto>> responseEntity = meterController.getAllMeters(1,1);
+        ResponseEntity<List<MeterDto>> responseEntity = meterBackController.getAllMeters(1,1);
 
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
         assertEquals(meterPage.getContent().size(),responseEntity.getBody().size());
@@ -63,7 +63,7 @@ public class MeterControllerTest {
         Pageable pageable = PageRequest.of(1,1);
 
         Mockito.when(meterService.getAllSpec(meterSpecification,pageable)).thenReturn(meterPage);
-        ResponseEntity<List<MeterDto>> responseEntity = meterController.getAllSpec(meterSpecification,pageable);
+        ResponseEntity<List<MeterDto>> responseEntity = meterBackController.getAllSpec(meterSpecification,pageable);
 
 
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
@@ -79,7 +79,7 @@ public class MeterControllerTest {
         Pageable pageable = PageRequest.of(1,1);
 
         Mockito.when(meterService.getAllSort(any(),any(),anyList())).thenReturn(aMeterPage());
-        ResponseEntity<List<MeterDto>> responseEntity = meterController.getAllSorted(pageable.getPageNumber(),pageable.getPageSize(),"id","serialNumber");
+        ResponseEntity<List<MeterDto>> responseEntity = meterBackController.getAllSorted(pageable.getPageNumber(),pageable.getPageSize(),"id","serialNumber");
 
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
         assertEquals(meterPage.getContent().size(),responseEntity.getBody().size());
@@ -92,7 +92,7 @@ public class MeterControllerTest {
 
         Mockito.when(meterService.getMeterById(anyInt())).thenReturn(aMeter());
         Mockito.when(conversionService.convert(aMeter(),MeterDto.class)).thenReturn(aMeterDto());
-        ResponseEntity<MeterDto> responseEntity = meterController.getMeterById(1);
+        ResponseEntity<MeterDto> responseEntity = meterBackController.getMeterById(1);
 
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
         assertEquals(aMeterDto().getId(), responseEntity.getBody().getId());
@@ -109,7 +109,7 @@ public class MeterControllerTest {
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
         Mockito.when(meterService.addMeter(aMeter())).thenReturn(aMeter());
-        ResponseEntity<Response> responseEntity = meterController.addMeter(aMeter());
+        ResponseEntity<Response> responseEntity = meterBackController.addMeter(aMeter());
 
         assertEquals(EntityURLBuilder.buildURL2("meters", aRate().getId()).toString(),responseEntity.getHeaders().get("Location").get(0));
         assertEquals(HttpStatus.CREATED.value(),responseEntity.getStatusCode().value());
@@ -118,7 +118,7 @@ public class MeterControllerTest {
     @Test
     public void deleteMeterById() throws Exception{
         Mockito.doNothing().when(meterService).deleteMeterById(1);
-        ResponseEntity<Object> responseEntity = meterController.deleteMeterById(1);
+        ResponseEntity<Object> responseEntity = meterBackController.deleteMeterById(1);
         assertEquals(HttpStatus.ACCEPTED.value(),responseEntity.getStatusCode().value());
     }
 

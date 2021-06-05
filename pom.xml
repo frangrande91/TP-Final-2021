@@ -142,6 +142,9 @@
 							<goal>check</goal>
 						</goals>
 						<configuration>
+							<excludes>
+								<exclude>**/edu/utn/TPFinal/model/*</exclude>
+							</excludes>
 							<rules>
 								<rule>
 									<element>BUNDLE</element>

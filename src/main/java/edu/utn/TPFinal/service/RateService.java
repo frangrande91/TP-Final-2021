@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.service;
 
+import edu.utn.TPFinal.exceptions.ViolationChangeKeyAttributeException;
 import edu.utn.TPFinal.exceptions.alreadyExists.MeterAlreadyExistsException;
 import edu.utn.TPFinal.exceptions.alreadyExists.RateAlreadyExists;
 import edu.utn.TPFinal.exceptions.notFound.ModelNotExistsException;
@@ -36,6 +37,14 @@ public class RateService {
         else {
             throw new RateAlreadyExists("Rate already exists");
         }
+    }
+
+    public Rate updateRate(Integer id, Rate newRate) throws ViolationChangeKeyAttributeException, RateNotExistsException {
+        Rate currentRate = getRateById(id);
+        if(!(currentRate.getId().equals(newRate.getId())) || !(currentRate.getTypeRate().equals(newRate.getTypeRate()))) {
+            throw new ViolationChangeKeyAttributeException("You can not change the id or serial number");
+        }
+        return rateRepository.save(newRate);
     }
 
     public Page<Rate> getAllRates(Pageable pageable) {

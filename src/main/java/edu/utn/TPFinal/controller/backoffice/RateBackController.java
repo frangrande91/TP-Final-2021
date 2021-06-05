@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.controller.backoffice;
 
+import edu.utn.TPFinal.exceptions.ViolationChangeKeyAttributeException;
 import edu.utn.TPFinal.exceptions.alreadyExists.RateAlreadyExists;
 import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.dto.RateDto;
@@ -30,14 +31,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/backoffice/rates")
-public class RateController {
+public class RateBackController {
 
     private RateService rateService;
     private ConversionService conversionService;
     private static final String RATE_PATH = "rates";
 
     @Autowired
-    public RateController(RateService rateService, ConversionService conversionService) {
+    public RateBackController(RateService rateService, ConversionService conversionService) {
         this.rateService = rateService;
         this.conversionService = conversionService;
     }
@@ -53,6 +54,17 @@ public class RateController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(EntityResponse.messageResponse("The rate has been created"));
     }
+
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<Response> updateRate(@PathVariable Integer id,@RequestBody Rate rate) throws ViolationChangeKeyAttributeException, RateNotExistsException {
+        rateService.updateRate(id,rate);
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(EntityResponse.messageResponse("The rate has been updated"));
+    }
+
 
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping

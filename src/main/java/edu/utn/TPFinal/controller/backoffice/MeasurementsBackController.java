@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
-@RequestMapping("backoffice/measurements")
+@RequestMapping("/backoffice/measurements")
 public class MeasurementsBackController {
 
     private MeasurementService measurementService;

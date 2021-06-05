@@ -1,9 +1,6 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.BillNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.*;
 import edu.utn.TPFinal.model.*;
 import edu.utn.TPFinal.repository.BillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +11,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.xml.crypto.Data;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -42,6 +43,14 @@ public class BillService {
         return billRepository.findAll(pageable);
     }
 
+    public Page<Bill> getAllBillsByUserClientAndBetweenDate(Integer idClientUser, Date from, Date to, Pageable pageable) throws UserNotExistsException, ClientNotFoundException {
+        User clientUser = userService.getUserById(idClientUser);
+        if(!clientUser.getTypeUser().equals(TypeUser.CLIENT)) {
+            throw new ClientNotFoundException(String.format("The client with id %s ",idClientUser," do not exists"));
+        }
+        return billRepository.findAllByUserClientAndDateBetween(clientUser ,from, to, pageable);
+    }
+
     public Page<Bill> getAllSort(Integer page, Integer size, List<Sort.Order> orders) {
         Pageable pageable = PageRequest.of(page,size, Sort.by(orders));
         return billRepository.findAll(pageable);
@@ -50,7 +59,6 @@ public class BillService {
     public Page<Bill> getAllSpec(Specification<Bill> billSpecification, Pageable pageable) {
         return billRepository.findAll(billSpecification, pageable);
     }
-
 
     public Bill getBillById(Integer id) throws BillNotExistsException {
         return billRepository.findById(id).orElseThrow(() -> new BillNotExistsException("Bill not exists"));
@@ -88,4 +96,7 @@ public class BillService {
         billRepository.deleteById(id);
     }
 
+    public Page<Bill> getAllSortedBetweenDate(Date from, Date to, Integer page, Integer size, List<Sort.Order> orders) {
+        return null;
+    }
 }

@@ -141,7 +141,9 @@ INSERT INTO addresses(`id_meter`,`id_user`,`address`,`id_rate`) VALUES
 (3,2,"Juan J. Paso 2056",2)
 ;
 
+
 select * from addresses;
+select * from users;
 
 INSERT INTO `measurements` (`id_meter`,`id_bill`,`date_time`,`quantity_kw`) VALUES
 (1,null,NOW(),2),
@@ -325,4 +327,7 @@ SELECT * FROM rates;
 insert into rates values (10,400,"C");
 
 
+select bill0_.id_bill as id_bill1_1_, bill0_.id_address as id_addre8_1_, bill0_.date as date2_1_, bill0_.expiration as expirati3_1_, bill0_.final_measurement as final_me4_1_, bill0_.initial_measurement as initial_5_1_, bill0_.id_meter as id_meter9_1_, bill0_.total_consumption as total_co6_1_, bill0_.total_payable as total_pa7_1_, bill0_.id_user as id_user10_1_ 
+from bills bill0_ 
+where bill0_.date between "2021-03-30" and "2021-05-30" limit 500
 

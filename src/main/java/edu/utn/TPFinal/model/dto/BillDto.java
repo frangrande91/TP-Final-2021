@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -16,8 +17,9 @@ public class BillDto {
     private AddressDto address;
     private MeterDto meter;
     private UserDto userClient;
-    private LocalDateTime initialMeasurement;
-    private LocalDateTime finalMeasurement;
+    private Date initialMeasurement;
+    private Date finalMeasurement;
+    private Date date;
     private Double totalConsumption;
     private Double totalPayable;
 

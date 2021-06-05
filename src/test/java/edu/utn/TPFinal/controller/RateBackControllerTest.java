@@ -1,6 +1,6 @@
 package edu.utn.TPFinal.controller;
 
-import edu.utn.TPFinal.controller.backoffice.RateController;
+import edu.utn.TPFinal.controller.backoffice.RateBackController;
 import edu.utn.TPFinal.model.Rate;
 import edu.utn.TPFinal.model.dto.RateDto;
 import edu.utn.TPFinal.model.responses.Response;
@@ -25,17 +25,17 @@ import static org.mockito.ArgumentMatchers.*;
 import java.util.*;
 
 
-public class RateControllerTest {
+public class RateBackControllerTest {
 
     private static RateService rateService;
     private static ConversionService conversionService;
-    private static RateController rateController;
+    private static RateBackController rateBackController;
 
     @BeforeAll
     public static void setUp() {
         rateService = Mockito.mock(RateService.class);
         conversionService = Mockito.mock(ConversionService.class);
-        rateController = new RateController(rateService,conversionService);
+        rateBackController = new RateBackController(rateService,conversionService);
     }
 
 
@@ -45,7 +45,7 @@ public class RateControllerTest {
         Page<Rate> ratePage = aRatePage();
 
         Mockito.when(rateService.getAllRates(any())).thenReturn(ratePage);
-        ResponseEntity<List<RateDto>> responseEntity = rateController.getAllRates(1,1);
+        ResponseEntity<List<RateDto>> responseEntity = rateBackController.getAllRates(1,1);
 
 
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
@@ -64,7 +64,7 @@ public class RateControllerTest {
         Pageable pageable = PageRequest.of(1,1);
 
         Mockito.when(rateService.getAllSpec(rateSpecification,pageable)).thenReturn(ratePage);
-        ResponseEntity<List<RateDto>> responseEntity = rateController.getAllSpec(rateSpecification,pageable);
+        ResponseEntity<List<RateDto>> responseEntity = rateBackController.getAllSpec(rateSpecification,pageable);
 
 
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
@@ -79,7 +79,7 @@ public class RateControllerTest {
         Pageable pageable = PageRequest.of(1,1);
 
         Mockito.when(rateService.getAllSort(any(),any(),anyList())).thenReturn(aRatePage());
-        ResponseEntity<List<RateDto>> responseEntity = rateController.getAllSorted(pageable.getPageNumber(),pageable.getPageSize(),"id","typeRate");
+        ResponseEntity<List<RateDto>> responseEntity = rateBackController.getAllSorted(pageable.getPageNumber(),pageable.getPageSize(),"id","typeRate");
 
 
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
@@ -93,7 +93,7 @@ public class RateControllerTest {
 
         Mockito.when(rateService.getRateById(anyInt())).thenReturn(aRate());
         Mockito.when(conversionService.convert(aRate(),RateDto.class)).thenReturn(aRateDto());
-        ResponseEntity<RateDto> responseEntity = rateController.getRateById(1);
+        ResponseEntity<RateDto> responseEntity = rateBackController.getRateById(1);
 
         assertEquals(aRate().getId(),responseEntity.getBody().getId());
         assertEquals(aRate().getTypeRate(),responseEntity.getBody().getTypeRate());
@@ -108,7 +108,7 @@ public class RateControllerTest {
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
         Mockito.when(rateService.addRate(aRate())).thenReturn(aRate());
-        ResponseEntity<Response> responseEntity = rateController.addRate(aRate());
+        ResponseEntity<Response> responseEntity = rateBackController.addRate(aRate());
 
         assertEquals(EntityURLBuilder.buildURL2("rates", aRate().getId()).toString(),responseEntity.getHeaders().get("Location").get(0));
         assertEquals(HttpStatus.CREATED.value(),responseEntity.getStatusCode().value());
@@ -119,7 +119,7 @@ public class RateControllerTest {
     public void deleteRateById() throws Exception {
 
         Mockito.doNothing().when(rateService).deleteRateById(1);
-        ResponseEntity<Object> responseEntity = rateController.deleteRateById(1);
+        ResponseEntity<Object> responseEntity = rateBackController.deleteRateById(1);
         assertEquals(HttpStatus.ACCEPTED.value(),responseEntity.getStatusCode().value());
     }
 

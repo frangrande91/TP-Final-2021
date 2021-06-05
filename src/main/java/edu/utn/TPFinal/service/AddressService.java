@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.service;
 
+import edu.utn.TPFinal.exceptions.ViolationChangeKeyAttributeException;
 import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.BrandNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
@@ -35,6 +36,14 @@ public class AddressService {
 
     public Address addAddress(Address address) throws SQLIntegrityConstraintViolationException {
         return addressRepository.save(address);
+    }
+
+    public Address updateAddress(Integer id, Address newAddress) throws ViolationChangeKeyAttributeException, AddressNotExistsException {
+        Address currentAddress = getAddressById(id);
+        if(!(currentAddress.getId().equals(newAddress.getId())) || !(currentAddress.getAddress().equals(newAddress.getAddress()))) {
+            throw new ViolationChangeKeyAttributeException("You can not change the id or address");
+        }
+        return addressRepository.save(newAddress);
     }
 
     public Page<Address> getAllAddress(Pageable pageable) {

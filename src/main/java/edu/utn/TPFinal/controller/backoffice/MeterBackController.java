@@ -1,7 +1,10 @@
 package edu.utn.TPFinal.controller.backoffice;
 
+import edu.utn.TPFinal.exceptions.ViolationChangeKeyAttributeException;
 import edu.utn.TPFinal.exceptions.alreadyExists.MeterAlreadyExistsException;
 import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
+import edu.utn.TPFinal.model.Rate;
 import edu.utn.TPFinal.model.dto.MeterDto;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.responses.Response;
@@ -30,14 +33,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/backoffice/meters")
-public class MeterController {
+public class MeterBackController {
 
     private final MeterService meterService;
     private final ConversionService conversionService;
     private final String METER_PATH = "meters";
 
     @Autowired
-    public MeterController(MeterService meterService,ConversionService conversionService) {
+    public MeterBackController(MeterService meterService, ConversionService conversionService) {
         this.meterService = meterService;
         this.conversionService = conversionService;
     }
@@ -52,6 +55,16 @@ public class MeterController {
                 .location(EntityURLBuilder.buildURL2(METER_PATH,meterCreated.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(EntityResponse.messageResponse("The meter has been created"));
+    }
+
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<Response> updateRate(@PathVariable Integer id,@RequestBody Meter meter) throws MeterNotExistsException, ViolationChangeKeyAttributeException {
+        meterService.updateMeter(id,meter);
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(EntityResponse.messageResponse("The meter has been updated"));
     }
 
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
