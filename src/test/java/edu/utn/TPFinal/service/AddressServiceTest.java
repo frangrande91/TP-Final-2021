@@ -244,6 +244,7 @@ public class AddressServiceTest {
             //then
             when(addressRepository.findById(aAddress().getId())).thenReturn(Optional.empty());
             verify(addressRepository, times(1)).findById(aAddress().getId());
+            verify(addressRepository, times(1)).deleteById(aAddress().getId());
         }
         catch (AddressNotExistsException e){
             fail(e);
@@ -256,7 +257,7 @@ public class AddressServiceTest {
         when(addressRepository.findById(aAddress().getId())).thenReturn(Optional.empty());
 
         //when and then
-        assertThrows(AddressNotExistsException.class, () -> addressService.addMeterToAddress(aAddress().getId(),aMeter().getId()) );
+        assertThrows(AddressNotExistsException.class, () -> addressService.deleteAddressById(aAddress().getId()));
         verify(addressRepository, times(1)).findById(aAddress().getId());
     }
 
