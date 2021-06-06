@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 import static edu.utn.TPFinal.utils.AddressTestUtils.*;
+import static edu.utn.TPFinal.utils.MeterTestUtils.aMeter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -122,7 +123,7 @@ public class AddressControllerTest {
     @Test
     public void addMeterToAddress() throws Exception {
         //given
-        doNothing().when(addressService).addMeterToAddress(anyInt(), anyInt());
+        doNothing().when(addressService).addMeterToAddress(aAddress().getId(), aMeter().getId());
 
         //when
         ResponseEntity<Response> responseEntity = addressController.addMeterToAddress(1,1);

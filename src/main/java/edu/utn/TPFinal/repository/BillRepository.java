@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 
 @Repository
 public interface BillRepository extends JpaRepository<Bill, Integer>, JpaSpecificationExecutor<Bill> {
-
     List<Bill> findAllByDateBetween(LocalDateTime from, LocalDateTime to);
 
 }

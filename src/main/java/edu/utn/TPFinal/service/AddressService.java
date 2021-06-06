@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.service;
 
+import edu.utn.TPFinal.exceptions.alreadyExists.AddressAlreadyExistsException;
 import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
@@ -15,8 +16,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
+
+import static java.util.Objects.isNull;
 
 @Service
 public class AddressService {
@@ -32,8 +34,14 @@ public class AddressService {
         this.rateService = rateService;
     }
 
-    public Address addAddress(Address address) throws SQLIntegrityConstraintViolationException {
-        return addressRepository.save(address);
+    public Address addAddress(Address address) throws AddressAlreadyExistsException {
+        if(isNull(addressRepository.findByIdOrAddress(address.getId(), address.getAddress()))){
+            return addressRepository.save(address);
+        }
+        else{
+            throw new AddressAlreadyExistsException("Address already exists");
+        }
+
     }
 
     public Page<Address> getAllAddress(Pageable pageable) {
@@ -45,7 +53,7 @@ public class AddressService {
     }
 
     public Page<Address> getAllSort(Integer page, Integer size, List<Sort.Order> orders) {
-        Pageable pageable = PageRequest.of(page,size, Sort.by(orders));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
         return addressRepository.findAll(pageable);
     }
 
@@ -53,7 +61,6 @@ public class AddressService {
     public Address getAddressById(Integer id) throws AddressNotExistsException {
         return addressRepository.findById(id).orElseThrow(() -> new AddressNotExistsException("Address not exists"));
     }
-
 
     public void addMeterToAddress(Integer id, Integer idMeter) throws MeterNotExistsException, AddressNotExistsException {
         Address address = getAddressById(id);

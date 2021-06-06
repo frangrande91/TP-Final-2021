@@ -34,8 +34,8 @@ public class BillService {
         this.addressService = addressService;
     }
 
-    public Bill addBill(Bill bill) {
-        return billRepository.save(bill);
+    public Bill addBill(Bill bill){
+            return billRepository.save(bill);
     }
 
     public Page<Bill> getAllBills(Pageable pageable) {

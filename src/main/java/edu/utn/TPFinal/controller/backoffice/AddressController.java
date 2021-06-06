@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.controller.backoffice;
 
+import edu.utn.TPFinal.exceptions.alreadyExists.AddressAlreadyExistsException;
 import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
@@ -46,7 +47,7 @@ public class AddressController {
 
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @PostMapping(value = "/")
-    public ResponseEntity<Response> addAddress(@RequestBody Address address) throws SQLIntegrityConstraintViolationException {
+    public ResponseEntity<Response> addAddress(@RequestBody Address address) throws AddressAlreadyExistsException {
         Address addressCreated = addressService.addAddress(address);
 
         return ResponseEntity

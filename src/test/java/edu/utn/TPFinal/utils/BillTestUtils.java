@@ -1,9 +1,11 @@
 package edu.utn.TPFinal.utils;
 
+import edu.utn.TPFinal.model.Address;
 import edu.utn.TPFinal.model.Bill;
 import edu.utn.TPFinal.model.dto.BillDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +31,17 @@ public class BillTestUtils {
 
     public static BillDto aBillDto(){
         return new BillDto();
+    }
+
+    public static Specification<Bill> aSpecBill(String value) {
+        if(value == null) {
+            return null;
+        }
+        else {
+            return (root, criteriaQuery, criteriaBuilder) -> {
+                return criteriaBuilder.like(root.get("bill.address.address"), "%" + value + "%");
+            };
+        }
     }
 
 
