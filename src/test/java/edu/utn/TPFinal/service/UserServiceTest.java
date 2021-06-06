@@ -21,6 +21,8 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static edu.utn.TPFinal.utils.AddressTestUtils.aAddress;
 import static edu.utn.TPFinal.utils.MeterTestUtils.*;
 import static edu.utn.TPFinal.utils.MeterTestUtils.aMeter;
 import static edu.utn.TPFinal.utils.RateTestUtils.aRate;
@@ -180,7 +182,7 @@ public class UserServiceTest {
             fail(ex);
         }
     }
-*/
+
     @Test
     public void loginError() {
         Integer id = 1234;
@@ -190,18 +192,23 @@ public class UserServiceTest {
 
         Mockito.verify(userRepository, Mockito.times(1)).findByUsernameAndPassword(aUser().getUsername(),aUser().getPassword());
     }
-
+*/
 
     @Test
     public void addAddressToClientUserOk()  {
         try {
             Integer idUser = 1;
             Integer idAddress = 1;
+
             Address address = new Address(1,aMeter(),aUser(),aRate(),"Brown 1855", new ArrayList<>());
             User user = Mockito.mock(User.class);
 
             Mockito.when(userRepository.findById(idUser)).thenReturn(Optional.of(aUser()));
             Mockito.when(addressService.getAddressById(1)).thenReturn(address);
+
+            Mockito.when(userRepository.findById(idUser)).thenReturn(Optional.of(aUser()));
+            Mockito.when(addressService.getAddressById(1)).thenReturn(aAddress());
+
             Mockito.when(userRepository.save(aUser())).thenReturn(aUser());
 
 
@@ -212,6 +219,7 @@ public class UserServiceTest {
 
             Mockito.verify(userRepository, Mockito.times(1)).findById(idUser);
             Mockito.verify(addressService, Mockito.times(1)).getAddressById(idAddress);
+            //Mockito.verify(userRepository, Mockito.times(1)).save(aUser());
         }
         catch (UserNotExistsException | ClientNotFoundException | AddressNotExistsException ex) {
             fail(ex);
@@ -236,7 +244,7 @@ public class UserServiceTest {
 
         Integer idUser = 1;
         Integer idAddress = 1;
-        Address address = new Address(1,aMeter(),aUser(),aRate(),"Brown 1855", new ArrayList<>());
+        //Address address = new Address(1,aMeter(),aUser(),aRate(),"Brown 1855", new ArrayList<>());
 
         Mockito.when(userRepository.findById(idUser)).thenReturn(Optional.of(aUserEmployee()));
 

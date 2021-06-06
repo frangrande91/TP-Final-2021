@@ -1,6 +1,5 @@
 package edu.utn.TPFinal.controller;
 
-import edu.utn.TPFinal.controller.app.BillAppController;
 import edu.utn.TPFinal.controller.backoffice.BillBackController;
 import edu.utn.TPFinal.model.Bill;
 import edu.utn.TPFinal.model.dto.BillDto;
@@ -19,7 +18,10 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
+import static edu.utn.TPFinal.utils.AddressTestUtils.aAddress;
 import static edu.utn.TPFinal.utils.BillTestUtils.*;
+import static edu.utn.TPFinal.utils.MeterTestUtils.aMeter;
+import static edu.utn.TPFinal.utils.UserTestUtils.aUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -126,7 +128,7 @@ public class BillAppControllerTest {
     @Test
     public void addClientToBill() throws Exception{
         //given
-        doNothing().when(billService).addClientToBill(anyInt(), anyInt());
+        when(billService.addClientToBill(aBill().getId(), aUser().getId())).thenReturn(aBill());
 
         //when
         ResponseEntity<Response> responseEntity = billBackController.addClientToBill(1,1);
@@ -138,20 +140,19 @@ public class BillAppControllerTest {
     @Test
     public void addAddressToBill() throws Exception{
         //given
-        doNothing().when(billService).addAddressToBill(anyInt(), anyInt());
+        when(billService.addAddressToBill(aBill().getId(), aAddress().getId())).thenReturn(aBill());
 
         //when
         ResponseEntity<Response> responseEntity = billBackController.addAddressToBill(1,1);
 
         //then
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
-
     }
 
     @Test
     public void addMeterToBill() throws Exception{
         //given
-        doNothing().when(billService).addMeterToBill(anyInt(), anyInt());
+        when(billService.addMeterToBill(aBill().getId(), aMeter().getId())).thenReturn(aBill());
 
         //when
         ResponseEntity<Response> responseEntity = billBackController.addMeterToBill(1,1);

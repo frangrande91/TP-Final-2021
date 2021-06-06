@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 import static edu.utn.TPFinal.utils.AddressTestUtils.*;
+import static edu.utn.TPFinal.utils.MeterTestUtils.aMeter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -122,7 +123,7 @@ public class AddressControllerTest {
     @Test
     public void addMeterToAddress() throws Exception {
         //given
-        doNothing().when(addressService).addMeterToAddress(anyInt(), anyInt());
+        when(addressService.addMeterToAddress(aAddress().getId(), aMeter().getId())).thenReturn(aAddress());
 
         //when
         ResponseEntity<Response> responseEntity = addressBackController.addMeterToAddress(1,1);
@@ -134,7 +135,7 @@ public class AddressControllerTest {
     @Test
     public void addRateToAddress() throws Exception{
         //given
-        doNothing().when(addressService).addRateToAddress(anyInt(), anyInt());
+        when(addressService.addRateToAddress(anyInt(), anyInt())).thenReturn(aAddress());
 
         //when
         ResponseEntity<Response> responseEntity = addressBackController.addRateToAddress(1,1);
@@ -155,8 +156,5 @@ public class AddressControllerTest {
         //then
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
     }
-
-
-
 
 }

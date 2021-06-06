@@ -1,11 +1,11 @@
 package edu.utn.TPFinal.controller.backoffice;
 
 import edu.utn.TPFinal.exceptions.ViolationChangeKeyAttributeException;
+import edu.utn.TPFinal.exceptions.alreadyExists.AddressAlreadyExistsException;
 import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.Address;
-import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.dto.AddressDto;
 import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.service.AddressService;
@@ -28,7 +28,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +47,7 @@ public class AddressBackController {
 
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @PostMapping(value = "/")
-    public ResponseEntity<Response> addAddress(@RequestBody Address address) throws SQLIntegrityConstraintViolationException {
+    public ResponseEntity<Response> addAddress(@RequestBody Address address) throws AddressAlreadyExistsException {
         Address addressCreated = addressService.addAddress(address);
 
         return ResponseEntity

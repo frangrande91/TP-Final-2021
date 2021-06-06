@@ -32,6 +32,8 @@ import static edu.utn.TPFinal.utils.UserTestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
+
 import java.util.*;
 
 public class UserControllerTest {
@@ -55,7 +57,7 @@ public class UserControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
-        Mockito.when(userService.addUser(aUser())).thenReturn(aUser());
+        when(userService.addUser(aUser())).thenReturn(aUser());
         ResponseEntity<Response> responseEntity = userController.addUser(aUser());
 
         assertEquals(EntityURLBuilder.buildURL2("users", aRate().getId()).toString(),responseEntity.getHeaders().get("Location").get(0));
@@ -67,7 +69,7 @@ public class UserControllerTest {
 
         Page<User> userPage = aUserPage();
 
-        Mockito.when(userService.getAllUsers(any())).thenReturn(userPage);
+        when(userService.getAllUsers(any())).thenReturn(userPage);
         ResponseEntity<List<UserDto>> responseEntity = userController.getAllUsers(1,1);
 
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
@@ -83,7 +85,7 @@ public class UserControllerTest {
         Page<Rate> ratePage = aRatePage();
         Pageable pageable = PageRequest.of(1,1);
 
-        Mockito.when(userService.getAllSort(any(),any(),anyList())).thenReturn(aUserPage());
+        when(userService.getAllSort(any(),any(),anyList())).thenReturn(aUserPage());
         ResponseEntity<List<UserDto>> responseEntity = userController.getAllSorted(pageable.getPageNumber(),pageable.getPageSize(),"firstName","lastName");
 
 
@@ -101,7 +103,7 @@ public class UserControllerTest {
         Page<User> userPage = aUserPage();
         Pageable pageable = PageRequest.of(1,1);
 
-        Mockito.when(userService.getAllSpec(userSpecification,pageable)).thenReturn(userPage);
+        when(userService.getAllSpec(userSpecification,pageable)).thenReturn(userPage);
         ResponseEntity<List<UserDto>> responseEntity = userController.getAllSpec(userSpecification,pageable);
 
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
@@ -113,8 +115,8 @@ public class UserControllerTest {
     @Test
     public void getUserById() throws Exception {
 
-        Mockito.when(userService.getUserById(anyInt())).thenReturn(aUser());
-        Mockito.when(conversionService.convert(aUser(),UserDto.class)).thenReturn(aUserDto());
+        when(userService.getUserById(anyInt())).thenReturn(aUser());
+        when(conversionService.convert(aUser(),UserDto.class)).thenReturn(aUserDto());
         ResponseEntity<UserDto> responseEntity = userController.getUserById(1);
 
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
@@ -150,7 +152,7 @@ public class UserControllerTest {
 
     @Test
     public void addAddressToClientUser() throws Exception{
-        Mockito.doNothing().when(userService).addAddressToClientUser(1,1);
+        when(userService.addAddressToClientUser(1,1)).thenReturn(aUser());
         ResponseEntity<Response> responseEntity = userController.addAddressToClientUser(1,1);
         assertEquals(HttpStatus.ACCEPTED.value(),responseEntity.getStatusCode().value());
     }

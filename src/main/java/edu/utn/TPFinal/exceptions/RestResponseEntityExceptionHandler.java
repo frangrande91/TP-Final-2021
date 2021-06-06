@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.exceptions;
 
+import edu.utn.TPFinal.exceptions.alreadyExists.AddressAlreadyExistsException;
 import edu.utn.TPFinal.exceptions.alreadyExists.RateAlreadyExists;
 import edu.utn.TPFinal.exceptions.notFound.*;
 import edu.utn.TPFinal.model.responses.Response;
@@ -97,5 +98,11 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler({AccessNotAllowedException.class})
     public ResponseEntity<Object> handlerAccessNotAllowedException(AccessNotAllowedException ex,WebRequest request) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(EntityResponse.messageResponse(ex.getMessage()));
+    }
+
+    @ExceptionHandler({AddressAlreadyExistsException.class})
+    public ResponseEntity<Object> handlerAddressAlreadyExists(AddressAlreadyExistsException ex, WebRequest request) {
+        System.out.println("TIPO DE EXCEPCION:"+ex.getClass());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(EntityResponse.messageResponse(ex.getMessage()));
     }
 }

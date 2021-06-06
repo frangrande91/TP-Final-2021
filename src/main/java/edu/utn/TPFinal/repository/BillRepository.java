@@ -10,8 +10,6 @@ import java.util.*;
 
 @Repository
 public interface BillRepository extends JpaRepository<Bill, Integer>, JpaSpecificationExecutor<Bill> {
-
     Page<Bill> findAllByUserClientAndDateBetween(User userClient, Date from, Date to, Pageable pageable);
     Page<Bill> findAllByUserClientAndPayed(User userClient, Boolean payed, Pageable pageable);
-
 }
