@@ -22,5 +22,6 @@ public class BillDto {
     private Date date;
     private Double totalConsumption;
     private Double totalPayable;
+    private Boolean payed;
 
 }

@@ -5,10 +5,7 @@ import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
 import edu.utn.TPFinal.exceptions.ErrorLoginException;
 import edu.utn.TPFinal.exceptions.notFound.ClientNotFoundException;
 import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
-import edu.utn.TPFinal.model.Address;
-import edu.utn.TPFinal.model.Bill;
-import edu.utn.TPFinal.model.TypeUser;
-import edu.utn.TPFinal.model.User;
+import edu.utn.TPFinal.model.*;
 import edu.utn.TPFinal.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -78,6 +75,17 @@ public class UserService {
         else {
             throw new ClientNotFoundException(String.format("The client with id %s ",idClientUser," do not exists"));
         }
+    }
+
+    public Boolean containsMeter(User user, Meter meter) {
+        List<Address> addressList = user.getAddressList();
+        
+        for(Address address : addressList) {
+            if(address.getMeter().getId().equals(meter.getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 /*    public List<Bill> getAllBills(Integer idClientUser) throws UserNotExistsException, ClientNotFoundException {

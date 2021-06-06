@@ -1,5 +1,7 @@
 package edu.utn.TPFinal.controller;
 
+import edu.utn.TPFinal.controller.app.BillAppController;
+import edu.utn.TPFinal.controller.backoffice.BillBackController;
 import edu.utn.TPFinal.model.Bill;
 import edu.utn.TPFinal.model.dto.BillDto;
 import edu.utn.TPFinal.model.responses.Response;
@@ -22,18 +24,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-public class BillControllerTest {
+public class BillAppControllerTest {
 
     private static BillService billService;
     private static ConversionService conversionService;
-    private static BillController billController;
+    private static BillBackController billBackController;
 
 
     @BeforeAll
     public static void setUp(){
         billService = mock(BillService.class);
         conversionService = mock(ConversionService.class);
-        billController = new BillController(billService, conversionService);
+        billBackController = new BillBackController(billService, conversionService);
     }
 
     @Test
@@ -44,7 +46,7 @@ public class BillControllerTest {
         when(billService.getAllBills(pageable)).thenReturn(pageBill);
 
         //when
-        ResponseEntity<List<BillDto>> responseEntity = billController.getAllBills(1, 1);
+        ResponseEntity<List<BillDto>> responseEntity = billBackController.getAllBills(1, 1);
 
         //then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -62,7 +64,7 @@ public class BillControllerTest {
         when(billService.getAllBills(pageable)).thenReturn(pageBill);
 
         //when
-        ResponseEntity<List<BillDto>> responseEntity = billController.getAllBills(pageable.getPageSize(), pageable.getPageNumber());
+        ResponseEntity<List<BillDto>> responseEntity = billBackController.getAllBills(pageable.getPageSize(), pageable.getPageNumber());
 
         //then
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
@@ -78,7 +80,7 @@ public class BillControllerTest {
         when(billService.getAllSort(any(), any(), anyList())).thenReturn(billPage);
 
         //when
-        ResponseEntity<List<BillDto>> responseEntity = billController.getAllSorted(pageable.getPageSize(), pageable.getPageNumber(), "id", "user");
+        ResponseEntity<List<BillDto>> responseEntity = billBackController.getAllSorted(pageable.getPageSize(), pageable.getPageNumber(), "id", "user");
 
         //then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -96,7 +98,7 @@ public class BillControllerTest {
         Mockito.when(billService.getAllSpec(billSpecification, pageable)).thenReturn(billPage);
 
         //when
-        ResponseEntity<List<BillDto>> responseEntity = billController.getAllSpec(billSpecification,pageable);
+        ResponseEntity<List<BillDto>> responseEntity = billBackController.getAllSpec(billSpecification,pageable);
 
         //then
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
@@ -113,7 +115,7 @@ public class BillControllerTest {
         when(conversionService.convert(aBill(), BillDto.class)).thenReturn(aBillDto());
 
         //when
-        ResponseEntity<BillDto> responseEntity = billController.getBillById(1);
+        ResponseEntity<BillDto> responseEntity = billBackController.getBillById(1);
 
         //then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -127,7 +129,7 @@ public class BillControllerTest {
         doNothing().when(billService).addClientToBill(anyInt(), anyInt());
 
         //when
-        ResponseEntity<Response> responseEntity = billController.addClientToBill(1,1);
+        ResponseEntity<Response> responseEntity = billBackController.addClientToBill(1,1);
 
         //then
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
@@ -139,7 +141,7 @@ public class BillControllerTest {
         doNothing().when(billService).addAddressToBill(anyInt(), anyInt());
 
         //when
-        ResponseEntity<Response> responseEntity = billController.addAddressToBill(1,1);
+        ResponseEntity<Response> responseEntity = billBackController.addAddressToBill(1,1);
 
         //then
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
@@ -152,7 +154,7 @@ public class BillControllerTest {
         doNothing().when(billService).addMeterToBill(anyInt(), anyInt());
 
         //when
-        ResponseEntity<Response> responseEntity = billController.addMeterToBill(1,1);
+        ResponseEntity<Response> responseEntity = billBackController.addMeterToBill(1,1);
 
         //then
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
@@ -165,7 +167,7 @@ public class BillControllerTest {
         doNothing().when(billService).deleteBillById(anyInt());
 
         //when
-        ResponseEntity<Object> responseEntity = billController.deleteBillById(1);
+        ResponseEntity<Object> responseEntity = billBackController.deleteBillById(1);
 
         //then
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());

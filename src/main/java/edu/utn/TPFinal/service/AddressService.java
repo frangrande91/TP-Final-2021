@@ -7,6 +7,7 @@ import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.Address;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.Rate;
+import edu.utn.TPFinal.model.User;
 import edu.utn.TPFinal.repository.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -58,6 +59,9 @@ public class AddressService {
         return addressRepository.findAll(pageable);
     }
 
+    public List<Address> getAllByUser(User userClient) {
+        return addressRepository.findAllByUserClient(userClient);
+    }
 
     public Address getAddressById(Integer id) throws AddressNotExistsException {
         return addressRepository.findById(id).orElseThrow(() -> new AddressNotExistsException("Address not exists"));

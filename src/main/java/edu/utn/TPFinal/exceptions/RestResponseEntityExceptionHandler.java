@@ -91,7 +91,11 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler({RateAlreadyExists.class})
     public ResponseEntity<Object> handlerRateAlreadyExists(RateAlreadyExists ex,WebRequest request) {
-        System.out.println("TIPO DE EXCEPCION:"+ex.getClass());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(EntityResponse.messageResponse(ex.getMessage()));
+    }
+
+    @ExceptionHandler({AccessNotAllowedException.class})
+    public ResponseEntity<Object> handlerAccessNotAllowedException(AccessNotAllowedException ex,WebRequest request) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(EntityResponse.messageResponse(ex.getMessage()));
     }
 }

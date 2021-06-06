@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.repository;
 
+import edu.utn.TPFinal.model.Address;
 import edu.utn.TPFinal.model.Bill;
 import edu.utn.TPFinal.model.TypeUser;
 import edu.utn.TPFinal.model.User;
@@ -15,5 +16,4 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User> {
     User findByUsernameAndPassword (String username, String password);
     User findByIdOrUsername(Integer id, String username);
-
 }

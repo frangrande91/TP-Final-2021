@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.service;
 
+import edu.utn.TPFinal.exceptions.AccessNotAllowedException;
 import edu.utn.TPFinal.exceptions.notFound.*;
 import edu.utn.TPFinal.model.*;
 import edu.utn.TPFinal.repository.BillRepository;
@@ -35,20 +36,36 @@ public class BillService {
         this.addressService = addressService;
     }
 
+    public Page<Bill> getAllBillsByUserClientAndBetweenDate(Integer idQueryUser, Integer idClientUser, Date from, Date to, Pageable pageable) throws UserNotExistsException, ClientNotFoundException, AccessNotAllowedException {
+        User queryUser = userService.getUserById(idQueryUser);
+        User clientUser = userService.getUserById(idClientUser);
+        userPermissionCheck(queryUser,clientUser);
+        return billRepository.findAllByUserClientAndDateBetween(clientUser ,from, to, pageable);
+    }
+
+    public Page<Bill> getAllUnpaidByUserClient(Integer idQueryUser, Integer idClientUser, Pageable pageable) throws UserNotExistsException, AccessNotAllowedException, ClientNotFoundException {
+        User queryUser = userService.getUserById(idQueryUser);
+        User clientUser = userService.getUserById(idClientUser);
+        userPermissionCheck(queryUser,clientUser);
+        return billRepository.findAllByUserClientAndPayed(clientUser,false, pageable);
+    }
+
+    private void userPermissionCheck(User queryUser,User clientUser) throws ClientNotFoundException, AccessNotAllowedException {
+        if(queryUser.getId().equals(clientUser.getId()) || queryUser.getTypeUser().equals(TypeUser.EMPLOYEE)) {
+            if(!clientUser.getTypeUser().equals(TypeUser.CLIENT)) {
+                throw new ClientNotFoundException(String.format("The client with id %s ",clientUser.getId()," do not exists"));
+            }
+        } else {
+            throw new AccessNotAllowedException("You have not access to this resource");
+        }
+    }
+
     public Bill addBill(Bill bill) {
         return billRepository.save(bill);
     }
 
     public Page<Bill> getAllBills(Pageable pageable) {
         return billRepository.findAll(pageable);
-    }
-
-    public Page<Bill> getAllBillsByUserClientAndBetweenDate(Integer idClientUser, Date from, Date to, Pageable pageable) throws UserNotExistsException, ClientNotFoundException {
-        User clientUser = userService.getUserById(idClientUser);
-        if(!clientUser.getTypeUser().equals(TypeUser.CLIENT)) {
-            throw new ClientNotFoundException(String.format("The client with id %s ",idClientUser," do not exists"));
-        }
-        return billRepository.findAllByUserClientAndDateBetween(clientUser ,from, to, pageable);
     }
 
     public Page<Bill> getAllSort(Integer page, Integer size, List<Sort.Order> orders) {
@@ -96,4 +113,5 @@ public class BillService {
     public Page<Bill> getAllSortedBetweenDate(Date from, Date to, Integer page, Integer size, List<Sort.Order> orders) {
         return null;
     }
+
 }

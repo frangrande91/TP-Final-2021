@@ -45,12 +45,12 @@ public class Bill {
 
     private Date date;
 
-    private Boolean payed;
-
     private Date expiration;
     
     private Double totalConsumption;
 
     private Double totalPayable;
+
+    private Boolean payed;
 
 }

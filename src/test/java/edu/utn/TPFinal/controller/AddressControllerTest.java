@@ -1,6 +1,6 @@
 package edu.utn.TPFinal.controller;
 
-import edu.utn.TPFinal.controller.backoffice.AddressController;
+import edu.utn.TPFinal.controller.backoffice.AddressBackController;
 import edu.utn.TPFinal.model.Address;
 import edu.utn.TPFinal.model.dto.AddressDto;
 import edu.utn.TPFinal.model.responses.Response;
@@ -27,13 +27,13 @@ public class AddressControllerTest {
 
     private static AddressService addressService;
     private static ConversionService conversionService;
-    private static AddressController addressController;
+    private static AddressBackController addressBackController;
 
     @BeforeAll
     public static void setUp(){
         addressService = mock(AddressService.class);
         conversionService = mock(ConversionService.class);
-        addressController = new AddressController(addressService, conversionService);
+        addressBackController = new AddressBackController(addressService, conversionService);
     }
 
     @Test
@@ -44,7 +44,7 @@ public class AddressControllerTest {
         when(addressService.getAllAddress(pageable)).thenReturn(pageAddress);
 
         //when
-        ResponseEntity<List<AddressDto>> responseEntity = addressController.getAllAddresses(10, 1);
+        ResponseEntity<List<AddressDto>> responseEntity = addressBackController.getAllAddresses(10, 1);
 
         //then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -62,7 +62,7 @@ public class AddressControllerTest {
         when(addressService.getAllAddress(pageable)).thenReturn(pageAddress);
 
         //when
-        ResponseEntity<List<AddressDto>> responseEntity = addressController.getAllAddresses(pageable.getPageSize(), pageable.getPageNumber());
+        ResponseEntity<List<AddressDto>> responseEntity = addressBackController.getAllAddresses(pageable.getPageSize(), pageable.getPageNumber());
 
         //then
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
@@ -77,7 +77,7 @@ public class AddressControllerTest {
         when(addressService.getAllSort(any(), any(), anyList())).thenReturn(addressPage);
 
         //when
-        ResponseEntity<List<AddressDto>> responseEntity = addressController.getAllSorted(pageable.getPageSize(), pageable.getPageNumber(), "id", "address");
+        ResponseEntity<List<AddressDto>> responseEntity = addressBackController.getAllSorted(pageable.getPageSize(), pageable.getPageNumber(), "id", "address");
 
         //then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -96,7 +96,7 @@ public class AddressControllerTest {
         Mockito.when(addressService.getAllSpec(addressSpecification, pageable)).thenReturn(addressPage);
 
         //when
-        ResponseEntity<List<AddressDto>> responseEntity = addressController.getAllSpec(addressSpecification,pageable);
+        ResponseEntity<List<AddressDto>> responseEntity = addressBackController.getAllSpec(addressSpecification,pageable);
 
         //then
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
@@ -112,7 +112,7 @@ public class AddressControllerTest {
         when(conversionService.convert(aAddress(), AddressDto.class)).thenReturn(aAddressDto());
 
         //when
-        ResponseEntity<AddressDto> responseEntity = addressController.getAddressById(1);
+        ResponseEntity<AddressDto> responseEntity = addressBackController.getAddressById(1);
 
         //then
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -125,7 +125,7 @@ public class AddressControllerTest {
         doNothing().when(addressService).addMeterToAddress(anyInt(), anyInt());
 
         //when
-        ResponseEntity<Response> responseEntity = addressController.addMeterToAddress(1,1);
+        ResponseEntity<Response> responseEntity = addressBackController.addMeterToAddress(1,1);
 
         //then
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
@@ -137,7 +137,7 @@ public class AddressControllerTest {
         doNothing().when(addressService).addRateToAddress(anyInt(), anyInt());
 
         //when
-        ResponseEntity<Response> responseEntity = addressController.addRateToAddress(1,1);
+        ResponseEntity<Response> responseEntity = addressBackController.addRateToAddress(1,1);
 
         //then
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
@@ -150,7 +150,7 @@ public class AddressControllerTest {
         doNothing().when(addressService).deleteAddressById(anyInt());
 
         //when
-        ResponseEntity<Object> responseEntity = addressController.deleteAddressById(1);
+        ResponseEntity<Object> responseEntity = addressBackController.deleteAddressById(1);
 
         //then
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());

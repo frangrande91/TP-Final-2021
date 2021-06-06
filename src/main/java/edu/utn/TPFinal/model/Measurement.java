@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -31,7 +32,7 @@ public class Measurement {
     private Double quantityKw;
 
     @NotNull (message = "dateTime should not be null")
-    private LocalDateTime dateTime;
+    private Date date;
     
     private Double priceMeasurement;
 
