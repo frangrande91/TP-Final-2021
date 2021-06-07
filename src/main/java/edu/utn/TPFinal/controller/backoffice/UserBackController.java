@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.controller;
+package edu.utn.TPFinal.controller.backoffice;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.utn.TPFinal.exceptions.ErrorLoginException;
 import edu.utn.TPFinal.exceptions.alreadyExists.UserAlreadyExists;
@@ -45,14 +45,14 @@ import static edu.utn.TPFinal.utils.Constants.*;
 @RestController
 @RequestMapping("/users")
 @Slf4j
-public class UserController {
+public class UserBackController {
 
     private UserService userService;
     private ConversionService conversionService;
     private static final String USER_PATH = "users";
 
     @Autowired
-    public UserController(UserService userService, ConversionService conversionService) {
+    public UserBackController(UserService userService, ConversionService conversionService) {
         this.userService = userService;
         this.conversionService = conversionService;
     }
@@ -111,14 +111,6 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
-    /*@GetMapping("/{username}/{password}")
-    public ResponseEntity<UserDto> login(@PathVariable String username, @PathVariable String password) throws ErrorLoginException {
-        UserDto userDto = conversionService.convert(userService.login(username,password),UserDto.class);
-        return ResponseEntity.status(HttpStatus.OK).body(userDto);
-
-
-    }*/
-
     @PutMapping("/{idClient}/addresses/{idAddress}")
     public ResponseEntity<Response> addAddressToClientUser(@PathVariable Integer idClient, @PathVariable Integer idAddress) throws UserNotExistsException, AddressNotExistsException, ClientNotFoundException {
         userService.addAddressToClientUser(idClient,idAddress);
@@ -132,40 +124,4 @@ public class UserController {
         return ResponseEntity.accepted().build();
     }
 
-    @PostMapping(value = "/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) {
-        User user = userService.login(loginRequestDto.getUsername(), loginRequestDto.getPassword());
-        if (user!=null){
-            UserDto dto = conversionService.convert(user,UserDto.class);
-            return ResponseEntity.ok(LoginResponseDto.builder().token(this.generateToken(dto)).build());
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-    }
-
-    @GetMapping(value = "/userDetails")
-    public ResponseEntity<User> userDetails(Authentication auth) {
-        return ResponseEntity.ok((User) auth.getPrincipal());
-    }
-
-    private String generateToken(UserDto userDto) {
-        try {
-            String role = userDto.getTypeUser().toString();
-            ObjectMapper objectMapper = new ObjectMapper();
-            List<GrantedAuthority> grantedAuthorities = AuthorityUtils.commaSeparatedStringToAuthorityList(role);
-            String token = Jwts
-                    .builder()
-                    .setId("JWT")
-                    .setSubject(userDto.getUsername())
-                    .claim("user", objectMapper.writeValueAsString(userDto))
-                    .claim("authorities",grantedAuthorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-                    .setIssuedAt(new Date(System.currentTimeMillis()))
-                    .setExpiration(new Date(System.currentTimeMillis() + 1000000))
-                    .signWith(SignatureAlgorithm.HS512, JWT_SECRET.getBytes()).compact();
-            return  token;
-        } catch(Exception e) {
-            return "dummy";
-        }
-
-    }
 }

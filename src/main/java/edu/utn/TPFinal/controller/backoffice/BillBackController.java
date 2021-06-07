@@ -41,7 +41,44 @@ public class BillBackController {
 
     }
 
+    /**PUNTO 4*/
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @GetMapping("/addresses/{idAddress}/unpaid")
+    public ResponseEntity<List<BillDto>> getAllUnpaidByAddress(@PathVariable Integer idAddress,
+                                                               @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                                               @RequestParam(value = "page", defaultValue = "0") Integer page) throws AddressNotExistsException {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Bill> billPage = billService.getAllUnpaidByAddress(idAddress,pageable);
+        Page<BillDto> billDtoPage = billPage.map(bill -> conversionService.convert(bill, BillDto.class));
+        return EntityResponse.listResponse(billDtoPage);
+    }
+
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @GetMapping("/addresses/{idAddress}/unpaid/sort")
+    public ResponseEntity<List<BillDto>> getAllUnpaidByAddress(@PathVariable Integer idAddress,
+                                                               @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                                               @RequestParam(value = "page", defaultValue = "0") Integer page,
+                                                               @RequestParam String field1, @RequestParam String field2) throws AddressNotExistsException {
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(new Sort.Order(Sort.Direction.DESC,field1));
+        orders.add(new Sort.Order(Sort.Direction.DESC,field2));
+        Pageable pageable = PageRequest.of(page,size,Sort.by(orders));
+        Page<Bill> billPage = billService.getAllUnpaidByAddress(idAddress,pageable);
+        Page<BillDto> billDtoPage = billPage.map(bill -> conversionService.convert(bill, BillDto.class));
+        return EntityResponse.listResponse(billDtoPage);
+    }
+
+
+    /*
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteBillById(@PathVariable Integer id) throws BillNotExistsException{
+        billService.deleteBillById(id);
+        return ResponseEntity.accepted().build();
+    }
+
     @PostMapping("/")
+
     public ResponseEntity<Response> addBill(@RequestBody Bill bill){
         Bill billCreated = billService.addBill(bill);
         return ResponseEntity
@@ -51,7 +88,7 @@ public class BillBackController {
                 .body(Response.builder().message("The bill has been created").build());
     }
 
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE') OR hasAuthority('CLIENT')")
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("/users/{idClient}")
     public ResponseEntity<List<BillDto>> getAllBills( @RequestParam(value = "size", defaultValue = "10") Integer size,
                                                       @RequestParam(value = "page", defaultValue = "0") Integer page
@@ -93,7 +130,7 @@ public class BillBackController {
         return ResponseEntity.ok(billDto);
     }
 
-    @PutMapping("/{id}/client/{idClient}")
+   /* @PutMapping("/{id}/client/{idClient}")
     public ResponseEntity<Response> addClientToBill(@PathVariable Integer id, @PathVariable Integer idClient) throws UserNotExistsException, BillNotExistsException {
         billService.addClientToBill(id, idClient);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(Response.builder().message("The bill has been modified").build());
@@ -110,12 +147,6 @@ public class BillBackController {
     public ResponseEntity<Response> addMeterToBill(@PathVariable Integer id, @PathVariable Integer idMeter) throws MeterNotExistsException, BillNotExistsException {
         billService.addMeterToBill(id, idMeter);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(Response.builder().message("The bill has been modified").build());
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteBillById(@PathVariable Integer id) throws BillNotExistsException{
-        billService.deleteBillById(id);
-        return ResponseEntity.accepted().build();
-    }
+    }*/
 
 }

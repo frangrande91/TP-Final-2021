@@ -14,4 +14,7 @@ import java.util.*;
 public interface MeasurementRepository extends JpaRepository<Measurement, Integer>, JpaSpecificationExecutor<Measurement> {
 
     Page<Measurement> findAllByMeterAndDateBetween(Meter meter,Date from, Date to, Pageable pageable);
+    List<Measurement> findAllByMeterAndDateBetween(Meter meter,Date from, Date to);
+    Page<Measurement> findByMeterAndDateBefore(Meter meter, Date from, Pageable pageable);
+
 }

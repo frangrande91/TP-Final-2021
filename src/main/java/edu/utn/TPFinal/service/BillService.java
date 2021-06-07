@@ -46,6 +46,11 @@ public class BillService {
         return billRepository.findAllByUserClientAndPayed(clientUser,false, pageable);
     }
 
+    public Page<Bill> getAllUnpaidByAddress(Integer idAddress, Pageable pageable) throws AddressNotExistsException {
+        Address address = addressService.getAddressById(idAddress);
+        return billRepository.findAllByAddressAndPayed(address,false, pageable);
+    }
+
     private void userPermissionCheck(User queryUser,User clientUser) throws ClientNotFoundException, AccessNotAllowedException {
         if(queryUser.getId().equals(clientUser.getId()) || queryUser.getTypeUser().equals(TypeUser.EMPLOYEE)) {
             if(!clientUser.getTypeUser().equals(TypeUser.CLIENT)) {

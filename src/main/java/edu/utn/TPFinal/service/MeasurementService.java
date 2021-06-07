@@ -3,6 +3,8 @@ package edu.utn.TPFinal.service;
 import edu.utn.TPFinal.exceptions.AccessNotAllowedException;
 import edu.utn.TPFinal.exceptions.notFound.*;
 import edu.utn.TPFinal.model.*;
+import edu.utn.TPFinal.model.dto.UserDto;
+import edu.utn.TPFinal.model.responses.ClientConsumption;
 import edu.utn.TPFinal.repository.MeasurementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,23 +35,65 @@ public class MeasurementService {
         this.userService = userService;
     }
 
-    /*public Page<Measurement> getAllByUserAndAddress(Integer idUserClient,Integer idAddress, Pageable pageable) throws AddressNotExistsException, UserNotExistsException {
-        User userClient = userService.getUserById(idUserClient);
-        Address address = addressService.getAddressById(idAddress);
-        if(userClient.getAddressList().contains(address)) {
-            return measurementRepository.findAllByMeterIn(address, pageable);
-        }
-        else {
-            throw new AddressNotExistsException("The address not exists for this client");
-        }
-    }*/
-
     public Page<Measurement> getAllByMeterAndDateBetween(Integer idMeter,Integer idUser, Date from, Date to, Pageable pageable) throws MeterNotExistsException, UserNotExistsException, AccessNotAllowedException {
         Meter meter = meterService.getMeterById(idMeter);
         User user = userService.getUserById(idUser);
 
         if(userService.containsMeter(user,meter) || user.getTypeUser().equals(TypeUser.EMPLOYEE)) {
             return measurementRepository.findAllByMeterAndDateBetween(meter,from,to,pageable);
+        }
+        else {
+            throw new AccessNotAllowedException("You have not access to this resource");
+        }
+    }
+
+    public ClientConsumption getConsumptionByMeterAndDateBetween(Integer idMeter, Integer idQueryUser, Date from, Date to) throws MeterNotExistsException, UserNotExistsException, AccessNotAllowedException {
+        Meter meter = meterService.getMeterById(idMeter);
+        User queryUser = userService.getUserById(idQueryUser);
+        User clientUser = meter.getAddress().getUserClient();
+
+        double totalConsumptionKw = 0.0;
+        double totalConsumptionMoney = 0.0;
+        double lastMeasurementKw = 0.0;
+
+        Pageable pageable = PageRequest.of(0,1, Sort.by(List.of(new Sort.Order(Sort.Direction.DESC, "date"))));
+
+        if(userService.containsMeter(queryUser,meter) || queryUser.getTypeUser().equals(TypeUser.EMPLOYEE)) {
+
+            List<Measurement> measurements = measurementRepository.findAllByMeterAndDateBetween(meter,from,to);
+
+            if(!measurements.isEmpty()) {
+                List<Measurement> lastMeasurementList = measurementRepository.findByMeterAndDateBefore(meter,from,pageable).toList();
+
+
+                if (!lastMeasurementList.isEmpty()) {
+                    lastMeasurementKw = lastMeasurementList.get(0).getQuantityKw();
+                }
+
+                for(Measurement m : measurements) {
+                    totalConsumptionMoney += m.getPriceMeasurement();
+                }
+
+                totalConsumptionKw = measurements.get(measurements.size() - 1).getQuantityKw() - lastMeasurementKw;
+                return ClientConsumption.builder()
+                        .consumptionKw(totalConsumptionKw)
+                        .consumptionMoney(totalConsumptionMoney)
+                        .quantityMeasurements(measurements.size())
+                        .from(from)
+                        .to(to)
+                        .clientUser(new UserDto(clientUser.getId(),clientUser.getFirstName(),clientUser.getLastName(),clientUser.getUsername(),clientUser.getTypeUser()))
+                        .build();
+            }
+            else {
+                return ClientConsumption.builder()
+                        .consumptionKw(0.0)
+                        .consumptionMoney(0.0)
+                        .quantityMeasurements(0)
+                        .from(from)
+                        .to(to)
+                        .clientUser(new UserDto(clientUser.getId(),clientUser.getFirstName(),clientUser.getLastName(),clientUser.getUsername(),clientUser.getTypeUser()))
+                        .build();
+            }
         }
         else {
             throw new AccessNotAllowedException("You have not access to this resource");

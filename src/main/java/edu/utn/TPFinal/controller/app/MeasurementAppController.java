@@ -5,9 +5,11 @@ import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.MeasurementNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
+import edu.utn.TPFinal.model.TypeUser;
 import edu.utn.TPFinal.model.dto.MeasurementDto;
 import edu.utn.TPFinal.model.Measurement;
 import edu.utn.TPFinal.model.dto.UserDto;
+import edu.utn.TPFinal.model.responses.ClientConsumption;
 import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.service.MeasurementService;
 import edu.utn.TPFinal.utils.EntityResponse;
@@ -41,13 +43,24 @@ public class MeasurementAppController {
 
     private MeasurementService measurementService;
     private ConversionService conversionService;
-    private static final String MEASUREMENT_PATH = "measurement";
-
 
     @Autowired
     public MeasurementAppController(MeasurementService measurementService, ConversionService conversionService) {
         this.measurementService = measurementService;
         this.conversionService = conversionService;
+    }
+
+    /**Punto 4*/
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE') OR hasAuthority('CLIENT')")
+    @GetMapping("/meters/{idMeter}/consumption")
+    public ResponseEntity<ClientConsumption> getConsumptionByMeter(@PathVariable Integer idMeter,
+                                                              @RequestParam(value = "from", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
+                                                              @RequestParam(value = "to", defaultValue = "2020-01-05") @DateTimeFormat(pattern = "yyyy-MM-dd")Date to,
+                                                              Authentication authentication) throws UserNotExistsException, AccessNotAllowedException, MeterNotExistsException {
+
+        UserDto userDto = (UserDto) authentication.getPrincipal();
+        ClientConsumption clientConsumption = measurementService.getConsumptionByMeterAndDateBetween(idMeter, userDto.getId(), from, to);
+        return ResponseEntity.status(HttpStatus.OK).body(clientConsumption);
     }
 
     /**Punto 5*/
@@ -64,70 +77,6 @@ public class MeasurementAppController {
         Page<Measurement> measurementPage = measurementService.getAllByMeterAndDateBetween(idMeter,userDto.getId(),from,to,pageable);
         Page<MeasurementDto> measurementDtoPage = measurementPage.map(measurement -> conversionService.convert(measurement,MeasurementDto.class));
         return EntityResponse.listResponse(measurementDtoPage);
-    }
-
-    @PostMapping("/")
-    public ResponseEntity<Response> addMeasurement(@RequestBody Measurement measurement) {
-        Measurement measurementCreated = measurementService.addMeasurement(measurement);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .location(EntityURLBuilder.buildURL2(MEASUREMENT_PATH,measurementCreated.getId()))
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(EntityResponse.messageResponse("The measurement has been created"));
-    }
-
-    @GetMapping
-    public ResponseEntity<List<MeasurementDto>> getAllMeasurements(@RequestParam(value = "size", defaultValue = "10") Integer size,
-                                             @RequestParam(value = "page", defaultValue = "0") Integer page){
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Measurement> measurementPage = measurementService.getAllMeasurements(pageable);
-        Page<MeasurementDto> measurementDtoPage = measurementPage.map(measurement -> conversionService.convert(measurement,MeasurementDto.class));
-        return EntityResponse.listResponse(measurementDtoPage);
-    }
-
-    @GetMapping("/spec")
-    public ResponseEntity<List<MeasurementDto>> getAllSpec(
-            @And({
-                    @Spec(path = "model", spec = Equal.class)
-            }) Specification<Measurement> measurementSpecification, Pageable pageable ){
-        Page<Measurement> measurementPage = measurementService.getAllSpec(measurementSpecification,pageable);
-        Page<MeasurementDto> measurementDtoPage = measurementPage.map(measurement -> conversionService.convert(measurement,MeasurementDto.class));
-        return EntityResponse.listResponse(measurementDtoPage);
-    }
-
-    @GetMapping("/sort")
-    public ResponseEntity<List<MeasurementDto>> getAllSorted(@RequestParam(value = "size", defaultValue = "10") Integer size,
-                                       @RequestParam(value = "page", defaultValue = "0") Integer page,
-                                       @RequestParam String field1, @RequestParam String field2) {
-        List<Order> orders = new ArrayList<>();
-        orders.add(new Order(Sort.Direction.DESC,field1));
-        orders.add(new Order(Sort.Direction.DESC,field2));
-        Page<Measurement> measurementPage = measurementService.getAllSort(page,size,orders);
-        Page<MeasurementDto> measurementDtoPage = measurementPage.map(measurement -> conversionService.convert(measurement,MeasurementDto.class));
-        return EntityResponse.listResponse(measurementDtoPage);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<MeasurementDto> getMeasurementById(@PathVariable Integer id) throws MeasurementNotExistsException {
-        MeasurementDto measurementDto = conversionService.convert(measurementService.getMeasurementById(id),MeasurementDto.class);
-        return ResponseEntity.ok(measurementDto);
-    }
-
-    @PutMapping("/{id}/{idMeter}")
-    public ResponseEntity<Response> addMeterToMeasurement(@PathVariable Integer id, @PathVariable Integer idMeter) throws MeasurementNotExistsException, MeterNotExistsException {
-        measurementService.addMeterToMeasurement(id, idMeter);
-        return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
-                .body(EntityResponse.messageResponse("The Measurement has been modified"));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteMeasurementById(@PathVariable Integer id) throws MeasurementNotExistsException{
-        measurementService.deleteMeasurementById(id);
-        return ResponseEntity
-                .status(HttpStatus.ACCEPTED)
-                .build();
     }
 
 }

@@ -27,7 +27,7 @@ public class UserTestUtils {
     }
 
     public static UserDto aUserDto() {
-        return new UserDto(1,"Nahuel","Salomon","nahuelmdp","12345",TypeUser.CLIENT);
+        return new UserDto(1,"Nahuel","Salomon","nahuelmdp",TypeUser.CLIENT);
     }
 
     public static User aUser() {

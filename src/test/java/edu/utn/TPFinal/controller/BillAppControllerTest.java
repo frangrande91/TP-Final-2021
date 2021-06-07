@@ -40,7 +40,7 @@ public class BillAppControllerTest {
         billBackController = new BillBackController(billService, conversionService);
     }
 
-    @Test
+    /*@Test
     public void getAllBillsOk() throws Exception{
         //given
         Pageable pageable = PageRequest.of(1,  1);
@@ -174,6 +174,6 @@ public class BillAppControllerTest {
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
     }
 
-
+*/
 
 }

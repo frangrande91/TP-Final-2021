@@ -37,7 +37,6 @@ CREATE TABLE IF NOT EXISTS users(
 	CONSTRAINT unq_username UNIQUE (username)
 );
 
-SELECT * FROM users;
 
 ALTER TABLE users CHANGE COLUMN type_user type_user INT NOT NULL DEFAULT 1;
 
@@ -77,8 +76,12 @@ CREATE TABLE IF NOT EXISTS bills(
 	CONSTRAINT fk_bill_user FOREIGN KEY (id_user) REFERENCES users(id_user)
 );
 
+
+
 alter table bills add column `date` datetime default now();
 alter table bills change column expiration expiration datetime default ( now() + DAY*15 );
+
+alter table bills add column payed bool default false;
 /*alter table bills change column expiration expiration datetime default DATE_ADD("2017-06-15", INTERVAL 10 DAY)*/
 
 /*select DATE_ADD("2017-06-15", INTERVAL 10 DAY) * from biills;*/
@@ -95,6 +98,7 @@ CREATE TABLE IF NOT EXISTS measurements(
 	CONSTRAINT fk_measurement_bill FOREIGN KEY (id_bill) REFERENCES bills(id_bill)
 );
 
+ALTER TABLE measurements CHANGE COLUMN date_time `date` DATETIME;
 
 /* Changes (They are already implemented in table creation) */
 
@@ -168,16 +172,35 @@ INSERT INTO `measurements` (`id_meter`,`id_bill`,`date_time`,`quantity_kw`) VALU
 (3,NULL,NOW(),38),
 (3,NULL,NOW(),40);
 
-DELETE FROM measurements;
+/*Datos
+-FROM
+-TO
+*/
+
+select * from measurements where `date` between "2021-07-30" and "2021-08-31" and id_meter = 1;
+select * from measurements where `date` < "2021-07-30" and id_meter = 1 order by `date` desc limit 0,1;  
+
 
  SELECT * FROM addresses;
  SELECT * FROM bills;
  SELECT * FROM brands;
- SELECT * FROM measurements;
+ SELECT * FROM measurements where id_meter = 3;
  SELECT * FROM meters;
  SELECT * FROM models;
  SELECT * FROM rates;
  SELECT * FROM users;
+ 
+ select *
+ from users u
+ inner join addresses a
+ on u.id_user = a.id_user
+ inner join meters me
+ on me.id_meter = a.id_meter
+ inner join measurements m
+ on m.id_meter = me.id_meter and m.date between "2021-04-01" and "2021-06-05"
+ group by me.id_meter
+ order by quantity_kw desc limit 10;
+ 
 
 /*PUNTO 2
 La facturación se realizará por un proceso automático en la base de datos. Se
@@ -327,7 +350,4 @@ SELECT * FROM rates;
 insert into rates values (10,400,"C");
 
 
-select bill0_.id_bill as id_bill1_1_, bill0_.id_address as id_addre8_1_, bill0_.date as date2_1_, bill0_.expiration as expirati3_1_, bill0_.final_measurement as final_me4_1_, bill0_.initial_measurement as initial_5_1_, bill0_.id_meter as id_meter9_1_, bill0_.total_consumption as total_co6_1_, bill0_.total_payable as total_pa7_1_, bill0_.id_user as id_user10_1_ 
-from bills bill0_ 
-where bill0_.date between "2021-03-30" and "2021-05-30" limit 500
 

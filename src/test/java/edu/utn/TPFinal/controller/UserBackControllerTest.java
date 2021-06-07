@@ -1,27 +1,21 @@
 package edu.utn.TPFinal.controller;
 
-import edu.utn.TPFinal.exceptions.ErrorLoginException;
+import edu.utn.TPFinal.controller.backoffice.UserBackController;
 import edu.utn.TPFinal.model.Rate;
 import edu.utn.TPFinal.model.User;
-import edu.utn.TPFinal.model.dto.RateDto;
 import edu.utn.TPFinal.model.dto.UserDto;
 import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.service.UserService;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -36,19 +30,19 @@ import static org.mockito.Mockito.when;
 
 import java.util.*;
 
-public class UserControllerTest {
+public class UserBackControllerTest {
 
 
     private static UserService userService;
     private static ConversionService conversionService;
-    private static UserController userController;
+    private static UserBackController userBackController;
 
 
     @BeforeAll
     public static void setUp() {
         userService = Mockito.mock(UserService.class);
         conversionService = Mockito.mock(ConversionService.class);
-        userController = new UserController(userService,conversionService);
+        userBackController = new UserBackController(userService,conversionService);
     }
 
     @Test
@@ -58,7 +52,7 @@ public class UserControllerTest {
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
         when(userService.addUser(aUser())).thenReturn(aUser());
-        ResponseEntity<Response> responseEntity = userController.addUser(aUser());
+        ResponseEntity<Response> responseEntity = userBackController.addUser(aUser());
 
         assertEquals(EntityURLBuilder.buildURL2("users", aRate().getId()).toString(),responseEntity.getHeaders().get("Location").get(0));
         assertEquals(HttpStatus.CREATED.value(),responseEntity.getStatusCode().value());
@@ -70,7 +64,7 @@ public class UserControllerTest {
         Page<User> userPage = aUserPage();
 
         when(userService.getAllUsers(any())).thenReturn(userPage);
-        ResponseEntity<List<UserDto>> responseEntity = userController.getAllUsers(1,1);
+        ResponseEntity<List<UserDto>> responseEntity = userBackController.getAllUsers(1,1);
 
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
         assertEquals(userPage.getContent().size(),responseEntity.getBody().size());
@@ -86,7 +80,7 @@ public class UserControllerTest {
         Pageable pageable = PageRequest.of(1,1);
 
         when(userService.getAllSort(any(),any(),anyList())).thenReturn(aUserPage());
-        ResponseEntity<List<UserDto>> responseEntity = userController.getAllSorted(pageable.getPageNumber(),pageable.getPageSize(),"firstName","lastName");
+        ResponseEntity<List<UserDto>> responseEntity = userBackController.getAllSorted(pageable.getPageNumber(),pageable.getPageSize(),"firstName","lastName");
 
 
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
@@ -104,7 +98,7 @@ public class UserControllerTest {
         Pageable pageable = PageRequest.of(1,1);
 
         when(userService.getAllSpec(userSpecification,pageable)).thenReturn(userPage);
-        ResponseEntity<List<UserDto>> responseEntity = userController.getAllSpec(userSpecification,pageable);
+        ResponseEntity<List<UserDto>> responseEntity = userBackController.getAllSpec(userSpecification,pageable);
 
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
         assertEquals(userPage.getContent().size(),responseEntity.getBody().size());
@@ -117,7 +111,7 @@ public class UserControllerTest {
 
         when(userService.getUserById(anyInt())).thenReturn(aUser());
         when(conversionService.convert(aUser(),UserDto.class)).thenReturn(aUserDto());
-        ResponseEntity<UserDto> responseEntity = userController.getUserById(1);
+        ResponseEntity<UserDto> responseEntity = userBackController.getUserById(1);
 
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
         assertEquals(aUser().getId(),responseEntity.getBody().getId());
@@ -153,7 +147,7 @@ public class UserControllerTest {
     @Test
     public void addAddressToClientUser() throws Exception{
         when(userService.addAddressToClientUser(1,1)).thenReturn(aUser());
-        ResponseEntity<Response> responseEntity = userController.addAddressToClientUser(1,1);
+        ResponseEntity<Response> responseEntity = userBackController.addAddressToClientUser(1,1);
         assertEquals(HttpStatus.ACCEPTED.value(),responseEntity.getStatusCode().value());
     }
 
@@ -161,7 +155,7 @@ public class UserControllerTest {
     public void deleteUserById() throws Exception {
 
         Mockito.doNothing().when(userService).deleteById(1);
-        ResponseEntity<Object> responseEntity = userController.deleteUser(1);
+        ResponseEntity<Object> responseEntity = userBackController.deleteUser(1);
         assertEquals(HttpStatus.ACCEPTED.value(),responseEntity.getStatusCode().value());
     }
 
