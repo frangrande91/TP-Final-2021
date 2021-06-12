@@ -6,6 +6,8 @@ import edu.utn.TPFinal.exceptions.ErrorLoginException;
 import edu.utn.TPFinal.exceptions.notFound.ClientNotFoundException;
 import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
 import edu.utn.TPFinal.model.*;
+import edu.utn.TPFinal.model.dto.ConsumerDto;
+import edu.utn.TPFinal.model.projectios.ConsumerProjection;
 import edu.utn.TPFinal.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -88,13 +92,13 @@ public class UserService {
         return false;
     }
 
-/*    public List<Bill> getAllBills(Integer idClientUser) throws UserNotExistsException, ClientNotFoundException {
-        User clientUser = getUserById(idClientUser);
-        if(!clientUser.getTypeUser().equals(TypeUser.CLIENT)) {
-            throw new ClientNotFoundException(String.format("The client with id %s ",idClientUser," do not exists"));
-        }
-        return clientUser.getBillList();
-    }*/
+    public List<ConsumerProjection> getTop10MoreConsumers(LocalDate from, LocalDate to) {
+        System.out.println("FROM: "+from);
+        System.out.println("TO: "+to);
+
+        System.out.println(userRepository.getTop10MoreConsumers(from, to));
+        return userRepository.getTop10MoreConsumers(from, to);
+    }
 
     public void deleteById(Integer id) throws UserNotExistsException{
         getUserById(id);

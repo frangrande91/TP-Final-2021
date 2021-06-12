@@ -78,9 +78,13 @@ CREATE TABLE IF NOT EXISTS bills(
 	CONSTRAINT fk_bill_user FOREIGN KEY (id_user) REFERENCES users(id_user)
 );
 
-/*alter table bills change column expiration expiration datetime default DATE_ADD("2017-06-15", INTERVAL 10 DAY)*/
 
-/*select DATE_ADD("2017-06-15", INTERVAL 10 DAY) * from biills;*/
+
+alter table bills add column `date` datetime default now();
+ALTER TABLE bills CHANGE COLUMN expiration expiration DATETIME DEFAULT DATE_ADD(NOW(),INTERVAL 15 DAY)
+/*alter table bills add column payed bool default false;*/
+alter table bills change column expiration expiration datetime default DATE_ADD("2017-06-15", INTERVAL 10 DAY);
+
 
 CREATE TABLE IF NOT EXISTS measurements(
 	id_measurement INT NOT NULL AUTO_INCREMENT,
@@ -95,15 +99,6 @@ CREATE TABLE IF NOT EXISTS measurements(
 );
 
 /*ALTER TABLE measurements CHANGE COLUMN date_time `date` DATETIME;
-*/
-/* Changes (They are already implemented in table creation) */
-
-/*
-ALTER TABLE measurements ADD COLUMN id_rate INT;
-ALTER TABLE measurements ADD COLUMN price_measurement DOUBLE DEFAULT 0;
-ALTER TABLE measurements ADD CONSTRAINT fk_measurements_rates FOREIGN KEY (id_rate) REFERENCES rates (id_rate) ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE measurements CHANGE COLUMN id_bill id_bill INT;
-ALTER TABLE bills ADD COLUMN expiration DATETIME;
 */
 
 
@@ -344,3 +339,35 @@ insert into rates values (10,400,"C");
 
 
 
+/*QUERY FOR EXCERCISE 5*/
+SELECT max_consumption.id_user AS id,
+       max_consumption.name,
+       max_consumption.last_name,
+       max_consumption.username,
+       (SUM(max_consumption.consumption) - SUM(IFNULL(min_consumption.minimo,0))) AS consumption
+FROM
+	(SELECT m.id_meter, u.id_user, u.name, u.last_name, u.username, MAX(me.quantity_kw) AS consumption
+	FROM users AS u
+	JOIN addresses AS a
+	ON u.id_user = a.id_user
+	JOIN meters AS m
+	ON a.id_meter = m.id_meter
+	JOIN measurements AS me
+	ON m.id_meter = me.id_meter AND (me.date_time BETWEEN '2015-08-01' AND '2020-12-10' )
+	GROUP BY m.id_meter, u.id_user, u.name, u.last_name, u.username) AS max_consumption
+LEFT JOIN
+	(SELECT m.id_meter,IFNULL(MAX(me.quantity_kw), 0) AS minimo
+	FROM users AS u
+	JOIN addresses AS a
+	ON u.id_user = a.id_user
+	JOIN meters AS m
+	ON a.id_meter = m.id_meter
+	JOIN measurements AS me
+	ON m.id_meter = me.id_meter AND (me.date < '2015-07-01')
+	GROUP BY m.id_meter) AS min_consumption
+ON max_consumption.id_meter = min_consumption.id_meter
+JOIN meters m
+ON max_consumption.id_meter = m.id_meter
+GROUP BY max_consumption.id_user
+ORDER BY consumption DESC LIMIT 10
+;
