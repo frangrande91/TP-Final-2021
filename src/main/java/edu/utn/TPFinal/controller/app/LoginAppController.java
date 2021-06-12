@@ -73,4 +73,9 @@ public class LoginAppController {
         }
     }
 
+    @GetMapping(value = "/hola")
+    public String hola() {
+        return "HOLA";
+    }
+
 }

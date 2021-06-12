@@ -69,19 +69,15 @@ CREATE TABLE IF NOT EXISTS bills(
 	final_measurement DATETIME NOT NULL,
 	total_consumption DOUBLE NOT NULL,
 	total_payable DOUBLE,
-	expiration DATETIME default ( now() + DAY*15 ),
+	expiration DATETIME default now(),
+    `date` datetime default now(),
+    payed bool default false,
 	CONSTRAINT pk_bill PRIMARY KEY (id_bill),
 	CONSTRAINT fk_bill_address FOREIGN KEY (id_address) REFERENCES addresses(id_address),
 	CONSTRAINT fk_bil_meter FOREIGN KEY (id_meter) REFERENCES meters(id_meter),
 	CONSTRAINT fk_bill_user FOREIGN KEY (id_user) REFERENCES users(id_user)
 );
 
-
-
-alter table bills add column `date` datetime default now();
-alter table bills change column expiration expiration datetime default ( now() + DAY*15 );
-
-alter table bills add column payed bool default false;
 /*alter table bills change column expiration expiration datetime default DATE_ADD("2017-06-15", INTERVAL 10 DAY)*/
 
 /*select DATE_ADD("2017-06-15", INTERVAL 10 DAY) * from biills;*/
@@ -90,7 +86,7 @@ CREATE TABLE IF NOT EXISTS measurements(
 	id_measurement INT NOT NULL AUTO_INCREMENT,
 	id_meter INT NOT NULL,
 	id_bill INT,
-    date_time DATETIME,
+    `date` DATETIME,
 	quantity_kw DOUBLE NOT NULL,
     price_measurement DOUBLE DEFAULT 0,
 	CONSTRAINT pk_measurement PRIMARY KEY (id_measurement),
@@ -98,8 +94,8 @@ CREATE TABLE IF NOT EXISTS measurements(
 	CONSTRAINT fk_measurement_bill FOREIGN KEY (id_bill) REFERENCES bills(id_bill)
 );
 
-ALTER TABLE measurements CHANGE COLUMN date_time `date` DATETIME;
-
+/*ALTER TABLE measurements CHANGE COLUMN date_time `date` DATETIME;
+*/
 /* Changes (They are already implemented in table creation) */
 
 /*
@@ -123,15 +119,15 @@ INSERT INTO models(id_brand,`name`) values
 (2, "D10S");
 
 INSERT INTO meters(`id_model`,`serial_number`,`password`) VALUES
-(1,"123456","123456"),
-(1,"1234567","1234567"),
-(2,"1234568","1234568")
+(1,"123456789asdsad10sdda","123456"),
+(1,"12345678sadsad9asdsda","1234567"),
+(2,"1234568101adsa1sdasda","1234568")
 ;
 
 INSERT INTO users(`name`, last_name, username, `password`, type_user) VALUES
-("Pepe", "Grillo", "pepegrillo", "123", "Client"),
-("Pepe2", "Grillo2", "pepegrillo2", "1234", "Client"),
-("Pepe3", "Grillo3", "pepegrillo3", "1235", "Client")
+("Pepe", "Grillo", "pepegrilloloa", "123", 1),
+("Pepe2", "Grillo2", "pepegrillo23a", "1234", 1),
+("Pepe3", "Grillo3", "pepegrillo32a", "1235", 1)
 ;
 
 INSERT INTO rates(`value`,`type_rate`) VALUES
@@ -149,7 +145,7 @@ INSERT INTO addresses(`id_meter`,`id_user`,`address`,`id_rate`) VALUES
 select * from addresses;
 select * from users;
 
-INSERT INTO `measurements` (`id_meter`,`id_bill`,`date_time`,`quantity_kw`) VALUES
+INSERT INTO `measurements` (`id_meter`,`id_bill`,`date`,`quantity_kw`) VALUES
 (1,null,NOW(),2),
 (1,NULL,NOW(),5),
 (1,NULL,NOW(),9),
@@ -174,8 +170,7 @@ INSERT INTO `measurements` (`id_meter`,`id_bill`,`date_time`,`quantity_kw`) VALU
 
 /*Datos
 -FROM
--TO
-*/
+-TO*/
 
 select * from measurements where `date` between "2021-07-30" and "2021-08-31" and id_meter = 1;
 select * from measurements where `date` < "2021-07-30" and id_meter = 1 order by `date` desc limit 0,1;  
@@ -189,7 +184,8 @@ select * from measurements where `date` < "2021-07-30" and id_meter = 1 order by
  SELECT * FROM models;
  SELECT * FROM rates;
  SELECT * FROM users;
- 
+
+
  select *
  from users u
  inner join addresses a
@@ -208,12 +204,9 @@ debe programar este proceso para el primer día de cada mes y debe generar una
 factura por medidor y debe tomar en cuenta todas las mediciones no facturadas
 para cada uno de los medidores, sin tener en cuenta su fecha. La fecha de vencimiento de
 esta factura será estipulado a 15 días.
-*/
-
-/*
 - una factura por medidor
-- todas las mediciones no facturadas
-*/
+- todas las mediciones no facturadas*/
+
 DROP PROCEDURE IF EXISTS liquidate_client;
 DELIMITER $$
 CREATE PROCEDURE liquidate_client(pIdClient INT)
