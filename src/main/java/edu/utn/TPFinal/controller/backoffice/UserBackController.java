@@ -5,7 +5,9 @@ import edu.utn.TPFinal.exceptions.alreadyExists.UserAlreadyExists;
 import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.ClientNotFoundException;
 import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
+import edu.utn.TPFinal.model.dto.ConsumerDto;
 import edu.utn.TPFinal.model.dto.LoginRequestDto;
+import edu.utn.TPFinal.model.projectios.ConsumerProjection;
 import edu.utn.TPFinal.model.responses.LoginResponseDto;
 import edu.utn.TPFinal.model.dto.UserDto;
 import edu.utn.TPFinal.model.responses.Response;
@@ -27,11 +29,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -122,6 +128,15 @@ public class UserBackController {
     public ResponseEntity<Object> deleteUser(@PathVariable Integer idUser) throws UserNotExistsException {
         userService.deleteById(idUser);
         return ResponseEntity.accepted().build();
+    }
+
+    /**PUNTO 5+*/
+    /*@PreAuthorize(value = "hasAuthority('EMPLOYEE')")*/
+    @GetMapping("/topConsumers")
+    public ResponseEntity<List<ConsumerProjection>> get10TopMoreConsumers(@RequestParam(value = "from", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
+                                                                            @RequestParam(value = "to", defaultValue = "2021-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to) {
+        List<ConsumerProjection> consumerProjection = userService.getTop10MoreConsumers(from,to);
+        return ResponseEntity.status(HttpStatus.OK).body(consumerProjection);
     }
 
 }

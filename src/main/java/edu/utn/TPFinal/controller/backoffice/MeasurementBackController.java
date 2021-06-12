@@ -48,12 +48,7 @@ public class MeasurementBackController {
         return null;
     }
 
-    /**PUNTO 5+*/
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
-    @GetMapping("addresses/{idAddress}/top10")
-    public ResponseEntity<List<UserDto>> get10TopMoreConsumers(@PathVariable LocalDateTime idAddress, @RequestParam Date from, @RequestParam Date to) {
-        return null;
-    }
+
 
     /**PUNTO 6+*/
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
