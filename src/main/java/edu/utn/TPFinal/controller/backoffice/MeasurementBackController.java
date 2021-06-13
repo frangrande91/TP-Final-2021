@@ -1,7 +1,10 @@
 package edu.utn.TPFinal.controller.backoffice;
 
+import edu.utn.TPFinal.exceptions.AccessNotAllowedException;
+import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.MeasurementNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
 import edu.utn.TPFinal.model.Measurement;
 import edu.utn.TPFinal.model.dto.MeasurementDto;
 import edu.utn.TPFinal.model.dto.UserDto;
@@ -19,12 +22,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -53,8 +59,16 @@ public class MeasurementBackController {
     /**PUNTO 6+*/
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("addresses/{idAddress}")
-    public ResponseEntity<List<UserDto>> getByAddressForDateRange(@PathVariable LocalDateTime idAddress, @RequestParam Date from, @RequestParam Date to) {
-        return null;
+    public ResponseEntity<List<MeasurementDto>> getByAddressForDateRange(@PathVariable Integer idAddress,
+                                                                  @RequestParam(value = "from", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
+                                                                  @RequestParam(value = "to", defaultValue = "2020-01-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to,
+                                                                  @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                                                  @RequestParam(value = "page", defaultValue = "0") Integer page,
+                                                                  Authentication authentication) throws AddressNotExistsException {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Measurement> measurementPage = measurementService.getAllByAddressAndDateBetween(idAddress, from, to, pageable);
+        Page<MeasurementDto> measurementDtoPage = measurementPage.map(measurement -> conversionService.convert(measurement,MeasurementDto.class));
+        return EntityResponse.listResponse(measurementDtoPage);
     }
 
     @PostMapping("/")

@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -131,5 +132,10 @@ public class MeasurementService {
     public void deleteMeasurementById(Integer id) throws MeasurementNotExistsException{
         getMeasurementById(id);
         measurementRepository.deleteById(id);
+    }
+
+    public Page<Measurement> getAllByAddressAndDateBetween(Integer idAddress, LocalDate from, LocalDate to, Pageable pageable) throws AddressNotExistsException {
+        Address address1 = addressService.getAddressById(idAddress);
+        return measurementRepository.findAllByAddressAndDateBetween(address1, from, to, pageable);
     }
 }
