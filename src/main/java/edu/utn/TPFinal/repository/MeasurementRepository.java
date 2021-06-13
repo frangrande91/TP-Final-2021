@@ -18,5 +18,5 @@ public interface MeasurementRepository extends JpaRepository<Measurement, Intege
     Page<Measurement> findAllByMeterAndDateBetween(Meter meter,Date from, Date to, Pageable pageable);
     List<Measurement> findAllByMeterAndDateBetween(Meter meter,Date from, Date to);
     Page<Measurement> findByMeterAndDateBefore(Meter meter, Date from, Pageable pageable);
-    Page<Measurement> findAllByAddressAndDateBetween(Address address, LocalDate from, LocalDate to, Pageable pageable);
+   // Page<Measurement> findAllByAddressAndDateBetween(Address address, LocalDate from, LocalDate to, Pageable pageable);
 }

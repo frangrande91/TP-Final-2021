@@ -7,6 +7,7 @@ import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
 import edu.utn.TPFinal.model.Measurement;
 import edu.utn.TPFinal.model.dto.MeasurementDto;
+import edu.utn.TPFinal.model.dto.ReceivedMeasurementDto;
 import edu.utn.TPFinal.model.dto.UserDto;
 import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.service.MeasurementService;
@@ -40,7 +41,7 @@ public class MeasurementBackController {
 
     private MeasurementService measurementService;
     private ConversionService conversionService;
-    private static final String MEASUREMENT_PATH = "measurement";
+    private static final String MEASUREMENT_PATH = "measurements";
 
     @Autowired
     public MeasurementBackController(MeasurementService measurementService, ConversionService conversionService) {
@@ -55,8 +56,7 @@ public class MeasurementBackController {
     }
 
 
-
-    /**PUNTO 6+*/
+/*    *//**PUNTO 6+*//*
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("addresses/{idAddress}")
     public ResponseEntity<List<MeasurementDto>> getByAddressForDateRange(@PathVariable Integer idAddress,
@@ -69,15 +69,18 @@ public class MeasurementBackController {
         Page<Measurement> measurementPage = measurementService.getAllByAddressAndDateBetween(idAddress, from, to, pageable);
         Page<MeasurementDto> measurementDtoPage = measurementPage.map(measurement -> conversionService.convert(measurement,MeasurementDto.class));
         return EntityResponse.listResponse(measurementDtoPage);
-    }
+    }*/
 
     @PostMapping("/")
-    public ResponseEntity<Response> addMeasurement(@RequestBody Measurement measurement) {
-        Measurement measurementCreated = measurementService.addMeasurement(measurement);
+    public ResponseEntity<Response> addMeasurement(@RequestBody ReceivedMeasurementDto receivedMeasurementDto) throws MeterNotExistsException {
+
+
+        Measurement measurement = measurementService.addMeasurement(receivedMeasurementDto);
+        System.out.println(receivedMeasurementDto);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .location(EntityURLBuilder.buildURL2(MEASUREMENT_PATH,measurementCreated.getId()))
+                .location(EntityURLBuilder.buildURL2(MEASUREMENT_PATH,measurement.getId()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(EntityResponse.messageResponse("The measurement has been created"));
     }

@@ -62,6 +62,7 @@ CREATE TABLE IF NOT EXISTS addresses(
 
 
 CREATE TABLE IF NOT EXISTS bills(
+<<<<<<< HEAD
                                     id_bill INT NOT NULL AUTO_INCREMENT,
                                     id_address INT NOT NULL,
                                     id_meter INT NOT NULL,
@@ -75,19 +76,35 @@ CREATE TABLE IF NOT EXISTS bills(
                                     CONSTRAINT fk_bill_address FOREIGN KEY (id_address) REFERENCES addresses(id_address),
                                     CONSTRAINT fk_bil_meter FOREIGN KEY (id_meter) REFERENCES meters(id_meter),
                                     CONSTRAINT fk_bill_user FOREIGN KEY (id_user) REFERENCES users(id_user)
+=======
+	id_bill INT NOT NULL AUTO_INCREMENT,
+	id_address INT NOT NULL,
+	id_meter INT NOT NULL,
+	id_user INT NOT NULL,
+	initial_measurement DATETIME NOT NULL,
+	final_measurement DATETIME NOT NULL,
+	total_consumption DOUBLE NOT NULL,
+	total_payable DOUBLE,
+	expiration DATETIME default now(),
+    `date` datetime default now(),
+    payed bool default false,
+	CONSTRAINT pk_bill PRIMARY KEY (id_bill),
+	CONSTRAINT fk_bill_address FOREIGN KEY (id_address) REFERENCES addresses(id_address),
+	CONSTRAINT fk_bil_meter FOREIGN KEY (id_meter) REFERENCES meters(id_meter),
+	CONSTRAINT fk_bill_user FOREIGN KEY (id_user) REFERENCES users(id_user)
+>>>>>>> 86c40d04f66b5b0fd6a04363dfca3de74a87cf8e
 );
 
 
 
 alter table bills add column `date` datetime default now();
 ALTER TABLE bills CHANGE COLUMN expiration expiration DATETIME DEFAULT DATE_ADD(NOW(),INTERVAL 15 DAY)
+/*alter table bills add column payed bool default false;*/
+alter table bills change column expiration expiration datetime default DATE_ADD("2017-06-15", INTERVAL 10 DAY);
 
-alter table bills add column payed bool default false;
-/*alter table bills change column expiration expiration datetime default DATE_ADD("2017-06-15", INTERVAL 10 DAY)*/
-
-/*select DATE_ADD("2017-06-15", INTERVAL 10 DAY) * from biills;*/
 
 CREATE TABLE IF NOT EXISTS measurements(
+<<<<<<< HEAD
                                            id_measurement INT NOT NULL AUTO_INCREMENT,
                                            id_meter INT NOT NULL,
                                            id_bill INT,
@@ -97,18 +114,20 @@ CREATE TABLE IF NOT EXISTS measurements(
                                            CONSTRAINT pk_measurement PRIMARY KEY (id_measurement),
                                            CONSTRAINT fk_measurement_meter FOREIGN KEY (id_meter) REFERENCES meters(id_meter),
                                            CONSTRAINT fk_measurement_bill FOREIGN KEY (id_bill) REFERENCES bills(id_bill)
+=======
+	id_measurement INT NOT NULL AUTO_INCREMENT,
+	id_meter INT NOT NULL,
+	id_bill INT,
+    `date` DATETIME,
+	quantity_kw DOUBLE NOT NULL,
+    price_measurement DOUBLE DEFAULT 0,
+	CONSTRAINT pk_measurement PRIMARY KEY (id_measurement),
+	CONSTRAINT fk_measurement_meter FOREIGN KEY (id_meter) REFERENCES meters(id_meter),
+	CONSTRAINT fk_measurement_bill FOREIGN KEY (id_bill) REFERENCES bills(id_bill)
+>>>>>>> 86c40d04f66b5b0fd6a04363dfca3de74a87cf8e
 );
 
-ALTER TABLE measurements CHANGE COLUMN date_time `date` DATETIME;
-
-/* Changes (They are already implemented in table creation) */
-
-/*
-ALTER TABLE measurements ADD COLUMN id_rate INT;
-ALTER TABLE measurements ADD COLUMN price_measurement DOUBLE DEFAULT 0;
-ALTER TABLE measurements ADD CONSTRAINT fk_measurements_rates FOREIGN KEY (id_rate) REFERENCES rates (id_rate) ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE measurements CHANGE COLUMN id_bill id_bill INT;
-ALTER TABLE bills ADD COLUMN expiration DATETIME;
+/*ALTER TABLE measurements CHANGE COLUMN date_time `date` DATETIME;
 */
 
 
@@ -124,15 +143,15 @@ INSERT INTO models(id_brand,`name`) values
 (2, "D10S");
 
 INSERT INTO meters(`id_model`,`serial_number`,`password`) VALUES
-(1,"123456","123456"),
-(1,"1234567","1234567"),
-(2,"1234568","1234568")
+(1,"123456789asdsad10sdda","123456"),
+(1,"12345678sadsad9asdsda","1234567"),
+(2,"1234568101adsa1sdasda","1234568")
 ;
 
 INSERT INTO users(`name`, last_name, username, `password`, type_user) VALUES
-("Pepe", "Grillo", "pepegrillo", "123", "Client"),
-("Pepe2", "Grillo2", "pepegrillo2", "1234", "Client"),
-("Pepe3", "Grillo3", "pepegrillo3", "1235", "Client")
+("Pepe", "Grillo", "pepegrilloloa", "123", 1),
+("Pepe2", "Grillo2", "pepegrillo23a", "1234", 1),
+("Pepe3", "Grillo3", "pepegrillo32a", "1235", 1)
 ;
 
 INSERT INTO rates(`value`,`type_rate`) VALUES
@@ -150,7 +169,7 @@ INSERT INTO addresses(`id_meter`,`id_user`,`address`,`id_rate`) VALUES
 select * from addresses;
 select * from users;
 
-INSERT INTO `measurements` (`id_meter`,`id_bill`,`date_time`,`quantity_kw`) VALUES
+INSERT INTO `measurements` (`id_meter`,`id_bill`,`date`,`quantity_kw`) VALUES
 (1,null,NOW(),2),
 (1,NULL,NOW(),5),
 (1,NULL,NOW(),9),
@@ -175,10 +194,10 @@ INSERT INTO `measurements` (`id_meter`,`id_bill`,`date_time`,`quantity_kw`) VALU
 
 /*Datos
 -FROM
--TO
-*/
+-TO*/
 
 select * from measurements where `date` between "2021-07-30" and "2021-08-31" and id_meter = 1;
+<<<<<<< HEAD
 select * from measurements where `date` < "2021-07-30" and id_meter = 1 order by `date` desc limit 0,1;
 
 
@@ -202,6 +221,32 @@ from users u
 group by me.id_meter
 order by quantity_kw desc limit 10;
 
+=======
+select * from measurements where `date` < "2021-07-30" and id_meter = 1 order by `date` desc limit 0,1;  
+
+
+ SELECT * FROM addresses;
+ SELECT * FROM bills;
+ SELECT * FROM brands;
+ SELECT * FROM measurements where id_meter = 3;
+ SELECT * FROM meters;
+ SELECT * FROM models;
+ SELECT * FROM rates;
+ SELECT * FROM users;
+
+
+ select *
+ from users u
+ inner join addresses a
+ on u.id_user = a.id_user
+ inner join meters me
+ on me.id_meter = a.id_meter
+ inner join measurements m
+ on m.id_meter = me.id_meter and m.date between "2021-04-01" and "2021-06-05"
+ group by me.id_meter
+ order by quantity_kw desc limit 10;
+ 
+>>>>>>> 86c40d04f66b5b0fd6a04363dfca3de74a87cf8e
 
 /*PUNTO 2
 La facturación se realizará por un proceso automático en la base de datos. Se
@@ -209,12 +254,9 @@ debe programar este proceso para el primer día de cada mes y debe generar una
 factura por medidor y debe tomar en cuenta todas las mediciones no facturadas
 para cada uno de los medidores, sin tener en cuenta su fecha. La fecha de vencimiento de
 esta factura será estipulado a 15 días.
-*/
-
-/*
 - una factura por medidor
-- todas las mediciones no facturadas
-*/
+- todas las mediciones no facturadas*/
+
 DROP PROCEDURE IF EXISTS liquidate_client;
 DELIMITER $$
 CREATE PROCEDURE liquidate_client(pIdClient INT)
@@ -305,7 +347,7 @@ $$
 /*Hecho por pablo*/
 drop trigger if exists TIB_add_calculate_price2;
 DELIMITER $$
-CREATE TRIGGER TIB_add_calculate_price2 BEFORE INSERT ON measurement FOR EACH ROW
+CREATE TRIGGER TIB_add_calculate_price2 BEFORE INSERT ON measurements FOR EACH ROW
 BEGIN
     DECLARE vLastDate DATETIME DEFAULT NULL;
     DECLARE vLastMeas FLOAT DEFAULT 0;
@@ -359,6 +401,7 @@ SELECT max_consumption.id_user AS id,
        max_consumption.username,
        (SUM(max_consumption.consumption) - SUM(IFNULL(min_consumption.minimo,0))) AS consumption
 FROM
+
     (SELECT m.id_meter, u.id_user, u.name, u.last_name, u.username, MAX(me.quantity_kw) AS consumption
      FROM users AS u
               JOIN addresses AS a
@@ -381,6 +424,32 @@ FROM
     ON max_consumption.id_meter = min_consumption.id_meter
         JOIN meters m
              ON max_consumption.id_meter = m.id_meter
+/*
+	(SELECT m.id_meter, u.id_user, u.name, u.last_name, u.username, MAX(me.quantity_kw) AS consumption
+	FROM users AS u
+	JOIN addresses AS a
+	ON u.id_user = a.id_user
+	JOIN meters AS m
+	ON a.id_meter = m.id_meter
+	JOIN measurements AS me
+	ON m.id_meter = me.id_meter AND (me.date_time BETWEEN '2015-08-01' AND '2020-12-10' )
+	GROUP BY m.id_meter, u.id_user, u.name, u.last_name, u.username) AS max_consumption
+LEFT JOIN
+	(SELECT m.id_meter,IFNULL(MAX(me.quantity_kw), 0) AS minimo
+	FROM users AS u
+	JOIN addresses AS a
+	ON u.id_user = a.id_user
+	JOIN meters AS m
+	ON a.id_meter = m.id_meter
+	JOIN measurements AS me
+	ON m.id_meter = me.id_meter AND (me.date < '2015-07-01')
+	GROUP BY m.id_meter) AS min_consumption
+ON max_consumption.id_meter = min_consumption.id_meter
+JOIN meters m
+ON max_consumption.id_meter = m.id_meter
+>>>>>>> 86c40d04f66b5b0fd6a04363dfca3de74a87cf8e
 GROUP BY max_consumption.id_user
 ORDER BY consumption DESC LIMIT 10
+
+ */
 ;

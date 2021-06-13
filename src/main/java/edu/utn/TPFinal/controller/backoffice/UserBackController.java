@@ -49,7 +49,7 @@ import static edu.utn.TPFinal.utils.Constants.*;
 
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("backoffice/users")
 @Slf4j
 public class UserBackController {
 
@@ -131,7 +131,7 @@ public class UserBackController {
     }
 
     /**PUNTO 5+*/
-    /*@PreAuthorize(value = "hasAuthority('EMPLOYEE')")*/
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("/topConsumers")
     public ResponseEntity<List<ConsumerProjection>> get10TopMoreConsumers(@RequestParam(value = "from", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
                                                                             @RequestParam(value = "to", defaultValue = "2021-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to) {

@@ -18,4 +18,6 @@ public class MeasurementDto {
     private Double quantityKw;
     private Date date;
 
+
+
 }

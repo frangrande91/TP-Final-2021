@@ -1,17 +1,20 @@
 package edu.utn.TPFinal.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity(name = "measurements")
 public class Measurement {
 
@@ -32,7 +35,7 @@ public class Measurement {
     private Double quantityKw;
 
     @NotNull (message = "dateTime should not be null")
-    private Date date;
+    private LocalDate date;
     
     private Double priceMeasurement;
 

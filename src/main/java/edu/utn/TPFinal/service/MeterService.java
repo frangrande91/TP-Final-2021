@@ -62,6 +62,10 @@ public class MeterService {
         return meterRepository.findById(id).orElseThrow(() -> new MeterNotExistsException("Meter not exists"));
     }
 
+    public Meter getMeterBySerialNumber(String serialNumber, String password) throws MeterNotExistsException {
+        return meterRepository.findBySerialNumberAndPassword(serialNumber, password).orElseThrow(() -> new MeterNotExistsException("Meter not exists"));
+    }
+
     public void deleteMeterById(Integer id) throws MeterNotExistsException {
         getMeterById(id);
         meterRepository.deleteById(id);

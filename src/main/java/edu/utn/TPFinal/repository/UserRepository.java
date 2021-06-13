@@ -18,9 +18,9 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
     User findByIdOrUsername(Integer id, String username);
 
     @Query(value =
-            "ELECT max_consumption.id_user AS id, \n" +
+            "SELECT max_consumption.id_user AS id, \n" +
                     "       max_consumption.name,\n" +
-                    "       max_consumption.last_name, \n" +
+                    "       max_consumption.last_name AS lastname, \n" +
                     "       max_consumption.username, \n" +
                     "       (SUM(max_consumption.consumption) - SUM(IFNULL(min_consumption.minimo,0))) AS consumption \n" +
                     "FROM \t\n" +
@@ -32,7 +32,7 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
                     "\tJOIN meters AS m\n" +
                     "\tON a.id_meter = m.id_meter\n" +
                     "\tJOIN measurements AS me\n" +
-                    "\tON m.id_meter = me.id_meter AND (me.date_time BETWEEN '2015-08-01' AND '2020-12-10' )\n" +
+                    "\tON m.id_meter = me.id_meter AND (me.date BETWEEN  ?1 AND  ?2)\n" +
                     "\tGROUP BY m.id_meter, u.id_user, u.name, u.last_name, u.username) AS max_consumption\t\n" +
                     "LEFT JOIN\n" +
                     "\t(SELECT m.id_meter,IFNULL(MAX(me.quantity_kw), 0) AS minimo\n" +
@@ -42,7 +42,7 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
                     "\tJOIN meters AS m\n" +
                     "\tON a.id_meter = m.id_meter\n" +
                     "\tJOIN measurements AS me\n" +
-                    "\tON m.id_meter = me.id_meter AND (me.date_time < '2015-07-01')    \n" +
+                    "\tON m.id_meter = me.id_meter AND (me.date < ?1)    \n" +
                     "\tGROUP BY m.id_meter) AS min_consumption\n" +
                     "ON max_consumption.id_meter = min_consumption.id_meter\n" +
                     "JOIN meters m\n" +

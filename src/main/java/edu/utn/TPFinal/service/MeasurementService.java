@@ -3,6 +3,8 @@ package edu.utn.TPFinal.service;
 import edu.utn.TPFinal.exceptions.AccessNotAllowedException;
 import edu.utn.TPFinal.exceptions.notFound.*;
 import edu.utn.TPFinal.model.*;
+import edu.utn.TPFinal.model.dto.MeasurementDto;
+import edu.utn.TPFinal.model.dto.ReceivedMeasurementDto;
 import edu.utn.TPFinal.model.dto.UserDto;
 import edu.utn.TPFinal.model.responses.ClientConsumption;
 import edu.utn.TPFinal.repository.MeasurementRepository;
@@ -101,7 +103,20 @@ public class MeasurementService {
         }
     }
 
-    public Measurement addMeasurement(Measurement measurement) {
+    public Measurement addMeasurement(ReceivedMeasurementDto receivedMeasurementDto) throws MeterNotExistsException {
+
+        double quantityKw = receivedMeasurementDto.getValue();
+
+        Meter meter = meterService.getMeterBySerialNumber(receivedMeasurementDto.getSerialNumber(), receivedMeasurementDto.getPassword());
+        Measurement measurement = Measurement.builder()
+                                    .meter(meter)
+                                    .quantityKw(quantityKw)
+                                    .date(LocalDate.parse(receivedMeasurementDto.getDate().substring(0,10)))
+                                    .build();
+
+
+        //Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
+
         return measurementRepository.save(measurement);
     }
 
@@ -134,8 +149,8 @@ public class MeasurementService {
         measurementRepository.deleteById(id);
     }
 
-    public Page<Measurement> getAllByAddressAndDateBetween(Integer idAddress, LocalDate from, LocalDate to, Pageable pageable) throws AddressNotExistsException {
+/*    public Page<Measurement> getAllByAddressAndDateBetween(Integer idAddress, LocalDate from, LocalDate to, Pageable pageable) throws AddressNotExistsException {
         Address address1 = addressService.getAddressById(idAddress);
         return measurementRepository.findAllByAddressAndDateBetween(address1, from, to, pageable);
-    }
+    }*/
 }
