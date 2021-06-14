@@ -1,12 +1,13 @@
 package edu.utn.TPFinal.controller.backoffice;
-import edu.utn.TPFinal.exceptions.ViolationChangeKeyAttributeException;
-import edu.utn.TPFinal.exceptions.alreadyExists.AddressAlreadyExistsException;
-import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
+import edu.utn.TPFinal.exception.RestrictDeleteException;
+import edu.utn.TPFinal.exception.ViolationChangeKeyAttributeException;
+import edu.utn.TPFinal.exception.alreadyExists.AddressAlreadyExistsException;
+import edu.utn.TPFinal.exception.notFound.AddressNotExistsException;
+import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exception.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.Address;
 import edu.utn.TPFinal.model.dto.AddressDto;
-import edu.utn.TPFinal.model.responses.Response;
+import edu.utn.TPFinal.model.response.Response;
 import edu.utn.TPFinal.service.AddressService;
 import edu.utn.TPFinal.utils.EntityResponse;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
@@ -31,12 +32,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/backoffice/address")
+@RequestMapping("/backoffice/addresses")
 public class AddressBackController {
 
     private AddressService addressService;
     private ConversionService conversionService;
-    private static final String ADDRESS_PATH = "address";
+    private static final String ADDRESS_PATH = "addresses";
 
     @Autowired
     public AddressBackController(AddressService addressService, ConversionService conversionService) {
@@ -80,9 +81,7 @@ public class AddressBackController {
     @GetMapping("/spec")
     public ResponseEntity<List<AddressDto>> getAllSpec(
             @And({
-                    @Spec(path = "address", spec = Equal.class),
-                    @Spec(path = "userClient", spec = Equal.class),
-                    @Spec(path = "meter", spec = Equal.class)
+                    @Spec(path = "address", spec = Equal.class)
             }) Specification<Address> newsSpecification, Pageable pageable ){
         Page<Address> addressPage = addressService.getAllSpec(newsSpecification,pageable);
         Page<AddressDto> addressDtoPage = addressPage.map(address -> conversionService.convert(address, AddressDto.class));
@@ -110,14 +109,14 @@ public class AddressBackController {
     }
 
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
-    @PutMapping("/{id}/{idMeter}")
+    @PutMapping("/{id}/meters/{idMeter}")
     public ResponseEntity<Response> addMeterToAddress(@PathVariable Integer id, @PathVariable Integer idMeter) throws AddressNotExistsException, MeterNotExistsException {
         addressService.addMeterToAddress(id, idMeter);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(EntityResponse.messageResponse("The address has been modified"));
     }
 
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
-    @PutMapping("/{id}/{idRate}")
+    @PutMapping("/{id}/rates/{idRate}")
     public ResponseEntity<Response> addRateToAddress(@PathVariable Integer id, @PathVariable Integer idRate) throws AddressNotExistsException, RateNotExistsException {
         addressService.addRateToAddress(id, idRate);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(EntityResponse.messageResponse("The address has been modified"));
@@ -125,7 +124,7 @@ public class AddressBackController {
 
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteAddressById(@PathVariable Integer id) throws AddressNotExistsException{
+    public ResponseEntity<Object> deleteAddressById(@PathVariable Integer id) throws AddressNotExistsException, RestrictDeleteException {
         addressService.deleteAddressById(id);
         return ResponseEntity.accepted().build();
     }

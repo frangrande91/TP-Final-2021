@@ -1,22 +1,16 @@
 package edu.utn.TPFinal.controller.backoffice;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import edu.utn.TPFinal.exceptions.ErrorLoginException;
-import edu.utn.TPFinal.exceptions.alreadyExists.UserAlreadyExists;
-import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.ClientNotFoundException;
-import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
-import edu.utn.TPFinal.model.dto.ConsumerDto;
-import edu.utn.TPFinal.model.dto.LoginRequestDto;
-import edu.utn.TPFinal.model.projectios.ConsumerProjection;
-import edu.utn.TPFinal.model.responses.LoginResponseDto;
+import edu.utn.TPFinal.exception.RestrictDeleteException;
+import edu.utn.TPFinal.exception.alreadyExists.UserAlreadyExists;
+import edu.utn.TPFinal.exception.notFound.AddressNotExistsException;
+import edu.utn.TPFinal.exception.notFound.ClientNotFoundException;
+import edu.utn.TPFinal.exception.notFound.UserNotExistsException;
+import edu.utn.TPFinal.model.projection.ConsumerProjection;
 import edu.utn.TPFinal.model.dto.UserDto;
-import edu.utn.TPFinal.model.responses.Response;
+import edu.utn.TPFinal.model.response.Response;
 import edu.utn.TPFinal.model.User;
 import edu.utn.TPFinal.service.UserService;
 import edu.utn.TPFinal.utils.EntityResponse;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import net.kaczmarzyk.spring.data.jpa.domain.Equal;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
@@ -37,15 +31,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
-import static edu.utn.TPFinal.utils.Constants.*;
 
 
 @RestController
@@ -125,7 +112,7 @@ public class UserBackController {
     }
 
     @DeleteMapping("/{idUser}")
-    public ResponseEntity<Object> deleteUser(@PathVariable Integer idUser) throws UserNotExistsException {
+    public ResponseEntity<Object> deleteUser(@PathVariable Integer idUser) throws UserNotExistsException, RestrictDeleteException {
         userService.deleteById(idUser);
         return ResponseEntity.accepted().build();
     }

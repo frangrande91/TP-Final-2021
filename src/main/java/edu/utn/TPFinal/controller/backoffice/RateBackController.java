@@ -1,11 +1,12 @@
 package edu.utn.TPFinal.controller.backoffice;
 
-import edu.utn.TPFinal.exceptions.ViolationChangeKeyAttributeException;
-import edu.utn.TPFinal.exceptions.alreadyExists.RateAlreadyExists;
-import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
+import edu.utn.TPFinal.exception.RestrictDeleteException;
+import edu.utn.TPFinal.exception.ViolationChangeKeyAttributeException;
+import edu.utn.TPFinal.exception.alreadyExists.RateAlreadyExists;
+import edu.utn.TPFinal.exception.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.dto.RateDto;
 import edu.utn.TPFinal.model.Rate;
-import edu.utn.TPFinal.model.responses.Response;
+import edu.utn.TPFinal.model.response.Response;
 import edu.utn.TPFinal.service.RateService;
 import edu.utn.TPFinal.utils.EntityResponse;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
@@ -25,7 +26,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +67,7 @@ public class RateBackController {
 
 
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<List<RateDto>> getAllRates(@RequestParam(value = "size", defaultValue = "10") Integer size,
                                                   @RequestParam(value = "page", defaultValue = "0") Integer page) {
         Pageable pageable = PageRequest.of(page,size);
@@ -110,7 +110,7 @@ public class RateBackController {
 
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteRateById(@PathVariable Integer id) throws RateNotExistsException{
+    public ResponseEntity<Object> deleteRateById(@PathVariable Integer id) throws RateNotExistsException, RestrictDeleteException {
         rateService.deleteRateById(id);
         return ResponseEntity.accepted().build();
     }

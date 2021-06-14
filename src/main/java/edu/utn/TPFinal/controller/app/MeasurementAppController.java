@@ -1,39 +1,26 @@
 package edu.utn.TPFinal.controller.app;
 
-import edu.utn.TPFinal.exceptions.AccessNotAllowedException;
-import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.MeasurementNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
-import edu.utn.TPFinal.model.TypeUser;
+import edu.utn.TPFinal.exception.AccessNotAllowedException;
+import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exception.notFound.UserNotExistsException;
 import edu.utn.TPFinal.model.dto.MeasurementDto;
 import edu.utn.TPFinal.model.Measurement;
 import edu.utn.TPFinal.model.dto.UserDto;
-import edu.utn.TPFinal.model.responses.ClientConsumption;
-import edu.utn.TPFinal.model.responses.Response;
+import edu.utn.TPFinal.model.response.ClientConsumption;
 import edu.utn.TPFinal.service.MeasurementService;
 import edu.utn.TPFinal.utils.EntityResponse;
-import edu.utn.TPFinal.utils.EntityURLBuilder;
-import net.kaczmarzyk.spring.data.jpa.domain.Equal;
-import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
-import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

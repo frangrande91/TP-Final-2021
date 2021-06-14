@@ -1,28 +1,19 @@
 package edu.utn.TPFinal.controller.app;
 
-import edu.utn.TPFinal.exceptions.AccessNotAllowedException;
-import edu.utn.TPFinal.exceptions.notFound.*;
+import edu.utn.TPFinal.exception.AccessNotAllowedException;
+import edu.utn.TPFinal.exception.notFound.*;
 import edu.utn.TPFinal.model.Bill;
-import edu.utn.TPFinal.model.TypeUser;
 import edu.utn.TPFinal.model.dto.BillDto;
 import edu.utn.TPFinal.model.dto.UserDto;
-import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.service.BillService;
 import edu.utn.TPFinal.utils.EntityResponse;
-import edu.utn.TPFinal.utils.EntityURLBuilder;
-import net.kaczmarzyk.spring.data.jpa.domain.Equal;
-import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
-import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -72,7 +63,7 @@ public class BillAppController {
                                                                                    @RequestParam(value = "to", defaultValue = "2020-01-05") @DateTimeFormat(pattern = "yyyy-MM-dd")Date to,
                                                                                    Authentication authentication) throws UserNotExistsException, ClientNotFoundException, AccessNotAllowedException {
         UserDto userDto = (UserDto) authentication.getPrincipal();
-        List<Sort.Order> orders = new ArrayList<>();
+        List<Sort.Order> orders = new ArrayList<Sort.Order>();
         orders.add(new Sort.Order(Sort.Direction.DESC, field1));
         orders.add(new Sort.Order(Sort.Direction.DESC, field2));
         Pageable pageable = PageRequest.of(page, size, Sort.by(orders));

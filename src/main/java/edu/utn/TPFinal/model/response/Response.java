@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.model.responses;
+package edu.utn.TPFinal.model.response;
 
 import lombok.Builder;
 import lombok.Data;

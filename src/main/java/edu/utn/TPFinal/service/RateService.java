@@ -1,10 +1,9 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.exceptions.ViolationChangeKeyAttributeException;
-import edu.utn.TPFinal.exceptions.alreadyExists.MeterAlreadyExistsException;
-import edu.utn.TPFinal.exceptions.alreadyExists.RateAlreadyExists;
-import edu.utn.TPFinal.exceptions.notFound.ModelNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
+import edu.utn.TPFinal.exception.RestrictDeleteException;
+import edu.utn.TPFinal.exception.ViolationChangeKeyAttributeException;
+import edu.utn.TPFinal.exception.alreadyExists.RateAlreadyExists;
+import edu.utn.TPFinal.exception.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.Rate;
 import edu.utn.TPFinal.repository.RateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -64,9 +62,15 @@ public class RateService {
         return rateRepository.findById(id).orElseThrow(() -> new RateNotExistsException("Rate not exists"));
     }
 
-    public void deleteRateById(Integer id) throws RateNotExistsException{
-        getRateById(id);
-        rateRepository.deleteById(id);
+    public void deleteRateById(Integer id) throws RateNotExistsException, RestrictDeleteException {
+        Rate rate = getRateById(id);
+
+        if(rate.getAddressList().isEmpty()) {
+            rateRepository.deleteById(id);
+        } else {
+            throw new RestrictDeleteException("Can not delete this rate because it depends of another objects");
+        }
+
     }
 
 }

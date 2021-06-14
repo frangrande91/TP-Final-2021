@@ -1,15 +1,14 @@
 package edu.utn.TPFinal.controller.backoffice;
 
-import edu.utn.TPFinal.exceptions.AccessNotAllowedException;
-import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.MeasurementNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
+import edu.utn.TPFinal.exception.RestrictDeleteException;
+import edu.utn.TPFinal.exception.notFound.AddressNotExistsException;
+import edu.utn.TPFinal.exception.notFound.MeasurementNotExistsException;
+import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.model.Measurement;
 import edu.utn.TPFinal.model.dto.MeasurementDto;
 import edu.utn.TPFinal.model.dto.ReceivedMeasurementDto;
 import edu.utn.TPFinal.model.dto.UserDto;
-import edu.utn.TPFinal.model.responses.Response;
+import edu.utn.TPFinal.model.response.Response;
 import edu.utn.TPFinal.service.MeasurementService;
 import edu.utn.TPFinal.utils.EntityResponse;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
@@ -31,9 +30,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/backoffice/measurements")
@@ -56,20 +56,20 @@ public class MeasurementBackController {
     }
 
 
-/*    *//**PUNTO 6+*//*
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    /**PUNTO 6+*/
+    //@PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("addresses/{idAddress}")
     public ResponseEntity<List<MeasurementDto>> getByAddressForDateRange(@PathVariable Integer idAddress,
-                                                                  @RequestParam(value = "from", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
-                                                                  @RequestParam(value = "to", defaultValue = "2020-01-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to,
+                                                                  @RequestParam(value = "from", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
+                                                                  @RequestParam(value = "to", defaultValue = "2020-01-05") @DateTimeFormat(pattern = "yyyy-MM-dd") Date to,
                                                                   @RequestParam(value = "size", defaultValue = "10") Integer size,
-                                                                  @RequestParam(value = "page", defaultValue = "0") Integer page,
-                                                                  Authentication authentication) throws AddressNotExistsException {
+                                                                  @RequestParam(value = "page", defaultValue = "0") Integer page/*,
+                                                                  Authentication authentication*/) throws AddressNotExistsException {
         Pageable pageable = PageRequest.of(page, size);
         Page<Measurement> measurementPage = measurementService.getAllByAddressAndDateBetween(idAddress, from, to, pageable);
         Page<MeasurementDto> measurementDtoPage = measurementPage.map(measurement -> conversionService.convert(measurement,MeasurementDto.class));
         return EntityResponse.listResponse(measurementDtoPage);
-    }*/
+    }
 
     @PostMapping("/")
     public ResponseEntity<Response> addMeasurement(@RequestBody ReceivedMeasurementDto receivedMeasurementDto) throws MeterNotExistsException {
@@ -85,7 +85,7 @@ public class MeasurementBackController {
                 .body(EntityResponse.messageResponse("The measurement has been created"));
     }
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<List<MeasurementDto>> getAllMeasurements(@RequestParam(value = "size", defaultValue = "10") Integer size,
                                                                    @RequestParam(value = "page", defaultValue = "0") Integer page){
         Pageable pageable = PageRequest.of(page, size);
@@ -122,7 +122,7 @@ public class MeasurementBackController {
         return ResponseEntity.ok(measurementDto);
     }
 
-    @PutMapping("/{id}/{idMeter}")
+    @PutMapping("/{id}/meters/{idMeter}")
     public ResponseEntity<Response> addMeterToMeasurement(@PathVariable Integer id, @PathVariable Integer idMeter) throws MeasurementNotExistsException, MeterNotExistsException {
         measurementService.addMeterToMeasurement(id, idMeter);
         return ResponseEntity
@@ -131,7 +131,7 @@ public class MeasurementBackController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteMeasurementById(@PathVariable Integer id) throws MeasurementNotExistsException{
+    public ResponseEntity<Object> deleteMeasurementById(@PathVariable Integer id) throws MeasurementNotExistsException, RestrictDeleteException {
         measurementService.deleteMeasurementById(id);
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)

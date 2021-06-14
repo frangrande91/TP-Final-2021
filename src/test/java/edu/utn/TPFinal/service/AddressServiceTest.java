@@ -1,9 +1,10 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.exceptions.alreadyExists.AddressAlreadyExistsException;
-import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
+import edu.utn.TPFinal.exception.RestrictDeleteException;
+import edu.utn.TPFinal.exception.alreadyExists.AddressAlreadyExistsException;
+import edu.utn.TPFinal.exception.notFound.AddressNotExistsException;
+import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exception.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.Address;
 import edu.utn.TPFinal.repository.AddressRepository;
 import edu.utn.TPFinal.repository.MeterRepository;
@@ -233,7 +234,7 @@ public class AddressServiceTest {
     }
 
     @Test
-    public void deleteAddressByIdOk(){
+    public void deleteAddressByIdOk() {
         try {
             //given
             when(addressRepository.findById(aAddress().getId())).thenReturn(Optional.of(aAddress()));
@@ -247,7 +248,7 @@ public class AddressServiceTest {
             verify(addressRepository, times(1)).findById(aAddress().getId());
             verify(addressRepository, times(1)).deleteById(aAddress().getId());
         }
-        catch (AddressNotExistsException e){
+        catch (AddressNotExistsException | RestrictDeleteException e){
             fail(e);
         }
     }

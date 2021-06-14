@@ -1,20 +1,12 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.exceptions.alreadyExists.RateAlreadyExists;
-import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
-import edu.utn.TPFinal.model.Meter;
+import edu.utn.TPFinal.exception.alreadyExists.RateAlreadyExists;
+import edu.utn.TPFinal.exception.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.Rate;
 
 import edu.utn.TPFinal.repository.RateRepository;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +20,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static edu.utn.TPFinal.utils.MeterTestUtils.aMeterPage;
-import static edu.utn.TPFinal.utils.MeterTestUtils.specMeter;
 import static edu.utn.TPFinal.utils.RateTestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -154,6 +145,7 @@ public class RateServiceTest {
         Assertions.assertThrows(RateNotExistsException.class, () -> rateService.getRateById(id));
     }
 
+    /*
     @Test
     public void deleteRateByIdOk() {
         Integer id = 1234;
@@ -170,6 +162,8 @@ public class RateServiceTest {
             fail(ex);
         }
     }
+
+     */
 
     @Test
     public void deleteRateByIdNotFound() {

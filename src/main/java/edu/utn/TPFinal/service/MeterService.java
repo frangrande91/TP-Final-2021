@@ -1,8 +1,9 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.exceptions.ViolationChangeKeyAttributeException;
-import edu.utn.TPFinal.exceptions.alreadyExists.MeterAlreadyExistsException;
-import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exception.RestrictDeleteException;
+import edu.utn.TPFinal.exception.ViolationChangeKeyAttributeException;
+import edu.utn.TPFinal.exception.alreadyExists.MeterAlreadyExistsException;
+import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.repository.MeterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,9 +67,15 @@ public class MeterService {
         return meterRepository.findBySerialNumberAndPassword(serialNumber, password).orElseThrow(() -> new MeterNotExistsException("Meter not exists"));
     }
 
-    public void deleteMeterById(Integer id) throws MeterNotExistsException {
-        getMeterById(id);
-        meterRepository.deleteById(id);
+    public void deleteMeterById(Integer id) throws MeterNotExistsException, RestrictDeleteException {
+        Meter meter = getMeterById(id);
+        if(isNull(meter.getAddress())){
+            meterRepository.deleteById(id);
+        }
+        else {
+            throw new RestrictDeleteException("Can not delete this meter because it depends of another objects");
+        }
+
     }
 
 }

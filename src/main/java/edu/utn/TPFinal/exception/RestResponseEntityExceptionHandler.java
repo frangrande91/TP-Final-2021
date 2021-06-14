@@ -1,9 +1,8 @@
-package edu.utn.TPFinal.exceptions;
+package edu.utn.TPFinal.exception;
 
-import edu.utn.TPFinal.exceptions.alreadyExists.AddressAlreadyExistsException;
-import edu.utn.TPFinal.exceptions.alreadyExists.RateAlreadyExists;
-import edu.utn.TPFinal.exceptions.notFound.*;
-import edu.utn.TPFinal.model.responses.Response;
+import edu.utn.TPFinal.exception.alreadyExists.AddressAlreadyExistsException;
+import edu.utn.TPFinal.exception.alreadyExists.RateAlreadyExists;
+import edu.utn.TPFinal.exception.notFound.*;
 import edu.utn.TPFinal.utils.EntityResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -105,4 +104,33 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         System.out.println("TIPO DE EXCEPCION:"+ex.getClass());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(EntityResponse.messageResponse(ex.getMessage()));
     }
+
+
+    @ExceptionHandler({SQLIntegrityConstraintViolationException.class})
+    public ResponseEntity<Object> SQLIntegrityConstraintViolationException
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            (AddressAlreadyExistsException ex, WebRequest request) {
+        System.out.println("TIPO DE EXCEPCION:"+ex.getClass());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(EntityResponse.messageResponse(ex.getMessage()));
+    }
+
 }

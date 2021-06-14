@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.model.projectios;
+package edu.utn.TPFinal.model.projection;
 
 public interface ConsumerProjection {
 

@@ -3,7 +3,7 @@ package edu.utn.TPFinal.controller;
 import edu.utn.TPFinal.controller.backoffice.RateBackController;
 import edu.utn.TPFinal.model.Rate;
 import edu.utn.TPFinal.model.dto.RateDto;
-import edu.utn.TPFinal.model.responses.Response;
+import edu.utn.TPFinal.model.response.Response;
 import edu.utn.TPFinal.service.RateService;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
 import org.junit.jupiter.api.BeforeAll;

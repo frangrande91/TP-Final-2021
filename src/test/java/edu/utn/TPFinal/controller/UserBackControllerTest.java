@@ -4,7 +4,7 @@ import edu.utn.TPFinal.controller.backoffice.UserBackController;
 import edu.utn.TPFinal.model.Rate;
 import edu.utn.TPFinal.model.User;
 import edu.utn.TPFinal.model.dto.UserDto;
-import edu.utn.TPFinal.model.responses.Response;
+import edu.utn.TPFinal.model.response.Response;
 import edu.utn.TPFinal.service.UserService;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
 import org.junit.jupiter.api.BeforeAll;

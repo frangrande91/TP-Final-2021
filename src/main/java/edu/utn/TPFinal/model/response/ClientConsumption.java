@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.model.responses;
+package edu.utn.TPFinal.model.response;
 
 import edu.utn.TPFinal.model.dto.UserDto;
 import lombok.AllArgsConstructor;

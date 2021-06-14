@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.utn.TPFinal.model.User;
 import edu.utn.TPFinal.model.dto.LoginRequestDto;
 import edu.utn.TPFinal.model.dto.UserDto;
-import edu.utn.TPFinal.model.responses.LoginResponseDto;
+import edu.utn.TPFinal.model.response.LoginResponseDto;
 import edu.utn.TPFinal.service.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

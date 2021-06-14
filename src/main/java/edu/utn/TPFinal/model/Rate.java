@@ -24,6 +24,6 @@ public class Rate {
 
     private String typeRate;
 
-    @OneToMany(mappedBy = "rate", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "rate")
     private List<Address> addressList;
 }

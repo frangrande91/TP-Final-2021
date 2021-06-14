@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.exceptions.alreadyExists;
+package edu.utn.TPFinal.exception.alreadyExists;
 
 public class AddressAlreadyExistsException extends Exception{
 

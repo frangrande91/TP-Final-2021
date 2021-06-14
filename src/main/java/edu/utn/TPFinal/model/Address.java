@@ -21,7 +21,7 @@ public class Address {
     @Column(name = "id_address")
     private Integer id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "id_meter")
     private Meter meter;
 

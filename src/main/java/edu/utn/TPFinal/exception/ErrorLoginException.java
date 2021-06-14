@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.exceptions;
+package edu.utn.TPFinal.exception;
 
 public class ErrorLoginException extends Exception {
     public ErrorLoginException(String message) {

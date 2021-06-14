@@ -1,12 +1,13 @@
 package edu.utn.TPFinal.controller.backoffice;
 
-import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.BillNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
+import edu.utn.TPFinal.exception.RestrictDeleteException;
+import edu.utn.TPFinal.exception.notFound.AddressNotExistsException;
+import edu.utn.TPFinal.exception.notFound.BillNotExistsException;
+import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exception.notFound.UserNotExistsException;
 import edu.utn.TPFinal.model.Bill;
 import edu.utn.TPFinal.model.dto.BillDto;
-import edu.utn.TPFinal.model.responses.Response;
+import edu.utn.TPFinal.model.response.Response;
 import edu.utn.TPFinal.service.BillService;
 import edu.utn.TPFinal.utils.EntityResponse;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
@@ -69,10 +70,10 @@ public class BillBackController {
     }
 
 
-    /*
+
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteBillById(@PathVariable Integer id) throws BillNotExistsException{
+    public ResponseEntity<Object> deleteBillById(@PathVariable Integer id) throws BillNotExistsException, RestrictDeleteException {
         billService.deleteBillById(id);
         return ResponseEntity.accepted().build();
     }
@@ -130,23 +131,22 @@ public class BillBackController {
         return ResponseEntity.ok(billDto);
     }
 
-   /* @PutMapping("/{id}/client/{idClient}")
+    @PutMapping("/{id}/clients/{idClient}")
     public ResponseEntity<Response> addClientToBill(@PathVariable Integer id, @PathVariable Integer idClient) throws UserNotExistsException, BillNotExistsException {
         billService.addClientToBill(id, idClient);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(Response.builder().message("The bill has been modified").build());
     }
 
 
-    @PutMapping("/{id}/{idAddress}")
+    @PutMapping("/{id}/addresses/{idAddress}")
     public ResponseEntity<Response> addAddressToBill(@PathVariable Integer id, @PathVariable Integer idAddress) throws AddressNotExistsException, BillNotExistsException{
         billService.addAddressToBill(id, idAddress);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(Response.builder().message("The bill has been modified").build());
     }
 
-    @PutMapping("/{id}/{idMeter}")
+    @PutMapping("/{id}/meters/{idMeter}")
     public ResponseEntity<Response> addMeterToBill(@PathVariable Integer id, @PathVariable Integer idMeter) throws MeterNotExistsException, BillNotExistsException {
         billService.addMeterToBill(id, idMeter);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(Response.builder().message("The bill has been modified").build());
-    }*/
-
+    }
 }

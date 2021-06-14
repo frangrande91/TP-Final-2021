@@ -40,7 +40,7 @@ public class User {
     @AccessType(AccessType.Type.PROPERTY)
     private TypeUser typeUser;
 
-    @OneToMany(mappedBy = "userClient", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userClient")
     private List<Bill> billList;
 
     @OneToMany(mappedBy = "userClient",fetch = FetchType.EAGER)

@@ -1,7 +1,8 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.exceptions.AccessNotAllowedException;
-import edu.utn.TPFinal.exceptions.notFound.*;
+import edu.utn.TPFinal.exception.AccessNotAllowedException;
+import edu.utn.TPFinal.exception.RestrictDeleteException;
+import edu.utn.TPFinal.exception.notFound.*;
 import edu.utn.TPFinal.model.*;
 import edu.utn.TPFinal.repository.BillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,9 +107,16 @@ public class BillService {
     }
 
 
-    public void deleteBillById(Integer id) throws BillNotExistsException{
-        getBillById(id);
-        billRepository.deleteById(id);
+    public void deleteBillById(Integer id) throws BillNotExistsException, RestrictDeleteException {
+        Bill bill = getBillById(id);
+        if(bill.getMeasurementList().isEmpty()){
+            billRepository.deleteById(id);
+        }
+        else{
+            throw new RestrictDeleteException("Can not delete this meter because it depends of another objects");
+
+        }
+
     }
 
 

@@ -1,13 +1,12 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.exceptions.alreadyExists.UserAlreadyExists;
-import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
-import edu.utn.TPFinal.exceptions.ErrorLoginException;
-import edu.utn.TPFinal.exceptions.notFound.ClientNotFoundException;
-import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
+import edu.utn.TPFinal.exception.RestrictDeleteException;
+import edu.utn.TPFinal.exception.alreadyExists.UserAlreadyExists;
+import edu.utn.TPFinal.exception.notFound.AddressNotExistsException;
+import edu.utn.TPFinal.exception.notFound.ClientNotFoundException;
+import edu.utn.TPFinal.exception.notFound.UserNotExistsException;
 import edu.utn.TPFinal.model.*;
-import edu.utn.TPFinal.model.dto.ConsumerDto;
-import edu.utn.TPFinal.model.projectios.ConsumerProjection;
+import edu.utn.TPFinal.model.projection.ConsumerProjection;
 import edu.utn.TPFinal.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,9 +17,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.Objects.isNull;
 
@@ -100,8 +97,15 @@ public class UserService {
         return userRepository.getTop10MoreConsumers(from, to);
     }
 
-    public void deleteById(Integer id) throws UserNotExistsException{
-        getUserById(id);
-        userRepository.deleteById(id);
+    public void deleteById(Integer id) throws UserNotExistsException, RestrictDeleteException {
+        User user = getUserById(id);
+        if(user.getBillList().isEmpty()){
+            userRepository.deleteById(id);
+        }
+        else{
+            throw new RestrictDeleteException("Can not delete this user because it depends of another objects");
+
+        }
+
     }
 }

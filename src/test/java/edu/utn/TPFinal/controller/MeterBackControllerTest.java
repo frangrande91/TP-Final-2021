@@ -2,7 +2,7 @@ package edu.utn.TPFinal.controller;
 import edu.utn.TPFinal.controller.backoffice.MeterBackController;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.dto.MeterDto;
-import edu.utn.TPFinal.model.responses.Response;
+import edu.utn.TPFinal.model.response.Response;
 import edu.utn.TPFinal.service.MeterService;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
 import org.junit.jupiter.api.BeforeAll;

@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.exceptions.notFound;
+package edu.utn.TPFinal.exception.notFound;
 
 public class BillNotExistsException extends Exception {
 

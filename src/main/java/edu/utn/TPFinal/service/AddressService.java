@@ -1,9 +1,10 @@
 package edu.utn.TPFinal.service;
-import edu.utn.TPFinal.exceptions.ViolationChangeKeyAttributeException;
-import edu.utn.TPFinal.exceptions.alreadyExists.AddressAlreadyExistsException;
-import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
+import edu.utn.TPFinal.exception.RestrictDeleteException;
+import edu.utn.TPFinal.exception.ViolationChangeKeyAttributeException;
+import edu.utn.TPFinal.exception.alreadyExists.AddressAlreadyExistsException;
+import edu.utn.TPFinal.exception.notFound.AddressNotExistsException;
+import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exception.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.Address;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.Rate;
@@ -88,9 +89,15 @@ public class AddressService {
         return addressRepository.save(address);
     }
 
-    public void deleteAddressById(Integer id) throws AddressNotExistsException {
-        getAddressById(id);
-        addressRepository.deleteById(id);
+    public void deleteAddressById(Integer id) throws AddressNotExistsException, RestrictDeleteException {
+        Address address = getAddressById(id);
+        if(isNull(address.getMeter()) && isNull(address.getRate())) {
+            addressRepository.deleteById(id);
+        } else {
+            throw new RestrictDeleteException("Can not delete this address because it depends of another objects");
+        }
+
+
     }
 
 }

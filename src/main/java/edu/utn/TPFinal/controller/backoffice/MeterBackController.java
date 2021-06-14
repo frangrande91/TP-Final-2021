@@ -1,13 +1,12 @@
 package edu.utn.TPFinal.controller.backoffice;
 
-import edu.utn.TPFinal.exceptions.ViolationChangeKeyAttributeException;
-import edu.utn.TPFinal.exceptions.alreadyExists.MeterAlreadyExistsException;
-import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.RateNotExistsException;
-import edu.utn.TPFinal.model.Rate;
+import edu.utn.TPFinal.exception.RestrictDeleteException;
+import edu.utn.TPFinal.exception.ViolationChangeKeyAttributeException;
+import edu.utn.TPFinal.exception.alreadyExists.MeterAlreadyExistsException;
+import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.model.dto.MeterDto;
 import edu.utn.TPFinal.model.Meter;
-import edu.utn.TPFinal.model.responses.Response;
+import edu.utn.TPFinal.model.response.Response;
 import edu.utn.TPFinal.service.MeterService;
 import edu.utn.TPFinal.utils.EntityResponse;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
@@ -114,7 +113,7 @@ public class MeterBackController {
 
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteMeterById(@PathVariable Integer id) throws MeterNotExistsException{
+    public ResponseEntity<Object> deleteMeterById(@PathVariable Integer id) throws MeterNotExistsException, RestrictDeleteException {
         meterService.deleteMeterById(id);
         return ResponseEntity.accepted().build();
     }

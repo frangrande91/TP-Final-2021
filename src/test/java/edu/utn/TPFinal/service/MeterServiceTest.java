@@ -1,6 +1,7 @@
 package edu.utn.TPFinal.service;
-import edu.utn.TPFinal.exceptions.alreadyExists.MeterAlreadyExistsException;
-import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exception.RestrictDeleteException;
+import edu.utn.TPFinal.exception.alreadyExists.MeterAlreadyExistsException;
+import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.repository.MeterRepository;
 import org.junit.jupiter.api.*;
@@ -9,7 +10,6 @@ import static edu.utn.TPFinal.utils.MeterTestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
@@ -160,7 +160,7 @@ public class MeterServiceTest {
             Mockito.verify(meterRepository, Mockito.times(1)).findById(id);
             Mockito.verify(meterRepository, Mockito.times(1)).deleteById(id);
 
-        } catch (MeterNotExistsException e) {
+        } catch (MeterNotExistsException | RestrictDeleteException e) {
             fail(e);
         }
     }

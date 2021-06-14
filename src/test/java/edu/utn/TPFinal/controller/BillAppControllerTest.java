@@ -1,29 +1,11 @@
 package edu.utn.TPFinal.controller;
 
 import edu.utn.TPFinal.controller.backoffice.BillBackController;
-import edu.utn.TPFinal.model.Bill;
-import edu.utn.TPFinal.model.dto.BillDto;
-import edu.utn.TPFinal.model.responses.Response;
 import edu.utn.TPFinal.service.BillService;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-import java.util.List;
-
-import static edu.utn.TPFinal.utils.AddressTestUtils.aAddress;
-import static edu.utn.TPFinal.utils.BillTestUtils.*;
-import static edu.utn.TPFinal.utils.MeterTestUtils.aMeter;
-import static edu.utn.TPFinal.utils.UserTestUtils.aUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 public class BillAppControllerTest {

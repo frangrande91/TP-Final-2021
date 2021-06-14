@@ -1,9 +1,10 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.exceptions.notFound.AddressNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.BillNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.MeterNotExistsException;
-import edu.utn.TPFinal.exceptions.notFound.UserNotExistsException;
+import edu.utn.TPFinal.exception.RestrictDeleteException;
+import edu.utn.TPFinal.exception.notFound.AddressNotExistsException;
+import edu.utn.TPFinal.exception.notFound.BillNotExistsException;
+import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exception.notFound.UserNotExistsException;
 import edu.utn.TPFinal.model.Bill;
 import edu.utn.TPFinal.repository.BillRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -252,7 +253,7 @@ public class BillServiceTest {
             when(billRepository.findById(aBill().getId())).thenReturn(Optional.empty());
             verify(billRepository, times(1)).findById(aBill().getId());
             verify(billRepository, times(1)).deleteById(aBill().getId());
-        } catch (BillNotExistsException e) {
+        } catch (BillNotExistsException | RestrictDeleteException e) {
             fail(e);
         }
     }

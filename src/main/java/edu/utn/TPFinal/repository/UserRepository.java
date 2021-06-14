@@ -1,15 +1,13 @@
 package edu.utn.TPFinal.repository;
 
 import edu.utn.TPFinal.model.User;
-import edu.utn.TPFinal.model.dto.ConsumerDto;
-import edu.utn.TPFinal.model.projectios.ConsumerProjection;
+import edu.utn.TPFinal.model.projection.ConsumerProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @Repository

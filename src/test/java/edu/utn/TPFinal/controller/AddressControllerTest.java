@@ -3,7 +3,7 @@ package edu.utn.TPFinal.controller;
 import edu.utn.TPFinal.controller.backoffice.AddressBackController;
 import edu.utn.TPFinal.model.Address;
 import edu.utn.TPFinal.model.dto.AddressDto;
-import edu.utn.TPFinal.model.responses.Response;
+import edu.utn.TPFinal.model.response.Response;
 import edu.utn.TPFinal.service.AddressService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

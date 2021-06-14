@@ -1,7 +1,6 @@
 package edu.utn.TPFinal.utils;
 
-import edu.utn.TPFinal.model.responses.Response;
-import org.apache.logging.log4j.message.Message;
+import edu.utn.TPFinal.model.response.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

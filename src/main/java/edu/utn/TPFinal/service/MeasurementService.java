@@ -1,12 +1,12 @@
 package edu.utn.TPFinal.service;
 
-import edu.utn.TPFinal.exceptions.AccessNotAllowedException;
-import edu.utn.TPFinal.exceptions.notFound.*;
+import edu.utn.TPFinal.exception.AccessNotAllowedException;
+import edu.utn.TPFinal.exception.RestrictDeleteException;
+import edu.utn.TPFinal.exception.notFound.*;
 import edu.utn.TPFinal.model.*;
-import edu.utn.TPFinal.model.dto.MeasurementDto;
 import edu.utn.TPFinal.model.dto.ReceivedMeasurementDto;
 import edu.utn.TPFinal.model.dto.UserDto;
-import edu.utn.TPFinal.model.responses.ClientConsumption;
+import edu.utn.TPFinal.model.response.ClientConsumption;
 import edu.utn.TPFinal.repository.MeasurementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -144,13 +144,13 @@ public class MeasurementService {
         measurementRepository.save(measurement);
     }
 
-    public void deleteMeasurementById(Integer id) throws MeasurementNotExistsException{
-        getMeasurementById(id);
+    public void deleteMeasurementById(Integer id) throws MeasurementNotExistsException, RestrictDeleteException {
         measurementRepository.deleteById(id);
     }
 
-/*    public Page<Measurement> getAllByAddressAndDateBetween(Integer idAddress, LocalDate from, LocalDate to, Pageable pageable) throws AddressNotExistsException {
-        Address address1 = addressService.getAddressById(idAddress);
-        return measurementRepository.findAllByAddressAndDateBetween(address1, from, to, pageable);
-    }*/
+
+   public Page<Measurement> getAllByAddressAndDateBetween(Integer idAddress, Date from, Date to, Pageable pageable) throws AddressNotExistsException {
+       Address address = addressService.getAddressById(idAddress);
+       return measurementRepository.findAllByMeterAndDateBetween(address.getMeter(), from, to, pageable);
+   }
 }

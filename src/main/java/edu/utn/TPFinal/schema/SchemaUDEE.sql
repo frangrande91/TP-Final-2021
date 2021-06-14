@@ -447,7 +447,6 @@ LEFT JOIN
 ON max_consumption.id_meter = min_consumption.id_meter
 JOIN meters m
 ON max_consumption.id_meter = m.id_meter
->>>>>>> 86c40d04f66b5b0fd6a04363dfca3de74a87cf8e
 GROUP BY max_consumption.id_user
 ORDER BY consumption DESC LIMIT 10
 
