@@ -1,13 +1,15 @@
-package edu.utn.TPFinal.controller;
+package edu.utn.TPFinal.controller.backoffice;
 
 import edu.utn.TPFinal.controller.backoffice.UserBackController;
 import edu.utn.TPFinal.model.Rate;
 import edu.utn.TPFinal.model.User;
 import edu.utn.TPFinal.model.dto.UserDto;
+import edu.utn.TPFinal.model.projection.ConsumerProjection;
 import edu.utn.TPFinal.model.response.Response;
 import edu.utn.TPFinal.service.UserService;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.core.convert.ConversionService;
@@ -26,8 +28,10 @@ import static edu.utn.TPFinal.utils.UserTestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.util.*;
 
 public class UserBackControllerTest {
@@ -38,8 +42,8 @@ public class UserBackControllerTest {
     private static UserBackController userBackController;
 
 
-    @BeforeAll
-    public static void setUp() {
+    @BeforeEach
+    public void setUp() {
         userService = Mockito.mock(UserService.class);
         conversionService = Mockito.mock(ConversionService.class);
         userBackController = new UserBackController(userService,conversionService);
@@ -121,29 +125,6 @@ public class UserBackControllerTest {
         assertEquals(aUser().getUsername(),responseEntity.getBody().getUsername());
     }
 
-   /* @Test
-    public void login() {
-
-        try {
-            Mockito.when(userService.login(any(),any())).thenReturn(aUser());
-            Mockito.when(conversionService.convert(aUser(),UserDto.class)).thenReturn(aUserDto());
-            ResponseEntity<UserDto> responseEntity = userController.login(aUser().getUsername(),aUser().getPassword());
-
-            assertEquals(aUser().getId(),responseEntity.getBody().getId());
-            assertEquals(aUser().getFirstName(),responseEntity.getBody().getFirstName());
-            assertEquals(aUser().getLastName(),responseEntity.getBody().getLastName());
-            assertEquals(aUser().getTypeUser(),responseEntity.getBody().getTypeUser());
-            assertEquals(aUser().getUsername(),responseEntity.getBody().getUsername());
-            assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
-            assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
-        }
-        catch (ErrorLoginException ex) {
-            ex.printStackTrace();
-            fail("Fail the tests");
-        }
-
-    }*/
-
     @Test
     public void addAddressToClientUser() throws Exception{
         when(userService.addAddressToClientUser(1,1)).thenReturn(aUser());
@@ -153,10 +134,23 @@ public class UserBackControllerTest {
 
     @Test
     public void deleteUserById() throws Exception {
-
         Mockito.doNothing().when(userService).deleteById(1);
         ResponseEntity<Object> responseEntity = userBackController.deleteUser(1);
         assertEquals(HttpStatus.ACCEPTED.value(),responseEntity.getStatusCode().value());
     }
+
+    @Test
+    public void get10TopMoreConsumers() {
+        ConsumerProjection consumerProjection = mock(ConsumerProjection.class);
+        List<ConsumerProjection> consumerProjections = List.of(consumerProjection);
+;
+        Mockito.when(userService.getTop10MoreConsumers(any(),any())).thenReturn(List.of(consumerProjection));
+
+        ResponseEntity<List<ConsumerProjection>> responseEntity = userBackController.get10TopMoreConsumers(LocalDate.of(2021,8, 1), LocalDate.of(2021,9,1));
+        assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
+        assertEquals(consumerProjections.size(),responseEntity.getBody().size());
+    }
+
+
 
 }

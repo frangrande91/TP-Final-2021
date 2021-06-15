@@ -56,7 +56,7 @@ public class BillBackController {
 
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("/addresses/{idAddress}/unpaid/sort")
-    public ResponseEntity<List<BillDto>> getAllUnpaidByAddress(@PathVariable Integer idAddress,
+    public ResponseEntity<List<BillDto>> getAllUnpaidByAddressSort(@PathVariable Integer idAddress,
                                                                @RequestParam(value = "size", defaultValue = "10") Integer size,
                                                                @RequestParam(value = "page", defaultValue = "0") Integer page,
                                                                @RequestParam String field1, @RequestParam String field2) throws AddressNotExistsException {
@@ -68,9 +68,6 @@ public class BillBackController {
         Page<BillDto> billDtoPage = billPage.map(bill -> conversionService.convert(bill, BillDto.class));
         return EntityResponse.listResponse(billDtoPage);
     }
-
-
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteBillById(@PathVariable Integer id) throws BillNotExistsException, RestrictDeleteException {
@@ -90,7 +87,7 @@ public class BillBackController {
     }
 
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
-    @GetMapping("/users/{idClient}")
+    @GetMapping("/")
     public ResponseEntity<List<BillDto>> getAllBills( @RequestParam(value = "size", defaultValue = "10") Integer size,
                                                       @RequestParam(value = "page", defaultValue = "0") Integer page
     ) {

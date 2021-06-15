@@ -1,5 +1,8 @@
-package edu.utn.TPFinal.controller;
+package edu.utn.TPFinal.controller.backoffice;
 import edu.utn.TPFinal.controller.backoffice.MeterBackController;
+import edu.utn.TPFinal.exception.ViolationChangeKeyAttributeException;
+import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exception.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.dto.MeterDto;
 import edu.utn.TPFinal.model.response.Response;
@@ -19,6 +22,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import static edu.utn.TPFinal.utils.EntityResponse.messageResponse;
 import static edu.utn.TPFinal.utils.MeterTestUtils.*;
 import static edu.utn.TPFinal.utils.RateTestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -120,6 +124,23 @@ public class MeterBackControllerTest {
         Mockito.doNothing().when(meterService).deleteMeterById(1);
         ResponseEntity<Object> responseEntity = meterBackController.deleteMeterById(1);
         assertEquals(HttpStatus.ACCEPTED.value(),responseEntity.getStatusCode().value());
+    }
+
+    @Test
+    public void updateMeter() {
+        try {
+            Mockito.when(meterService.updateMeter(any(),any())).thenReturn(aMeter());
+
+            ResponseEntity<Response> responseEntity = meterBackController.updateMeter(1,aMeter());
+
+            assertEquals(HttpStatus.ACCEPTED.value(),responseEntity.getStatusCode().value());
+            assertEquals(messageResponse("The meter has been updated"),responseEntity.getBody());
+
+        }
+        catch ( ViolationChangeKeyAttributeException | MeterNotExistsException e) {
+            fail(e);
+        }
+
     }
 
 }

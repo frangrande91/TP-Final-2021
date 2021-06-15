@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.dto.MeterDto;
-import edu.utn.TPFinal.repositories.ClassRepository;
 import edu.utn.TPFinal.utils.localdate.LocalDateDeserializer;
 import edu.utn.TPFinal.utils.localdate.LocalDateSerializer;
 import org.springframework.data.domain.Page;
@@ -53,39 +52,9 @@ public class MeterTestUtils {
         }
         else {
             return (root, criteriaQuery, criteriaBuilder) -> {
-                return criteriaBuilder.like(root.get("meters.serial_number"), "%" + serialNumber + "%");/*criteriaBuilder.like(root.as( ),"%" + serialNumber + "%");*/
+                return criteriaBuilder.like(root.get("meters.serial_number"), "%" + serialNumber + "%");
             };
         }
     }
 
-    public static Specification<Meter> hasString(String searchString) {
-        return (root, query, cb) -> {
-            query.distinct(true);
-            if (searchString != null) {
-                return cb.like(root.get("meters_.serial_number"), "%" + searchString + "%");
-            } else {
-                return null;
-            }
-        };
-    }
-
-    public static Specification<Meter> hasClasses(String searchString, ClassRepository classRepository) {
-
-        return (root, query, cb) -> {
-            query.distinct(true);
-            if (searchString != null) {
-                List<Class> classes = classRepository.findAllByNameContainsIgnoreCase(searchString);
-
-                if (!CollectionUtils.isEmpty(classes)) {
-                    SetJoin<Meter, Class> masterClassJoin = root.joinSet("classes", JoinType.LEFT);
-                    List<Predicate> predicates = new ArrayList<>();
-                    predicates.add(masterClassJoin.in(new HashSet<>(classes)));
-                    Predicate[] p = predicates.toArray(new Predicate[predicates.size()]);
-                    return cb.or(p);
-                }
-            }
-
-            return null;
-        };
-    }
 }

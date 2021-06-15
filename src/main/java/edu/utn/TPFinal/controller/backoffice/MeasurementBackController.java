@@ -12,6 +12,7 @@ import edu.utn.TPFinal.model.response.Response;
 import edu.utn.TPFinal.service.MeasurementService;
 import edu.utn.TPFinal.utils.EntityResponse;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
+import lombok.extern.slf4j.Slf4j;
 import net.kaczmarzyk.spring.data.jpa.domain.Equal;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
@@ -37,6 +38,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/backoffice/measurements")
+@Slf4j
 public class MeasurementBackController {
 
     private MeasurementService measurementService;
@@ -49,15 +51,9 @@ public class MeasurementBackController {
         this.conversionService = conversionService;
     }
 
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
-    @GetMapping("{from}/{to}")
-    public ResponseEntity<List<UserDto>> get10MoreConsumersPerDateRange(@PathVariable LocalDateTime from, @PathVariable LocalDateTime to) {
-        return null;
-    }
-
 
     /**PUNTO 6+*/
-    //@PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("addresses/{idAddress}")
     public ResponseEntity<List<MeasurementDto>> getByAddressForDateRange(@PathVariable Integer idAddress,
                                                                   @RequestParam(value = "from", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
@@ -74,9 +70,8 @@ public class MeasurementBackController {
     @PostMapping("/")
     public ResponseEntity<Response> addMeasurement(@RequestBody ReceivedMeasurementDto receivedMeasurementDto) throws MeterNotExistsException {
 
-
         Measurement measurement = measurementService.addMeasurement(receivedMeasurementDto);
-        System.out.println(receivedMeasurementDto);
+        log.info(receivedMeasurementDto.toString());
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

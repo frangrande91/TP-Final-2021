@@ -1,11 +1,11 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/UDEE
-    #url: jdbc:mysql://localhost:3307/UDEE?serverTimezone=UTC
+    #url: jdbc:mysql://localhost:3306/UDEE
+    url: jdbc:mysql://localhost:3307/UDEE?serverTimezone=UTC
     #DOCKER# url: jdbc:mysql://MySQL-docker-udee/UDEE?serverTimezone=UTC
     username: root
-    password:
-    #password: Renata2000
+    #password:
+    password: Renata2000
     #DOCKER# password:root
     driver-class-name: com.mysql.cj.jdbc.Driver
     #password: Renata2000

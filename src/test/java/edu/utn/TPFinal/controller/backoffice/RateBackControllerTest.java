@@ -1,6 +1,8 @@
-package edu.utn.TPFinal.controller;
+package edu.utn.TPFinal.controller.backoffice;
 
 import edu.utn.TPFinal.controller.backoffice.RateBackController;
+import edu.utn.TPFinal.exception.ViolationChangeKeyAttributeException;
+import edu.utn.TPFinal.exception.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.Rate;
 import edu.utn.TPFinal.model.dto.RateDto;
 import edu.utn.TPFinal.model.response.Response;
@@ -19,8 +21,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import static edu.utn.TPFinal.utils.EntityResponse.messageResponse;
 import static edu.utn.TPFinal.utils.RateTestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.*;
 import java.util.*;
 
@@ -74,7 +79,7 @@ public class RateBackControllerTest {
     }
 
     @Test
-    public void getAllSorted()  throws Exception{
+    public void getAllSorted() {
         Page<Rate> ratePage = aRatePage();
         Pageable pageable = PageRequest.of(1,1);
 
@@ -112,15 +117,30 @@ public class RateBackControllerTest {
 
         assertEquals(EntityURLBuilder.buildURL2("rates", aRate().getId()).toString(),responseEntity.getHeaders().get("Location").get(0));
         assertEquals(HttpStatus.CREATED.value(),responseEntity.getStatusCode().value());
-
     }
 
     @Test
     public void deleteRateById() throws Exception {
-
         Mockito.doNothing().when(rateService).deleteRateById(1);
         ResponseEntity<Object> responseEntity = rateBackController.deleteRateById(1);
         assertEquals(HttpStatus.ACCEPTED.value(),responseEntity.getStatusCode().value());
+    }
+
+    @Test
+    public void updateRate() {
+        try {
+            Mockito.when(rateService.updateRate(any(),any())).thenReturn(aRate());
+
+            ResponseEntity<Response> responseEntity = rateBackController.updateRate(1,aRate());
+
+            assertEquals(HttpStatus.ACCEPTED.value(),responseEntity.getStatusCode().value());
+            assertEquals(messageResponse("The rate has been updated"),responseEntity.getBody());
+
+        }
+        catch ( ViolationChangeKeyAttributeException | RateNotExistsException e) {
+            fail(e);
+        }
+
     }
 
 }

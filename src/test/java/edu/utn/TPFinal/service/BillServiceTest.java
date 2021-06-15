@@ -239,7 +239,7 @@ public class BillServiceTest {
         verify(billRepository, times(1)).findById(aBill().getId());
     }
 
-    @Test
+/*    @Test
     public void deleteBillByIdOk(){
         try{
             //given
@@ -256,7 +256,7 @@ public class BillServiceTest {
         } catch (BillNotExistsException | RestrictDeleteException e) {
             fail(e);
         }
-    }
+    }*/
 
 
     @Test

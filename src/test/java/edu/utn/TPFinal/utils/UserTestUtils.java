@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import edu.utn.TPFinal.model.TypeUser;
 import edu.utn.TPFinal.model.User;
 import edu.utn.TPFinal.model.dto.UserDto;
+import edu.utn.TPFinal.model.projection.ConsumerProjection;
 import edu.utn.TPFinal.utils.localdate.LocalDateDeserializer;
 import edu.utn.TPFinal.utils.localdate.LocalDateSerializer;
 import org.springframework.data.domain.Page;

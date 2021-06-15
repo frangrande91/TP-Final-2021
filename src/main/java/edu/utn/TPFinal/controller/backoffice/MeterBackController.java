@@ -58,7 +58,7 @@ public class MeterBackController {
 
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Response> updateRate(@PathVariable Integer id,@RequestBody Meter meter) throws MeterNotExistsException, ViolationChangeKeyAttributeException {
+    public ResponseEntity<Response> updateMeter(@PathVariable Integer id,@RequestBody Meter meter) throws MeterNotExistsException, ViolationChangeKeyAttributeException {
         meterService.updateMeter(id,meter);
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)

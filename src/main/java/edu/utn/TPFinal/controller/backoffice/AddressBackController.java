@@ -59,7 +59,7 @@ public class AddressBackController {
 
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Response> updateRate(@PathVariable Integer id,@RequestBody Address address) throws AddressNotExistsException, ViolationChangeKeyAttributeException {
+    public ResponseEntity<Response> updateAddress(@PathVariable Integer id,@RequestBody Address address) throws AddressNotExistsException, ViolationChangeKeyAttributeException {
         addressService.updateAddress(id,address);
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
