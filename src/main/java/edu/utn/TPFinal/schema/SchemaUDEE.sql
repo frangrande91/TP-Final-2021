@@ -1,7 +1,7 @@
 
 CREATE DATABASE IF NOT EXISTS UDEE;
 #drop database UDEE;
-use UDEE;
+USE UDEE;
 
 CREATE TABLE IF NOT EXISTS brands(
                                      id_brand INT NOT NULL AUTO_INCREMENT,
@@ -62,21 +62,6 @@ CREATE TABLE IF NOT EXISTS addresses(
 
 
 CREATE TABLE IF NOT EXISTS bills(
-<<<<<<< HEAD
-                                    id_bill INT NOT NULL AUTO_INCREMENT,
-                                    id_address INT NOT NULL,
-                                    id_meter INT NOT NULL,
-                                    id_user INT NOT NULL,
-                                    initial_measurement DATETIME NOT NULL,
-                                    final_measurement DATETIME NOT NULL,
-                                    total_consumption DOUBLE NOT NULL,
-                                    total_payable DOUBLE,
-                                    expiration DATETIME default ( now() + DAY*15 ),
-                                    CONSTRAINT pk_bill PRIMARY KEY (id_bill),
-                                    CONSTRAINT fk_bill_address FOREIGN KEY (id_address) REFERENCES addresses(id_address),
-                                    CONSTRAINT fk_bil_meter FOREIGN KEY (id_meter) REFERENCES meters(id_meter),
-                                    CONSTRAINT fk_bill_user FOREIGN KEY (id_user) REFERENCES users(id_user)
-=======
 	id_bill INT NOT NULL AUTO_INCREMENT,
 	id_address INT NOT NULL,
 	id_meter INT NOT NULL,
@@ -85,50 +70,36 @@ CREATE TABLE IF NOT EXISTS bills(
 	final_measurement DATETIME NOT NULL,
 	total_consumption DOUBLE NOT NULL,
 	total_payable DOUBLE,
-	expiration DATETIME default now(),
-    `date` datetime default now(),
-    payed bool default false,
+	expiration DATETIME DEFAULT NOW(),
+	`date` DATETIME DEFAULT NOW(),
+	payed BOOL DEFAULT FALSE,
 	CONSTRAINT pk_bill PRIMARY KEY (id_bill),
 	CONSTRAINT fk_bill_address FOREIGN KEY (id_address) REFERENCES addresses(id_address),
 	CONSTRAINT fk_bil_meter FOREIGN KEY (id_meter) REFERENCES meters(id_meter),
 	CONSTRAINT fk_bill_user FOREIGN KEY (id_user) REFERENCES users(id_user)
->>>>>>> 86c40d04f66b5b0fd6a04363dfca3de74a87cf8e
 );
 
 
 
-alter table bills add column `date` datetime default now();
+ALTER TABLE bills ADD COLUMN `date` DATETIME DEFAULT NOW();
 ALTER TABLE bills CHANGE COLUMN expiration expiration DATETIME DEFAULT DATE_ADD(NOW(),INTERVAL 15 DAY)
 /*alter table bills add column payed bool default false;*/
-alter table bills change column expiration expiration datetime default DATE_ADD("2017-06-15", INTERVAL 10 DAY);
+ALTER TABLE bills CHANGE COLUMN expiration expiration DATETIME DEFAULT DATE_ADD("2017-06-15", INTERVAL 10 DAY);
 
 
 CREATE TABLE IF NOT EXISTS measurements(
-<<<<<<< HEAD
-                                           id_measurement INT NOT NULL AUTO_INCREMENT,
-                                           id_meter INT NOT NULL,
-                                           id_bill INT,
-                                           date_time DATETIME,
-                                           quantity_kw DOUBLE NOT NULL,
-                                           price_measurement DOUBLE DEFAULT 0,
-                                           CONSTRAINT pk_measurement PRIMARY KEY (id_measurement),
-                                           CONSTRAINT fk_measurement_meter FOREIGN KEY (id_meter) REFERENCES meters(id_meter),
-                                           CONSTRAINT fk_measurement_bill FOREIGN KEY (id_bill) REFERENCES bills(id_bill)
-=======
 	id_measurement INT NOT NULL AUTO_INCREMENT,
 	id_meter INT NOT NULL,
 	id_bill INT,
-    `date` DATETIME,
+	`date` DATETIME,
 	quantity_kw DOUBLE NOT NULL,
-    price_measurement DOUBLE DEFAULT 0,
+	price_measurement DOUBLE DEFAULT 0,
 	CONSTRAINT pk_measurement PRIMARY KEY (id_measurement),
 	CONSTRAINT fk_measurement_meter FOREIGN KEY (id_meter) REFERENCES meters(id_meter),
 	CONSTRAINT fk_measurement_bill FOREIGN KEY (id_bill) REFERENCES bills(id_bill)
->>>>>>> 86c40d04f66b5b0fd6a04363dfca3de74a87cf8e
 );
 
-/*ALTER TABLE measurements CHANGE COLUMN date_time `date` DATETIME;
-*/
+ALTER TABLE measurements CHANGE COLUMN `date` `date` DATETIME;
 
 
 /* INSERTS */
@@ -137,7 +108,7 @@ INSERT INTO brands(`name`) VALUES
 ("Nike"),
 ("Adidas");
 
-INSERT INTO models(id_brand,`name`) values
+INSERT INTO models(id_brand,`name`) VALUES
 (1,"SB"),
 (1,"Janoski"),
 (2, "D10S");
@@ -166,87 +137,53 @@ INSERT INTO addresses(`id_meter`,`id_user`,`address`,`id_rate`) VALUES
 ;
 
 
-select * from addresses;
-select * from users;
+SELECT * FROM addresses;
+SELECT * FROM users;
 
 INSERT INTO `measurements` (`id_meter`,`id_bill`,`date`,`quantity_kw`) VALUES
-(1,null,NOW(),2),
-(1,NULL,NOW(),5),
-(1,NULL,NOW(),9),
-(1,NULL,NOW(),15),
-(1,NULL,NOW(),17),
-(1,NULL,NOW(),18),
-(1,NULL,NOW(),24),
-(2,NULL,NOW(),8),
-(2,NULL,NOW(),15),
-(2,NULL,NOW(),20),
-(2,NULL,NOW(),26),
-(2,NULL,NOW(),30),
-(2,NULL,NOW(),31),
-(2,NULL,NOW(),34),
-(3,NULL,NOW(),8),
-(3,NULL,NOW(),15),
-(3,NULL,NOW(),24),
-(3,NULL,NOW(),30),
-(3,NULL,NOW(),35),
-(3,NULL,NOW(),38),
-(3,NULL,NOW(),40);
+(8,NULL,NOW(),0),
+(8,NULL,DATE_ADD(NOW(),INTERVAL 5 MINUTE),2),
+(8,NULL,DATE_ADD(NOW(),INTERVAL 10 MINUTE),5),
+(8,NULL,DATE_ADD(NOW(),INTERVAL 15 MINUTE),9),
+(8,NULL,DATE_ADD(NOW(),INTERVAL 20 MINUTE),15),
+(8,NULL,DATE_ADD(NOW(),INTERVAL 25 MINUTE),17),
+(8,NULL,DATE_ADD(NOW(),INTERVAL 30 MINUTE),18),
+(8,NULL,DATE_ADD(NOW(),INTERVAL 35 MINUTE),24),
+(9,NULL,NOW(),0),
+(9,NULL,DATE_ADD(NOW(),INTERVAL 5 MINUTE),8),
+(9,NULL,DATE_ADD(NOW(),INTERVAL 10 MINUTE),15),
+(9,NULL,DATE_ADD(NOW(),INTERVAL 15 MINUTE),20),
+(9,NULL,DATE_ADD(NOW(),INTERVAL 20 MINUTE),26),
+(9,NULL,DATE_ADD(NOW(),INTERVAL 25 MINUTE),30),
+(9,NULL,DATE_ADD(NOW(),INTERVAL 30 MINUTE),31),
+(9,NULL,DATE_ADD(NOW(),INTERVAL 35 MINUTE),34),
+(10,NULL,NOW(),0),
+(10,NULL,DATE_ADD(NOW(),INTERVAL 5 MINUTE),8),
+(10,NULL,DATE_ADD(NOW(),INTERVAL 10 MINUTE),15),
+(10,NULL,DATE_ADD(NOW(),INTERVAL 15 MINUTE),24),
+(10,NULL,DATE_ADD(NOW(),INTERVAL 20 MINUTE),30),
+(10,NULL,DATE_ADD(NOW(),INTERVAL 25 MINUTE),35),
+(10,NULL,DATE_ADD(NOW(),INTERVAL 30 MINUTE),38),
+(10,NULL,DATE_ADD(NOW(),INTERVAL 35 MINUTE),40);
 
-/*Datos
--FROM
--TO*/
+DELETE FROM measurements
 
-select * from measurements where `date` between "2021-07-30" and "2021-08-31" and id_meter = 1;
-<<<<<<< HEAD
-select * from measurements where `date` < "2021-07-30" and id_meter = 1 order by `date` desc limit 0,1;
+
+ALTER TABLE measurements AUTO_INCREMENT = 1;
+ALTER TABLE bills AUTO_INCREMENT = 1;
 
 
 SELECT * FROM addresses;
 SELECT * FROM bills;
 SELECT * FROM brands;
-SELECT * FROM measurements where id_meter = 3;
+SELECT * FROM measurements;
 SELECT * FROM meters;
 SELECT * FROM models;
 SELECT * FROM rates;
 SELECT * FROM users;
 
-select *
-from users u
-         inner join addresses a
-                    on u.id_user = a.id_user
-         inner join meters me
-                    on me.id_meter = a.id_meter
-         inner join measurements m
-                    on m.id_meter = me.id_meter and m.date between "2021-04-01" and "2021-06-05"
-group by me.id_meter
-order by quantity_kw desc limit 10;
 
-=======
-select * from measurements where `date` < "2021-07-30" and id_meter = 1 order by `date` desc limit 0,1;  
-
-
- SELECT * FROM addresses;
- SELECT * FROM bills;
- SELECT * FROM brands;
- SELECT * FROM measurements where id_meter = 3;
- SELECT * FROM meters;
- SELECT * FROM models;
- SELECT * FROM rates;
- SELECT * FROM users;
-
-
- select *
- from users u
- inner join addresses a
- on u.id_user = a.id_user
- inner join meters me
- on me.id_meter = a.id_meter
- inner join measurements m
- on m.id_meter = me.id_meter and m.date between "2021-04-01" and "2021-06-05"
- group by me.id_meter
- order by quantity_kw desc limit 10;
  
->>>>>>> 86c40d04f66b5b0fd6a04363dfca3de74a87cf8e
 
 /*PUNTO 2
 La facturación se realizará por un proceso automático en la base de datos. Se
@@ -257,52 +194,58 @@ esta factura será estipulado a 15 días.
 - una factura por medidor
 - todas las mediciones no facturadas*/
 
-DROP PROCEDURE IF EXISTS liquidate_client;
+/*STORE PROCEDURE PARA FACTURACION*/
+DROP PROCEDURE IF EXISTS p_liquidate_clients;
 DELIMITER $$
-CREATE PROCEDURE liquidate_client(pIdClient INT)
+CREATE PROCEDURE p_liquidate_clients()
 BEGIN
+    DECLARE vIdClient INT;
     DECLARE vIdMeter INT;
     DECLARE vIdAddress INT;
+    DECLARE vIdBill INT;
     DECLARE vInitialMeasurement DATETIME;
     DECLARE vFinalMeasurement DATETIME;
     DECLARE vTotalConsumption DOUBLE;
     DECLARE vTotalPayable DOUBLE;
+    DECLARE vIdBillCreated INT DEFAULT NULL;
+    
     DECLARE vFinished INT DEFAULT 0;
-    DECLARE cur_liquidate CURSOR FOR SELECT me.id_meter,
+    DECLARE cur_liquidate CURSOR FOR SELECT u.id_user,
+					    me.id_meter,
                                             a.id_address,
-                                            MIN(measurements.date_time) AS `initialMeasurement`,
-                                            MAX(measurements.date_time) AS `finalMeasurement`,
-                                            SUM(measurements.quantity_kw) AS `totalConsumption`,
-                                            SUM(measurements.quantity_kw * r.value) AS `totalPayable`
+                                            measurements.id_bill,
+                                            MIN(measurements.date) AS `initialMeasurement`,
+                                            MAX(measurements.date) AS `finalMeasurement`,
+                                            MAX(measurements.quantity_kw) - MIN(measurements.quantity_kw) AS `totalConsumption`,
+                                            ( MAX(measurements.quantity_kw) - MIN(measurements.quantity_kw) ) * r.value AS `totalPayable`
                                      FROM
-                                         (SELECT m.id_meter,m.date_time,m.quantity_kw, m.id_bill
-                                          FROM measurements m
-                                                   JOIN meters me
-                                                        ON m.id_meter = me.id_meter
-                                                   JOIN addresses AS a
-                                                        ON a.id_meter = m.id_meter
-                                          WHERE a.id_user = pIdClient
-                                          ORDER BY m.date_time) AS `measurements`
-                                             INNER JOIN meters me
-                                                        ON measurements.id_meter = me.id_meter
-                                             INNER JOIN addresses a
-                                                        ON a.id_meter = me.id_meter
-                                             INNER JOIN rates r
-                                                        ON a.id_rate = r.id_rate
-                                     WHERE (measurements.id_bill IS NULL) AND (a.id_user = pIdClient)
-                                     GROUP BY me.id_meter;
+					     measurements  
+					     INNER JOIN meters me
+							ON measurements.id_meter = me.id_meter 
+					     INNER JOIN addresses a
+							ON a.id_meter = me.id_meter
+					     INNER JOIN users u
+							ON u.id_user = a.id_user
+					     INNER JOIN rates r
+							ON a.id_rate = r.id_rate
+                                     GROUP BY u.id_user, me.id_meter, a.id_address, measurements.id_bill
+				     HAVING measurements.id_bill IS NULL;
 
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET vFinished = 1;
 
     OPEN cur_liquidate;
-    FETCH cur_liquidate INTO vIdMeter,vIdAddress,vInitialMeasurement,vFinalMeasurement,vTotalConsumption,vTotalPayable;
+    FETCH cur_liquidate INTO vIdClient, vIdMeter,vIdAddress,vIdBill,vInitialMeasurement,vFinalMeasurement,vTotalConsumption,vTotalPayable;
 
     WHILE (vFinished = 0) DO
 
             INSERT INTO bills (`id_address`,`id_meter`,`id_user`,`initial_measurement`,`final_measurement`,`total_consumption`,`total_payable`) VALUES
-            (vIdAddress,vIdMeter,pIdClient,vInitialMeasurement,vFinalMeasurement,vTotalConsumption,vTotalPayable);
-
-            FETCH cur_liquidate INTO vIdMeter,vIdAddress,vInitialMeasurement,vFinalMeasurement,vTotalConsumption,vTotalPayable;
+            (vIdAddress,vIdMeter,vIdClient,vInitialMeasurement,vFinalMeasurement,vTotalConsumption,vTotalPayable);
+	    
+	    SET vIdBillCreated = LAST_INSERT_ID();
+	
+	    UPDATE measurements SET id_bill = vIdBillCreated WHERE id_meter = vIdMeter AND `date` BETWEEN vInitialMeasurement AND vFinalMeasurement;
+	     
+	     FETCH cur_liquidate INTO vIdClient, vIdMeter,vIdAddress,vIdBill,vInitialMeasurement,vFinalMeasurement,vTotalConsumption,vTotalPayable;
 
         END WHILE;
 
@@ -310,8 +253,26 @@ BEGIN
 END
 $$
 
-CALL liquidate_client(2);
+
+CALL p_liquidate_clients();
 SELECT * FROM bills;
+SELECT * FROM measurements;
+DELETE FROM measurements;
+DELETE FROM bills;
+
+/*PROCESO AUTOMATICO FACTURACION*/
+
+SET GLOBAL event_scheduler = ON;
+
+DROP EVENT e_liquidate_clients
+CREATE EVENT e_liquidate_clients 
+ON SCHEDULE EVERY 30 SECOND STARTS '2021-06-15 19:39:00'
+DO CALL p_liquidate_clients();
+
+ALTER EVENT e_liquidate_clients
+DISABLE;
+
+SHOW EVENTS
 
 
 /* PUNTO 3 */
@@ -322,45 +283,8 @@ modificar el precio de cada una de estas mediciones en la base de datos y genera
 factura de ajuste a la nueva medición de cada una de las mediciones involucradas con esta
 tarifa. */
 
-/*PRIMER INTENTO*/
-DROP TRIGGER IF EXISTS TIB_add_calculate_price;
-DELIMITER $$
-CREATE TRIGGER TIB_add_calculate_price BEFORE INSERT ON measurements FOR EACH ROW
-BEGIN
-    DECLARE vIdRate INT;
-    DECLARE vPriceMeasurement DOUBLE;
 
-    SELECT r.id_rate INTO vIdRate
-    FROM rates r
-             INNER JOIN addresses a
-                        ON r.id_rate = a.id_rate
-             INNER JOIN meters m
-                        ON a.id_meter = m.id_meter
-    WHERE m.id_meter = new.id_meter;
-
-    SELECT r.value * new.quantity_kw INTO vPriceMeasurement FROM rates r WHERE r.id_rate = vIdRate;
-
-    SET new.id_rate = vIdRate, new.price_measurement = vPriceMeasurement;
-END;
-$$
-
-/*Hecho por pablo*/
-drop trigger if exists TIB_add_calculate_price2;
-DELIMITER $$
-CREATE TRIGGER TIB_add_calculate_price2 BEFORE INSERT ON measurements FOR EACH ROW
-BEGIN
-    DECLARE vLastDate DATETIME DEFAULT NULL;
-    DECLARE vLastMeas FLOAT DEFAULT 0;
-    /*Buscar la máxima fecha que tenga*/
-    SELECT MAX(`date`) INTO vLastDate FROM measurements WHERE id_meter = new.id_meter AND `date` < new.date;
-    IF (vLastDate IS NOT NULL) THEN
-        SELECT kw INTO vLastMeas FROM measurements WHERE id_meter = new.id_meter and `date` = vLastDate;
-        SET new.price = (new.kw - vLastMeas) * 5.0;
-    END IF;
-END;
-$$
-
-/*CORRECCION SEGUNDO INTENTO (Funciona)*/
+/*TRIGGER BEFORE INSERT MEASUREMENTS*/
 DROP TRIGGER IF EXISTS TIB_add_calculate_price3;
 DELIMITER $$
 CREATE TRIGGER TIB_add_calculate_price3 BEFORE INSERT ON measurements FOR EACH ROW
@@ -369,7 +293,7 @@ BEGIN
     DECLARE vKwLastMeas FLOAT DEFAULT NULL;
     DECLARE vValueRate FLOAT DEFAULT NULL;
 
-    SELECT MAX(`date_time`) INTO vLastDate FROM measurements WHERE id_meter = new.id_meter and `date_time` <= new.date_time;
+    SELECT MAX(`date_time`) INTO vLastDate FROM measurements WHERE id_meter = new.id_meter AND `date_time` <= new.date_time;
     SELECT r.`value` INTO vValueRate FROM rates r INNER JOIN addresses a ON a.id_rate = r.id_rate WHERE id_meter = new.id_meter LIMIT 1;
 
     IF(vLastDate IS NOT NULL) THEN
@@ -382,19 +306,110 @@ BEGIN
 END;
 $$
 
-SELECT MAX(`date_time`) FROM measurements WHERE id_meter = 1 and `date_time` <= new.date_time;
-SELECT MAX(`date_time`) FROM measurements WHERE id_meter = new.id_meter and `date_time` <= new.date_time;
+SELECT MAX(`date_time`) FROM measurements WHERE id_meter = 1 AND `date_time` <= new.date_time;
+SELECT MAX(`date_time`) FROM measurements WHERE id_meter = new.id_meter AND `date_time` <= new.date_time;
 
 INSERT INTO `measurements` (`id_meter`,`id_bill`,`date_time`,`quantity_kw`) VALUES
 (3,NULL,NOW(),3);
 
 
 SELECT * FROM rates;
-insert into rates values (10,400,"C");
+INSERT INTO rates VALUES (10,400,"C");
+
+
+/*TRIGGER BEFORE UPDATE RATES*/
+DROP TRIGGER IF EXISTS TUA_update_price_measurements;
+DELIMITER $$
+CREATE TRIGGER TUA_update_price_measurements AFTER UPDATE ON rates FOR EACH ROW
+BEGIN
+	
+	/*update measurements set `price_measurement` = (`price_measurement` / old.value) * new.value where id_meter in (SELECT m.id_meter 
+														FROM rates r
+														INNER JOIN addresses a
+														ON a.id_rate = r.id_rate
+														INNER JOIN meters m
+														ON a.id_meter = m.id_meter				
+														WHERE r.id_rate = new.rate);*/
+	/* Modificamos el precio de las mediciones */
+	UPDATE measurements SET `price_measurement` = (`price_measurement` / old.value) * new.value WHERE id_measurement IN (SELECT me.id_measurement
+															FROM measurements me
+															INNER JOIN meters m
+															ON m.id_meter = me.id_meter
+															INNER JOIN addresses a
+															ON a.id_meter = me.id_meter
+															INNER JOIN rates r
+															ON a.id_rate = r.id_rate
+															WHERE r.id_rate = new.id_rate);
+					
+	/* Se crean las nuevas facturas de ajuste */										
+	CALL p_liquidate_update_rate(new.id_rate);
+	
+END;
+$$
+
+DROP PROCEDURE IF EXISTS p_liquidate_update_rate;
+DELIMITER $$
+CREATE PROCEDURE  p_liquidate_update_rate(IN pIdRate INT)
+BEGIN
+	DECLARE vNewTotalPayable DOUBLE;
+	DECLARE vIdBill INT;
+	DECLARE vIdAddress INT;
+	DECLARE vIdMeter INT;
+	DECLARE vIdClient INT;
+	DECLARE vInitialMeasurement DATETIME;
+	DECLARE vFinalMeasurement DATETIME;
+	DECLARE vTotalConsumption DOUBLE;
+	DECLARE vTotalPayable DOUBLE;
+	DECLARE vFinished INT DEFAULT 0;
+	DECLARE cur_liquidate CURSOR FOR SELECT b.`id_bill`,b.`id_address`,b.`id_meter`,b.`id_user`,b.`initial_measurement`,b.`final_measurement`,b.`total_consumption`,b.`total_payable`
+						FROM bills b
+						INNER JOIN addresses a
+						ON a.id_address = b.id_address
+						WHERE a.id_rate = pIdRate;
+						
+	
+	
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET vFinished = 1;
+
+    OPEN cur_liquidate;
+    FETCH cur_liquidate INTO vIdBill,vIdAddress, vIdMeter, vIdClient,vInitialMeasurement,vFinalMeasurement,vTotalConsumption,vTotalPayable;
+
+    WHILE (vFinished = 0) DO
+	
+	    SET vNewTotalPayable = (SELECT SUM(price_measurement) FROM measurements WHERE id_bill = vIdBill) - vTotalPayable;
+
+            INSERT INTO bills (`id_address`,`id_meter`,`id_user`,`initial_measurement`,`final_measurement`,`total_consumption`,`total_payable`) VALUES
+            (vIdAddress,vIdMeter,vIdClient,vInitialMeasurement,vFinalMeasurement,vTotalConsumption,vNewTotalPayable);
+	   
+	     
+	    FETCH cur_liquidate INTO vIdBill,vIdAddress, vIdMeter, vIdClient,vInitialMeasurement,vFinalMeasurement,vTotalConsumption,vTotalPayable;
+        END WHILE;
+
+    CLOSE cur_liquidate;
+	
+END 
+$$
 
 
 
-/*QUERY FOR EXCERCISE 5*/
+SELECT * FROM measurements
+
+
+
+SELECT * FROM bills
+
+UPDATE 
+
+
+
+
+
+
+
+
+
+
+/*QUERY FOR EXCERCISE 5 tp avanzada*/
 SELECT max_consumption.id_user AS id,
        max_consumption.name,
        max_consumption.last_name,

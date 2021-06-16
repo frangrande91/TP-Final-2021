@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -14,8 +15,8 @@ public class ClientConsumption {
 
     private Double consumptionKw;
     private Double consumptionMoney;
-    private Date from;
-    private Date to;
+    private LocalDate from;
+    private LocalDate to;
     private Integer quantityMeasurements;
     private UserDto clientUser;
 
