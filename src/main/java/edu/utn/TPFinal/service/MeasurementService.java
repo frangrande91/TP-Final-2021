@@ -38,7 +38,7 @@ public class MeasurementService {
         this.userService = userService;
     }
 
-    public Page<Measurement> getAllByMeterAndDateBetween(Integer idMeter,Integer idUser, Date from, Date to, Pageable pageable) throws MeterNotExistsException, UserNotExistsException, AccessNotAllowedException {
+    public Page<Measurement> getAllByMeterAndDateBetween(Integer idMeter,Integer idUser, LocalDate from, LocalDate to, Pageable pageable) throws MeterNotExistsException, UserNotExistsException, AccessNotAllowedException {
         Meter meter = meterService.getMeterById(idMeter);
         User user = userService.getUserById(idUser);
 
@@ -50,7 +50,7 @@ public class MeasurementService {
         }
     }
 
-    public ClientConsumption getConsumptionByMeterAndDateBetween(Integer idMeter, Integer idQueryUser, Date from, Date to) throws MeterNotExistsException, UserNotExistsException, AccessNotAllowedException {
+    public ClientConsumption getConsumptionByMeterAndDateBetween(Integer idMeter, Integer idQueryUser, LocalDate from, LocalDate to) throws MeterNotExistsException, UserNotExistsException, AccessNotAllowedException {
         Meter meter = meterService.getMeterById(idMeter);
         User queryUser = userService.getUserById(idQueryUser);
         User clientUser = meter.getAddress().getUserClient();
@@ -149,7 +149,7 @@ public class MeasurementService {
     }
 
 
-   public Page<Measurement> getAllByAddressAndDateBetween(Integer idAddress, Date from, Date to, Pageable pageable) throws AddressNotExistsException {
+   public Page<Measurement> getAllByAddressAndDateBetween(Integer idAddress, LocalDate from, LocalDate to, Pageable pageable) throws AddressNotExistsException {
        Address address = addressService.getAddressById(idAddress);
        return measurementRepository.findAllByMeterAndDateBetween(address.getMeter(), from, to, pageable);
    }

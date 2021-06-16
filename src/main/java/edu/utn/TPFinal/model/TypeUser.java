@@ -2,8 +2,8 @@ package edu.utn.TPFinal.model;
 
 public enum TypeUser {
 
-    EMPLOYEE("Employee"),
-    CLIENT("Client");
+    EMPLOYEE("Employee"),   //0
+    CLIENT("Client");       //1
 
     private String description;
 

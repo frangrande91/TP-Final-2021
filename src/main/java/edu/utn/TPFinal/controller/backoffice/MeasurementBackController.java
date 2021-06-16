@@ -31,10 +31,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static edu.utn.TPFinal.utils.Utils.checkFromTo;
 
 @RestController
 @RequestMapping("/backoffice/measurements")
@@ -69,11 +72,12 @@ public class MeasurementBackController {
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("addresses/{idAddress}")
     public ResponseEntity<List<MeasurementDto>> getByAddressForDateRange(@PathVariable Integer idAddress,
-                                                                  @RequestParam(value = "from", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
-                                                                  @RequestParam(value = "to", defaultValue = "2020-01-05") @DateTimeFormat(pattern = "yyyy-MM-dd") Date to,
+                                                                  @RequestParam(value = "from", defaultValue = "2021-01-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
+                                                                  @RequestParam(value = "to", defaultValue = "2021-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to,
                                                                   @RequestParam(value = "size", defaultValue = "10") Integer size,
                                                                   @RequestParam(value = "page", defaultValue = "0") Integer page/*,
                                                                   Authentication authentication*/) throws AddressNotExistsException {
+        checkFromTo(from,to);
         Pageable pageable = PageRequest.of(page, size);
         Page<Measurement> measurementPage = measurementService.getAllByAddressAndDateBetween(idAddress, from, to, pageable);
         Page<MeasurementDto> measurementDtoPage = measurementPage.map(measurement -> conversionService.convert(measurement,MeasurementDto.class));

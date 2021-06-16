@@ -34,6 +34,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.utn.TPFinal.utils.Utils.checkFromTo;
+
 
 @RestController
 @RequestMapping("backoffice/users")
@@ -122,6 +124,7 @@ public class UserBackController {
     @GetMapping("/topConsumers")
     public ResponseEntity<List<ConsumerProjection>> get10TopMoreConsumers(@RequestParam(value = "from", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
                                                                             @RequestParam(value = "to", defaultValue = "2021-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to) {
+        checkFromTo(from,to);
         List<ConsumerProjection> consumerProjection = userService.getTop10MoreConsumers(from,to);
         return ResponseEntity.status(HttpStatus.OK).body(consumerProjection);
     }
