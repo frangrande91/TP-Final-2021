@@ -4,6 +4,7 @@ import edu.utn.TPFinal.model.Measurement;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.dto.MeasurementDto;
 import edu.utn.TPFinal.model.dto.MeterDto;
+import edu.utn.TPFinal.model.dto.ReceivedMeasurementDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.jpa.domain.Specification;
@@ -29,6 +30,10 @@ public class MeasurementTestUtils {
         return MeasurementDto.builder().id(1).meter(aMeterDto()).bill(aBill()).quantityKw(1.0).date(LocalDate.of(2021,5,5)).priceMeasurement(100.0).build();
     }
 
+    public static ReceivedMeasurementDto aReceivedMeasurementDto() {
+        return ReceivedMeasurementDto.builder().serialNumber("1234").value(2).date("2020-05-05").password("1234").build();
+    }
+
     public static Specification<Measurement> specMeasurement(Double quantityKw) {
         if(quantityKw == null) {
             return null;
@@ -39,5 +44,6 @@ public class MeasurementTestUtils {
             };
         }
     }
+
 
 }

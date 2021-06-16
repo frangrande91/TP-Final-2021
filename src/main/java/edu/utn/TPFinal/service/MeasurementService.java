@@ -137,11 +137,11 @@ public class MeasurementService {
         return measurementRepository.findById(id).orElseThrow(() -> new MeasurementNotExistsException("Measurement not exists"));
     }
 
-    public void addMeterToMeasurement(Integer id, Integer idMeter) throws MeasurementNotExistsException, MeterNotExistsException {
+    public Measurement addMeterToMeasurement(Integer id, Integer idMeter) throws MeasurementNotExistsException, MeterNotExistsException {
         Meter meter = meterService.getMeterById(idMeter);
         Measurement measurement = getMeasurementById(id);
         measurement.setMeter(meter);
-        measurementRepository.save(measurement);
+        return measurementRepository.save(measurement);
     }
 
     public void deleteMeasurementById(Integer id) throws MeasurementNotExistsException, RestrictDeleteException {

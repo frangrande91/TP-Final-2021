@@ -51,6 +51,19 @@ public class MeasurementBackController {
         this.conversionService = conversionService;
     }
 
+    /**Enponit especial**/
+    @PostMapping("/")
+    public ResponseEntity<Response> addMeasurement(@RequestBody ReceivedMeasurementDto receivedMeasurementDto) throws MeterNotExistsException {
+
+        Measurement measurement = measurementService.addMeasurement(receivedMeasurementDto);
+        log.info(receivedMeasurementDto.toString());
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .location(EntityURLBuilder.buildURL2(MEASUREMENT_PATH,measurement.getId()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(EntityResponse.messageResponse("The measurement has been created"));
+    }
 
     /**PUNTO 6+*/
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
@@ -65,19 +78,6 @@ public class MeasurementBackController {
         Page<Measurement> measurementPage = measurementService.getAllByAddressAndDateBetween(idAddress, from, to, pageable);
         Page<MeasurementDto> measurementDtoPage = measurementPage.map(measurement -> conversionService.convert(measurement,MeasurementDto.class));
         return EntityResponse.listResponse(measurementDtoPage);
-    }
-
-    @PostMapping("/")
-    public ResponseEntity<Response> addMeasurement(@RequestBody ReceivedMeasurementDto receivedMeasurementDto) throws MeterNotExistsException {
-
-        Measurement measurement = measurementService.addMeasurement(receivedMeasurementDto);
-        log.info(receivedMeasurementDto.toString());
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .location(EntityURLBuilder.buildURL2(MEASUREMENT_PATH,measurement.getId()))
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(EntityResponse.messageResponse("The measurement has been created"));
     }
 
     @GetMapping("/")

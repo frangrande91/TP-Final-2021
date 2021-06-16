@@ -1,10 +1,14 @@
 package edu.utn.TPFinal.controller.backoffice;
 
+import edu.utn.TPFinal.exception.RestrictDeleteException;
 import edu.utn.TPFinal.exception.notFound.MeasurementNotExistsException;
+import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.model.Measurement;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.dto.MeasurementDto;
+import edu.utn.TPFinal.model.response.Response;
 import edu.utn.TPFinal.service.MeasurementService;
+import edu.utn.TPFinal.utils.EntityURLBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,15 +19,23 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.List;
 
+import static edu.utn.TPFinal.utils.BillTestUtils.aBill;
+import static edu.utn.TPFinal.utils.EntityResponse.messageResponse;
 import static edu.utn.TPFinal.utils.MeasurementTestUtils.*;
+import static edu.utn.TPFinal.utils.MeterTestUtils.aMeter;
 import static edu.utn.TPFinal.utils.MeterTestUtils.aMeterPage;
+import static edu.utn.TPFinal.utils.RateTestUtils.aRate;
+import static edu.utn.TPFinal.utils.UserTestUtils.aUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 public class MeasurementBackControllerTest {
 
@@ -36,6 +48,25 @@ public class MeasurementBackControllerTest {
         measurementService = mock(MeasurementService.class);
         conversionService = mock(ConversionService.class);
         measurementBackController = new MeasurementBackController(measurementService,conversionService);
+    }
+
+    @Test
+    public void addMeasurement() {
+        try {
+            MockHttpServletRequest request = new MockHttpServletRequest();
+            RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+
+            when(measurementService.addMeasurement(aReceivedMeasurementDto())).thenReturn(aMeasurement());
+            ResponseEntity<Response> responseEntity = measurementBackController.addMeasurement(aReceivedMeasurementDto());
+
+
+            assertEquals(EntityURLBuilder.buildURL2("measurements", aMeasurement().getId()).toString(),responseEntity.getHeaders().get("Location").get(0));
+            assertEquals(HttpStatus.CREATED.value(),responseEntity.getStatusCode().value());
+
+        } catch (MeterNotExistsException e) {
+            fail(e);
+        }
+
     }
 
     @Test
@@ -99,6 +130,30 @@ public class MeasurementBackControllerTest {
         } catch (MeasurementNotExistsException e) {
             fail(e);
         }
+    }
+
+    @Test
+    public void addMeterToMeasurement() throws Exception{
+        when(measurementService.addMeterToMeasurement(any(),any())).thenReturn(aMeasurement());
+
+        ResponseEntity<Response> responseEntity = measurementBackController.addMeterToMeasurement(1,1);
+
+        assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
+        assertEquals(messageResponse("The Measurement has been modified"), responseEntity.getBody());
+    }
+
+    @Test
+    public void deleteMeasurementById() {
+        try {
+            doNothing().when(measurementService).deleteMeasurementById(anyInt());
+
+            ResponseEntity<Object> responseEntity = measurementBackController.deleteMeasurementById(1);
+
+            assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
+        } catch (MeasurementNotExistsException | RestrictDeleteException e) {
+            fail(e);
+        }
+
     }
 
 }

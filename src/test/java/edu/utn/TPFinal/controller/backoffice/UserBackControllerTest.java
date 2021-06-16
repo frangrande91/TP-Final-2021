@@ -1,6 +1,9 @@
 package edu.utn.TPFinal.controller.backoffice;
 
 import edu.utn.TPFinal.controller.backoffice.UserBackController;
+import edu.utn.TPFinal.exception.notFound.AddressNotExistsException;
+import edu.utn.TPFinal.exception.notFound.ClientNotFoundException;
+import edu.utn.TPFinal.exception.notFound.UserNotExistsException;
 import edu.utn.TPFinal.model.Rate;
 import edu.utn.TPFinal.model.User;
 import edu.utn.TPFinal.model.dto.UserDto;
@@ -78,7 +81,7 @@ public class UserBackControllerTest {
     }
 
     @Test
-    public void getAllSorted() throws Exception {
+    public void getAllSorted() {
 
         Page<Rate> ratePage = aRatePage();
         Pageable pageable = PageRequest.of(1,1);
@@ -126,17 +129,25 @@ public class UserBackControllerTest {
     }
 
     @Test
-    public void addAddressToClientUser() throws Exception{
-        when(userService.addAddressToClientUser(1,1)).thenReturn(aUser());
-        ResponseEntity<Response> responseEntity = userBackController.addAddressToClientUser(1,1);
-        assertEquals(HttpStatus.ACCEPTED.value(),responseEntity.getStatusCode().value());
+    public void addAddressToClientUser() {
+        try {
+            when(userService.addAddressToClientUser(1,1)).thenReturn(aUser());
+            ResponseEntity<Response> responseEntity = userBackController.addAddressToClientUser(1,1);
+            assertEquals(HttpStatus.ACCEPTED.value(),responseEntity.getStatusCode().value());
+        } catch (UserNotExistsException | ClientNotFoundException | AddressNotExistsException e) {
+            fail(e);
+        }
     }
 
     @Test
     public void deleteUserById() throws Exception {
-        Mockito.doNothing().when(userService).deleteById(1);
-        ResponseEntity<Object> responseEntity = userBackController.deleteUser(1);
-        assertEquals(HttpStatus.ACCEPTED.value(),responseEntity.getStatusCode().value());
+        try {
+            Mockito.doNothing().when(userService).deleteById(1);
+            ResponseEntity<Object> responseEntity = userBackController.deleteUser(1);
+            assertEquals(HttpStatus.ACCEPTED.value(),responseEntity.getStatusCode().value());
+        } catch (UserNotExistsException e) {
+            fail(e);
+        }
     }
 
     @Test
