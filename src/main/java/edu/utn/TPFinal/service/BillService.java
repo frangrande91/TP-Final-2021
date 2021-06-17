@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +35,7 @@ public class BillService {
         this.addressService = addressService;
     }
 
-    public Page<Bill> getAllBillsByUserClientAndBetweenDate(Integer idQueryUser, Integer idClientUser, Date from, Date to, Pageable pageable) throws UserNotExistsException, ClientNotFoundException, AccessNotAllowedException {
+    public Page<Bill> getAllBillsByUserClientAndBetweenDate(Integer idQueryUser, Integer idClientUser, LocalDate from, LocalDate to, Pageable pageable) throws UserNotExistsException, ClientNotFoundException, AccessNotAllowedException {
         User queryUser = userService.getUserById(idQueryUser);
         User clientUser = userService.getUserById(idClientUser);
         userPermissionCheck(queryUser,clientUser);

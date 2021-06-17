@@ -58,27 +58,21 @@ public class BillServiceTest {
 
     @Test
     public void addBill(){
-        //given
         when(billRepository.save(aBill())).thenReturn(aBill());
 
-        //when
         Bill bill = billService.addBill(aBill());
 
-        //then
         assertEquals(aBill(), bill);
         verify(billRepository, times(1)).save(aBill());
     }
 
     @Test
     public void getAllBills(){
-        //given
         Pageable pageable = PageRequest.of(1,1);
         when(billRepository.findAll(pageable)).thenReturn(aBillPage());
 
-        //when
         Page<Bill> billPage = billService.getAllBills(pageable);
 
-        //then
         assertEquals(aBillPage().getTotalElements(), billPage.getTotalElements());
         assertEquals(aBillPage().getTotalPages(), billPage.getTotalPages());
         assertEquals(aBillPage().getContent(), billPage.getContent());
@@ -87,15 +81,12 @@ public class BillServiceTest {
 
     @Test
     public void getAllSort(){
-        //given
         List<Sort.Order> orders = new ArrayList<>();
         Pageable pageable = PageRequest.of(1,1, Sort.by(orders));
         when(billRepository.findAll(pageable)).thenReturn(aBillPage());
 
-        //when
         Page<Bill> billPage = billService.getAllSort(1, 1, orders);
 
-        //then
         assertEquals(aBillPage().getTotalElements(), billPage.getTotalElements());
         assertEquals(aBillPage().getTotalPages(), billPage.getTotalPages());
         assertEquals(aBillPage().getContent(), billPage.getContent());
@@ -104,15 +95,12 @@ public class BillServiceTest {
 
     @Test
     public void getAllSpec(){
-        //given
         Pageable pageable = PageRequest.of(1,1);
         Specification<Bill> billSpecification = aSpecBill("False Street 123");
         when(billRepository.findAll(billSpecification, pageable)).thenReturn(aBillPage()) ;
 
-        //when
         Page<Bill> billPage = billService.getAllSpec(billSpecification, pageable);
 
-        //then
         assertEquals(aBillPage().getTotalElements(), aBillPage().getTotalElements());
         assertEquals(aBillPage().getTotalPages(), billPage.getTotalPages());
         assertEquals(aBillPage().getContent(), billPage.getContent());
@@ -122,13 +110,10 @@ public class BillServiceTest {
     @Test
     public void getBillByIdOk(){
         try{
-            //given
             when(billRepository.findById(aBill().getId())).thenReturn(Optional.of(aBill()));
 
-            //when
             Bill bill = billService.getBillById(aBill().getId());
 
-            //then
             assertEquals(aBill(), bill);
             verify(billRepository, times(1)). findById(bill.getId());
         }
@@ -139,10 +124,8 @@ public class BillServiceTest {
 
     @Test
     public void getBillByIdNotExists(){
-        //given
         when(billRepository.findById(aBill().getId())).thenReturn(Optional.empty());
 
-        //then and when
         assertThrows(BillNotExistsException.class, ()-> billService.getBillById(aBill().getId()));
         verify(billRepository, times(1)).findById(aBill().getId());
     }
@@ -150,17 +133,14 @@ public class BillServiceTest {
     @Test
     public void addClientToBillOk(){
         try {
-            //given
             Bill bill = aBill();
             bill.setUserClient(aUser());
             when(billRepository.findById(aBill().getId())).thenReturn(Optional.of(aBill()));
             when(userService.getUserById(aUser().getId())).thenReturn(aUser());
             when(billRepository.save(bill)).thenReturn(bill);
 
-            //when
             Bill bill1 = billService.addClientToBill(aBill().getId(), aUser().getId());
 
-            //then
             assertEquals(bill.getUserClient(), bill1.getUserClient());
         }
         catch (UserNotExistsException | BillNotExistsException e){
@@ -170,10 +150,8 @@ public class BillServiceTest {
 
     @Test
     public void addClientToBillUserNotExists(){
-        //given
         when(billRepository.findById(aBill().getId())).thenReturn(Optional.empty());
 
-        //when and then
         assertThrows(BillNotExistsException.class, () -> billService.addClientToBill(aBill().getId(), aUser().getId()));
         verify(billRepository, times(1)).findById(aBill().getId());
     }
@@ -182,17 +160,14 @@ public class BillServiceTest {
     @Test
     public void addAddressToBillOk() {
         try {
-            //given
             Bill bill = aBill();
             bill.setAddress(aAddress());
             when(billRepository.findById(aBill().getId())).thenReturn(Optional.of(aBill()));
             when(addressService.getAddressById(aAddress().getId())).thenReturn(aAddress());
             when(billRepository.save(bill)).thenReturn(bill);
 
-            //when
             Bill bill1 = billService.addAddressToBill(aBill().getId(), aAddress().getId());
 
-            //then
             assertEquals(bill.getAddress(), bill1.getAddress());
         } catch (AddressNotExistsException | BillNotExistsException e) {
             fail(e);
@@ -201,10 +176,8 @@ public class BillServiceTest {
 
     @Test
     public void addAddressToBillBillNotExists(){
-        //given
         when(billRepository.findById(aBill().getId())).thenReturn(Optional.empty());
 
-        //when and then
         assertThrows(BillNotExistsException.class, () -> billService.addClientToBill(aBill().getId(), aAddress().getId()));
         verify(billRepository, times(1)).findById(aBill().getId());
     }
@@ -212,17 +185,14 @@ public class BillServiceTest {
     @Test
     public void addMeterToBillOk(){
         try {
-            //given
             Bill bill = aBill();
             bill.setMeter(aMeter());
             when(billRepository.findById(aBill().getId())).thenReturn(Optional.of(aBill()));
             when(meterService.getMeterById(aMeter().getId())).thenReturn(aMeter());
             when(billRepository.save(bill)).thenReturn(bill);
 
-            //when
             Bill bill1 = billService.addMeterToBill(aBill().getId(), aMeter().getId());
 
-            //then
             assertEquals(bill.getMeter(), bill1.getMeter());
         } catch (MeterNotExistsException | BillNotExistsException e) {
             fail(e);
@@ -231,10 +201,8 @@ public class BillServiceTest {
 
     @Test
     public void addMeterToBillBillNotExists(){
-        //given
         when(billRepository.findById(aBill().getId())).thenReturn(Optional.empty());
 
-        //when and then
         assertThrows(BillNotExistsException.class, () -> billService.addMeterToBill(aBill().getId(), aMeter().getId()));
         verify(billRepository, times(1)).findById(aBill().getId());
     }
@@ -261,10 +229,8 @@ public class BillServiceTest {
 
     @Test
     public void deleteBillByIdBillNotExists(){
-        //given
         when(billRepository.findById(aBill().getId())).thenReturn(Optional.empty());
 
-        //when and then
         assertThrows(BillNotExistsException.class, () -> billService.deleteBillById(aBill().getId()));
         verify(billRepository, times(1)).findById(aBill().getId());
     }

@@ -18,9 +18,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static edu.utn.TPFinal.utils.Utils.checkFromTo;
 
 @RestController
 @RequestMapping("/app/bills")
@@ -41,10 +45,10 @@ public class BillAppController {
     public ResponseEntity<List<BillDto>> getAllByUserClientAndBetweenDate(@PathVariable Integer idClient,
                                                     @RequestParam(value = "size", defaultValue = "10") Integer size,
                                                     @RequestParam(value = "page", defaultValue = "0") Integer page,
-                                                    @RequestParam(value = "from", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd")Date from,
-                                                    @RequestParam(value = "to", defaultValue = "2020-01-05") @DateTimeFormat(pattern = "yyyy-MM-dd")Date to,
+                                                    @RequestParam(value = "from", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
+                                                    @RequestParam(value = "to", defaultValue = "2020-01-05") @DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate to,
                                                     Authentication authentication) throws UserNotExistsException, ClientNotFoundException, AccessNotAllowedException {
-
+        checkFromTo(from,to);
         UserDto userDto = (UserDto) authentication.getPrincipal();
         Pageable pageable = PageRequest.of(page, size);
         Page<Bill> billPage = billService.getAllBillsByUserClientAndBetweenDate(idClient,userDto.getId(), from, to, pageable);
@@ -59,9 +63,10 @@ public class BillAppController {
                                                                                    @RequestParam(value = "size", defaultValue = "10") Integer size,
                                                                                    @RequestParam(value = "page", defaultValue = "0") Integer page,
                                                                                    @RequestParam(value = "field1") String field1, @RequestParam(value = "field2") String field2,
-                                                                                   @RequestParam(value = "from", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd")Date from,
-                                                                                   @RequestParam(value = "to", defaultValue = "2020-01-05") @DateTimeFormat(pattern = "yyyy-MM-dd")Date to,
+                                                                                   @RequestParam(value = "from", defaultValue = "2020-1-05") @DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate from,
+                                                                                   @RequestParam(value = "to", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate to,
                                                                                    Authentication authentication) throws UserNotExistsException, ClientNotFoundException, AccessNotAllowedException {
+        checkFromTo(from,to);
         UserDto userDto = (UserDto) authentication.getPrincipal();
         List<Sort.Order> orders = new ArrayList<Sort.Order>();
         orders.add(new Sort.Order(Sort.Direction.DESC, field1));
@@ -80,6 +85,7 @@ public class BillAppController {
                                                                   @RequestParam(value = "size", defaultValue = "10") Integer size,
                                                                   @RequestParam(value = "page", defaultValue = "0") Integer page,
                                                                   Authentication authentication) throws UserNotExistsException, ClientNotFoundException,AccessNotAllowedException {
+
         UserDto userDto = (UserDto) authentication.getPrincipal();
         Pageable pageable = PageRequest.of(page, size);
         Page<Bill> billPage = billService.getAllUnpaidByUserClient(userDto.getId(),idClient, pageable);

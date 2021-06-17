@@ -24,14 +24,25 @@ public class BillTestUtils {
         return new PageImpl<>(List.of(aBill()));
     }
 
+    public static BillDto aBillDto(){
+        return BillDto.builder().id(1).build();
+    }
+
+    public static Page<BillDto> aBillDtoPage(){
+        return new PageImpl<>(List.of(aBillDto()));
+    }
+
+
     public static Page<Bill> aBillPageEmpty() {
         List<Bill> billList = Collections.emptyList();
         return new PageImpl<>(billList);
     }
 
-    public static BillDto aBillDto(){
-        return new BillDto();
+    public static Page<BillDto> aBillDtoPageEmpty() {
+        List<BillDto> billDtoList = Collections.emptyList();
+        return new PageImpl<>(billDtoList);
     }
+
 
     public static Specification<Bill> aSpecBill(String value) {
         if(value == null) {
