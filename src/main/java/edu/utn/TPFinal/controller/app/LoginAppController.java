@@ -53,7 +53,8 @@ public class LoginAppController {
         return ResponseEntity.ok((User) auth.getPrincipal());
     }
 
-    private String generateToken(UserDto userDto) {
+    /** Lo tuve que hacer public para los tests **/
+    public String generateToken(UserDto userDto) {
         try {
             String role = userDto.getTypeUser().toString();
             ObjectMapper objectMapper = new ObjectMapper();
@@ -73,9 +74,12 @@ public class LoginAppController {
         }
     }
 
+    /*
     @GetMapping(value = "/hola")
     public String hola() {
         return "HOLA";
     }
+
+     */
 
 }

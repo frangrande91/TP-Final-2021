@@ -1,20 +1,17 @@
 package edu.utn.TPFinal.controller.app;
 
-import edu.utn.TPFinal.exception.AccessNotAllowedException;
-import edu.utn.TPFinal.exception.notFound.ClientNotFoundException;
-import edu.utn.TPFinal.exception.notFound.UserNotExistsException;
-import edu.utn.TPFinal.model.Bill;
 import edu.utn.TPFinal.model.dto.BillDto;
 import edu.utn.TPFinal.service.BillService;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

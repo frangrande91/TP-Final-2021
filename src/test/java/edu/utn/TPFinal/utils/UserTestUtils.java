@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import edu.utn.TPFinal.model.TypeUser;
 import edu.utn.TPFinal.model.User;
+import edu.utn.TPFinal.model.dto.LoginRequestDto;
 import edu.utn.TPFinal.model.dto.UserDto;
 import edu.utn.TPFinal.model.projection.ConsumerProjection;
 import edu.utn.TPFinal.utils.localdate.LocalDateDeserializer;
@@ -53,6 +54,11 @@ public class UserTestUtils {
             };
         }
     }
+
+    public static LoginRequestDto aLoginRequestDto(){
+        return LoginRequestDto.builder().username("nahuelmdp").password("1234").build();
+    }
+
 
 
 }
