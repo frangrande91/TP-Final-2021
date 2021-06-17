@@ -67,10 +67,6 @@ public class AddressService {
         return addressRepository.findAll(pageable);
     }
 
-    public List<Address> getAllByUser(User userClient) {
-        return addressRepository.findAllByUserClient(userClient);
-    }
-
     public Address getAddressById(Integer id) throws AddressNotExistsException {
         return addressRepository.findById(id).orElseThrow(() -> new AddressNotExistsException("Address not exists"));
     }
@@ -91,7 +87,7 @@ public class AddressService {
 
     public void deleteAddressById(Integer id) throws AddressNotExistsException, RestrictDeleteException {
         Address address = getAddressById(id);
-        if(isNull(address.getMeter()) && isNull(address.getRate())) {
+        if(isNull(address.getMeter())) {
             addressRepository.deleteById(id);
         } else {
             throw new RestrictDeleteException("Can not delete this address because it depends of another objects");

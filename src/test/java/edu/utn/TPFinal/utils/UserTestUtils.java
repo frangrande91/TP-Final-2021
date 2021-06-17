@@ -16,6 +16,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.utn.TPFinal.utils.AddressTestUtils.aAddress;
+
 public class UserTestUtils {
 
     public static String aUserJSON() {
@@ -32,7 +34,7 @@ public class UserTestUtils {
     }
 
     public static User aUser() {
-        return User.builder().id(1).firstName("Nahuel").lastName("Salomon").typeUser(TypeUser.CLIENT).username("nahuelmdp").password("1234").addressList(new ArrayList<>()).build();
+        return User.builder().id(1).firstName("Nahuel").lastName("Salomon").typeUser(TypeUser.CLIENT).username("nahuelmdp").password("1234").addressList(List.of(aAddress())).build();
     }
 
     public static User aUserEmployee(){

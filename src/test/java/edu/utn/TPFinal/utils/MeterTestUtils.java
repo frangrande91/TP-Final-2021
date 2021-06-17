@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import static edu.utn.TPFinal.utils.AddressTestUtils.aAddress;
+
 public class MeterTestUtils {
     public static String aMeterJSON() {
         final Gson gson =  new GsonBuilder()

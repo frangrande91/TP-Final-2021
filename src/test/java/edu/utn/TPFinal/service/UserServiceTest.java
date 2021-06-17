@@ -1,10 +1,14 @@
 package edu.utn.TPFinal.service;
+import edu.utn.TPFinal.exception.RestrictDeleteException;
 import edu.utn.TPFinal.exception.alreadyExists.UserAlreadyExists;
 import edu.utn.TPFinal.exception.notFound.AddressNotExistsException;
 import edu.utn.TPFinal.exception.notFound.ClientNotFoundException;
 import edu.utn.TPFinal.exception.notFound.UserNotExistsException;
 import edu.utn.TPFinal.model.Address;
+import edu.utn.TPFinal.model.Meter;
+import edu.utn.TPFinal.model.TypeUser;
 import edu.utn.TPFinal.model.User;
+import edu.utn.TPFinal.model.projection.ConsumerProjection;
 import edu.utn.TPFinal.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -16,16 +20,21 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static edu.utn.TPFinal.utils.AddressTestUtils.aAddress;
+import static edu.utn.TPFinal.utils.BillTestUtils.aBill;
 import static edu.utn.TPFinal.utils.MeterTestUtils.*;
 import static edu.utn.TPFinal.utils.MeterTestUtils.aMeter;
 import static edu.utn.TPFinal.utils.RateTestUtils.aRate;
 import static edu.utn.TPFinal.utils.UserTestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 
 
 public class UserServiceTest {
@@ -36,8 +45,8 @@ public class UserServiceTest {
 
     @BeforeAll
     public static void setUp() {
-        userRepository = Mockito.mock(UserRepository.class);
-        addressService = Mockito.mock(AddressService.class);
+        userRepository = mock(UserRepository.class);
+        addressService = mock(AddressService.class);
         userService = new UserService(userRepository,addressService);
     }
 
@@ -45,6 +54,21 @@ public class UserServiceTest {
     public void after() {
         Mockito.reset(userRepository);
         Mockito.reset(addressService);
+    }
+
+    @Test
+    public void getTop10MoreConsumers() {
+        ConsumerProjection consumerProjection = mock(ConsumerProjection.class);
+        Mockito.when(userRepository.getTop10MoreConsumers(any(),any())).thenReturn(List.of(consumerProjection));
+
+        List<ConsumerProjection> consumerProjection1 = userService.getTop10MoreConsumers(LocalDate.of(2020,5,9),
+                                                                            LocalDate.of(2020,5,9));
+
+        assertEquals(List.of(consumerProjection).size(),consumerProjection1.size());
+
+        Mockito.verify(userRepository,Mockito.times(1)).getTop10MoreConsumers(LocalDate.of(2020,5,9),
+                LocalDate.of(2020,5,9));
+
     }
 
     @Test
@@ -80,6 +104,29 @@ public class UserServiceTest {
         Mockito.verify(userRepository, Mockito.times(1)).findByIdOrUsername(user.getId(),user.getUsername());
         Mockito.verify(userRepository, Mockito.times(0)).save(user);
     }
+
+    @Test
+    public void containsMeterTrue() {
+        User user = aUser();
+        Meter meter = aMeter();
+
+        Boolean contains = userService.containsMeter(user,meter);
+
+        assertEquals(true,contains);
+    }
+
+    @Test
+    public void containsMeterFalse() {
+        User user = aUser();
+        Meter meter = aMeter();
+        meter.setId(2);
+
+        Boolean contains = userService.containsMeter(user,meter);
+
+        assertEquals(false,contains);
+    }
+
+
 
     @Test
     public void getAllUsers() {
@@ -160,38 +207,6 @@ public class UserServiceTest {
         Mockito.verify(userRepository, Mockito.times(1)).findById(id);
     }
 
-    /*@Test
-    public void loginOk() {
-        try {
-            Integer id = 1234;
-            Mockito.when(userRepository.findByUsernameAndPassword(aUser().getUsername(),aUser().getPassword())).thenReturn(aUser());
-            User user = userService.login(aUser().getUsername(),aUser().getPassword());
-
-            assertEquals(aUser().getId(),user.getId());
-            assertEquals(aUser().getFirstName(),user.getFirstName());
-            assertEquals(aUser().getLastName(),user.getLastName());
-            assertEquals(aUser().getUsername(),user.getUsername());
-            assertEquals(aUser().getTypeUser(),user.getTypeUser());
-            assertEquals(aUser().getPassword(),user.getPassword());
-
-            Mockito.verify(userRepository,Mockito.times(1)).findByUsernameAndPassword(aUser().getUsername(),aUser().getPassword());
-        }
-        catch (ErrorLoginException ex) {
-            fail(ex);
-        }
-    }
-
-    @Test
-    public void loginError() {
-        Integer id = 1234;
-        Mockito.when(userRepository.findByUsernameAndPassword(aUser().getUsername(),aUser().getPassword())).thenReturn(null);
-
-        //assertThrows(ErrorLoginException.class, () -> userService.login(aUser().getUsername(),aUser().getPassword()));
-
-        Mockito.verify(userRepository, Mockito.times(1)).findByUsernameAndPassword(aUser().getUsername(),aUser().getPassword());
-    }
-*/
-
     @Test
     public void addAddressToClientUserOk()  {
         try {
@@ -199,25 +214,22 @@ public class UserServiceTest {
             Integer idAddress = 1;
 
             Address address = new Address(1,aMeter(),aUser(),aRate(),"Brown 1855", new ArrayList<>());
-            User user = Mockito.mock(User.class);
+            User user = User.builder().id(1).firstName("Nahuel").lastName("Salomon").typeUser(TypeUser.CLIENT).username("nahuelmdp").password("1234").addressList(new ArrayList<>()).build();;
+            User userReturned = user;
+            userReturned.getAddressList().add(aAddress());
 
-            Mockito.when(userRepository.findById(idUser)).thenReturn(Optional.of(aUser()));
-            Mockito.when(addressService.getAddressById(1)).thenReturn(address);
-
-            Mockito.when(userRepository.findById(idUser)).thenReturn(Optional.of(aUser()));
+            Mockito.when(userRepository.findById(idUser)).thenReturn(Optional.of(user));
             Mockito.when(addressService.getAddressById(1)).thenReturn(aAddress());
-
-            Mockito.when(userRepository.save(aUser())).thenReturn(aUser());
+            Mockito.when(userRepository.save(user)).thenReturn(userReturned);
 
 
             User userUpdated = userService.addAddressToClientUser(idUser, idAddress);
 
-
-            System.out.println(userUpdated);
+            assertEquals(userReturned,userUpdated);
 
             Mockito.verify(userRepository, Mockito.times(1)).findById(idUser);
             Mockito.verify(addressService, Mockito.times(1)).getAddressById(idAddress);
-            //Mockito.verify(userRepository, Mockito.times(1)).save(aUser());
+
         }
         catch (UserNotExistsException | ClientNotFoundException | AddressNotExistsException ex) {
             fail(ex);
@@ -250,36 +262,56 @@ public class UserServiceTest {
 
         Mockito.verify(userRepository,Mockito.times(1)).findById(idUser);
     }
-/*
+
     @Test
     public void deleteById(){
-        Integer id = 1234;
+        User user = aUser();
+        user.setBillList(new ArrayList<>());
         try {
 
-            Mockito.when(userRepository.findById(id)).thenReturn(Optional.of(aUser()));
-            Mockito.doNothing().when(userRepository).deleteById(id);
+            Mockito.when(userRepository.findById(any())).thenReturn(Optional.of(user));
+            Mockito.doNothing().when(userRepository).deleteById(user.getId());
 
-            userService.deleteById(id);
+            userService.deleteById(user.getId());
 
-            Mockito.verify(userRepository, Mockito.times(1)).findById(id);
-            Mockito.verify(userRepository, Mockito.times(1)).deleteById(id);
+            Mockito.verify(userRepository, Mockito.times(1)).findById(user.getId());
+            Mockito.verify(userRepository, Mockito.times(1)).deleteById(user.getId());
 
-        } catch (UserNotExistsException e) {
+        } catch (UserNotExistsException | RestrictDeleteException e) {
             fail(e);
         }
     }
 
- */
 
     @Test
-    public void deleteByIdNotFound(){
-        Integer id = 1234;
-        Mockito.when(userRepository.findById(id)).thenReturn(Optional.empty());
-        Mockito.doNothing().when(userRepository).deleteById(id);
+    public void deleteByIdRestrict(){
+        User user = aUser();
+        user.setBillList(new ArrayList<>());
+        user.getBillList().add(aBill());
 
-        Assertions.assertThrows(UserNotExistsException.class, ()-> { userService.deleteById(id); } );
+        Mockito.when(userRepository.findById(any())).thenReturn(Optional.of(user));
+        Mockito.doNothing().when(userRepository).deleteById(user.getId());
 
-        Mockito.verify(userRepository,Mockito.times(1)).findById(id);
+        Assertions.assertThrows(RestrictDeleteException.class, ()-> { userService.deleteById(user.getId()); } );
+
+        Mockito.verify(userRepository,Mockito.times(1)).findById(user.getId());
     }
+
+    @Test
+    public void login()  {
+            Mockito.when(userRepository.findByUsernameAndPassword(any(),any())).thenReturn(aUser());
+            User user = userService.login(aUser().getUsername(),aUser().getPassword());
+
+            assertEquals(aUser().getId(),user.getId());
+            assertEquals(aUser().getFirstName(),user.getFirstName());
+            assertEquals(aUser().getLastName(),user.getLastName());
+            assertEquals(aUser().getUsername(),user.getUsername());
+            assertEquals(aUser().getTypeUser(),user.getTypeUser());
+            assertEquals(aUser().getPassword(),user.getPassword());
+
+            Mockito.verify(userRepository,Mockito.times(1)).findByUsernameAndPassword(aUser().getUsername(),aUser().getPassword());
+    }
+
+
 
 }

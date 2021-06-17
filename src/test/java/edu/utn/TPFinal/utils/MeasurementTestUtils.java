@@ -19,7 +19,14 @@ import static edu.utn.TPFinal.utils.MeterTestUtils.aMeterDto;
 public class MeasurementTestUtils {
 
     public static Measurement aMeasurement() {
-        return Measurement.builder().id(1).meter(aMeter()).bill(aBill()).quantityKw(1.0).date(LocalDate.of(2021,5,5)).priceMeasurement(100.0).build();
+        return Measurement.builder()
+                .id(1)
+                .meter(aMeter())
+                .bill(aBill())
+                .quantityKw(2.0)
+                .date(LocalDate.of(2021,5,5))
+                .priceMeasurement(100.0)
+                .build();
     }
 
     public static Page<Measurement> aMeasurementPage() {
@@ -27,11 +34,11 @@ public class MeasurementTestUtils {
     }
 
     public static MeasurementDto aMeasurementDto() {
-        return MeasurementDto.builder().id(1).meter(aMeterDto()).bill(aBill()).quantityKw(1.0).date(LocalDate.of(2021,5,5)).priceMeasurement(100.0).build();
+        return MeasurementDto.builder().id(1).meter(aMeterDto()).bill(aBill()).quantityKw(2.0).date(LocalDate.of(2021,5,5)).priceMeasurement(100.0).build();
     }
 
     public static ReceivedMeasurementDto aReceivedMeasurementDto() {
-        return ReceivedMeasurementDto.builder().serialNumber("1234").value(2).date("2020-05-05").password("1234").build();
+        return ReceivedMeasurementDto.builder().serialNumber(null).value(2).date("2020-05-05").password("1235").build();
     }
 
     public static Specification<Measurement> specMeasurement(Double quantityKw) {

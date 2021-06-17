@@ -90,10 +90,6 @@ public class UserService {
     }
 
     public List<ConsumerProjection> getTop10MoreConsumers(LocalDate from, LocalDate to) {
-        System.out.println("FROM: "+from);
-        System.out.println("TO: "+to);
-
-        System.out.println(userRepository.getTop10MoreConsumers(from, to));
         return userRepository.getTop10MoreConsumers(from, to);
     }
 

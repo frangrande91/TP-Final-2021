@@ -1,14 +1,24 @@
 package edu.utn.TPFinal.service;
 import edu.utn.TPFinal.exception.RestrictDeleteException;
+import edu.utn.TPFinal.exception.ViolationChangeKeyAttributeException;
 import edu.utn.TPFinal.exception.alreadyExists.MeterAlreadyExistsException;
 import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exception.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.Meter;
+import edu.utn.TPFinal.model.Rate;
 import edu.utn.TPFinal.repository.MeterRepository;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
+
+import static edu.utn.TPFinal.utils.AddressTestUtils.aAddress;
 import static edu.utn.TPFinal.utils.MeterTestUtils.*;
+import static edu.utn.TPFinal.utils.MeterTestUtils.aMeter;
+import static edu.utn.TPFinal.utils.RateTestUtils.aRate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -148,6 +158,37 @@ public class MeterServiceTest {
     }
 
     @Test
+    public void getMeterBySerialNumberAndPasswordOk() {
+
+        try {
+            Integer id = 1234;
+            Mockito.when(meterRepository.findBySerialNumberAndPassword(any(),any())).thenReturn(Optional.of(aMeter()));
+            Meter meter = meterService.getMeterBySerialNumberAndPassword(aMeter().getSerialNumber(),aMeter().getPassword());
+
+            assertEquals(aMeter().getId(),meter.getId());
+            assertEquals(aMeter().getSerialNumber(),meter.getSerialNumber());
+            assertEquals(aMeter().getPassword(),meter.getPassword());
+            assertEquals(aMeter().getModel(),meter.getModel());
+
+            Mockito.verify(meterRepository,Mockito.times(1)).findBySerialNumberAndPassword(aMeter().getSerialNumber(),aMeter().getPassword());
+        }
+        catch (MeterNotExistsException ex) {
+            fail(ex);
+        }
+    }
+
+    @Test
+    public void getMeterBySerialNumberAndPasswordNotFound() {
+        Integer id = 1234;
+        Mockito.when(meterRepository.findBySerialNumberAndPassword(any(),any())).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(MeterNotExistsException.class, () -> meterService.getMeterBySerialNumberAndPassword(aMeter().getSerialNumber(),aMeter().getPassword()));
+
+        Mockito.verify(meterRepository,Mockito.times(1)).findBySerialNumberAndPassword(aMeter().getSerialNumber(),aMeter().getPassword());
+    }
+
+
+    @Test
     public void deleteMeterByIdOk() {
         Integer id = 1234;
         try {
@@ -166,14 +207,75 @@ public class MeterServiceTest {
     }
 
     @Test
-    public void deleteMeterByIdNotFound() {
-        Integer id = 1234;
-        Mockito.when(meterRepository.findById(id)).thenReturn(Optional.empty());
-        Mockito.doNothing().when(meterRepository).deleteById(id);
+    public void deleteMeterByIdRestrict() {
 
-        Assertions.assertThrows(MeterNotExistsException.class, ()-> { meterService.deleteMeterById(id); } );
+        Meter meter = aMeter();
+        meter.setAddress(aAddress());
+        Mockito.when(meterRepository.findById(any())).thenReturn(Optional.of(meter));
+        Mockito.doNothing().when(meterRepository).deleteById(meter.getId());
 
-        Mockito.verify(meterRepository,Mockito.times(1)).findById(id);
+        Assertions.assertThrows(RestrictDeleteException.class, ()-> { meterService.deleteMeterById(meter.getId()); } );
+
+        Mockito.verify(meterRepository,Mockito.times(1)).findById(meter.getId());
+    }
+
+    @Test
+    public void updateMeterOk() {
+        Meter meter = aMeter();
+        meter.setSerialNumber("123456");
+        try {
+            when(meterRepository.findById(1)).thenReturn(Optional.of(meter));
+            when(meterRepository.save(meter)).thenReturn(meter);
+
+            Meter meterUpdated = meterService.updateMeter(meter.getId(),meter);
+
+            assertEquals(meter,meterUpdated);
+
+            verify(meterRepository, times(1)).save(meter);
+        }
+        catch (ViolationChangeKeyAttributeException | MeterNotExistsException e){
+            fail(e);
+        }
+    }
+
+    @Test
+    public void updateMeterViolationKey() {
+        Meter meter = aMeter();
+        meter.setSerialNumber("123456");
+        meter.setId(55);
+
+        Meter meter2 = aMeter();
+        meter2.setSerialNumber("123456");
+        meter2.setId(56);
+
+        when(meterRepository.findById(any())).thenReturn(Optional.of(meter));
+        when(meterRepository.save(meter)).thenReturn(meter);
+
+        Assertions.assertThrows(ViolationChangeKeyAttributeException.class, () -> {
+            meterService.updateMeter(meter.getId(),meter2);
+        });
+
+        verify(meterRepository, times(0)).save(meter);
+    }
+
+    @Test
+    public void updateMeterViolationKey2() {
+        Meter meter = aMeter();
+        meter.setSerialNumber("123456");
+
+
+        Meter meter2 = aMeter();
+        meter2.setSerialNumber("1234567");
+
+
+        when(meterRepository.findById(any())).thenReturn(Optional.of(meter));
+        when(meterRepository.save(meter)).thenReturn(meter);
+
+        Assertions.assertThrows(ViolationChangeKeyAttributeException.class, () -> {
+            meterService.updateMeter(meter.getId(),meter2);
+        });
+
+        verify(meterRepository, times(0)).save(meter);
     }
 
 }

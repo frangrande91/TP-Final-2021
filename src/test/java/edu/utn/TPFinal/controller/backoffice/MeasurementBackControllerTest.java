@@ -1,6 +1,7 @@
 package edu.utn.TPFinal.controller.backoffice;
 
 import edu.utn.TPFinal.exception.RestrictDeleteException;
+import edu.utn.TPFinal.exception.notFound.AddressNotExistsException;
 import edu.utn.TPFinal.exception.notFound.MeasurementNotExistsException;
 import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
 import edu.utn.TPFinal.model.Measurement;
@@ -22,16 +23,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
+import java.time.LocalDate;
 import java.util.List;
-
-import static edu.utn.TPFinal.utils.BillTestUtils.aBill;
 import static edu.utn.TPFinal.utils.EntityResponse.messageResponse;
 import static edu.utn.TPFinal.utils.MeasurementTestUtils.*;
-import static edu.utn.TPFinal.utils.MeterTestUtils.aMeter;
 import static edu.utn.TPFinal.utils.MeterTestUtils.aMeterPage;
-import static edu.utn.TPFinal.utils.RateTestUtils.aRate;
-import static edu.utn.TPFinal.utils.UserTestUtils.aUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.*;
@@ -70,7 +66,26 @@ public class MeasurementBackControllerTest {
     }
 
     @Test
-    public void getAllMeters() {
+    public void getByAddressForDateRange() {
+
+        Page<Measurement> measurementPage = aMeasurementPage();
+        try {
+            Mockito.when(measurementService.getAllByAddressAndDateBetween(any(),any(),any(),any())).thenReturn(aMeasurementPage());
+
+            ResponseEntity<List<MeasurementDto>> responseEntity = measurementBackController.getByAddressForDateRange(1, LocalDate.of(2021,5,5),LocalDate.of(2021,5,7),1,1);
+
+            assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
+            assertEquals(measurementPage.getContent().size(),responseEntity.getBody().size());
+            assertEquals(measurementPage.getTotalElements(),Long.parseLong(responseEntity.getHeaders().get("X-Total-Count").get(0)));
+            assertEquals(measurementPage.getTotalPages(),Long.parseLong(responseEntity.getHeaders().get("X-Total-Pages").get(0)));
+
+        } catch (AddressNotExistsException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void getAllMeasurement() {
 
         Page<Measurement> measurementPage = aMeasurementPage();
         Mockito.when(measurementService.getAllMeasurements(any())).thenReturn(aMeasurementPage());

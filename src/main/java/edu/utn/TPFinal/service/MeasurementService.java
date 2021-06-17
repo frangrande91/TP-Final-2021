@@ -20,6 +20,8 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Service
 public class MeasurementService {
 
@@ -48,6 +50,11 @@ public class MeasurementService {
         else {
             throw new AccessNotAllowedException("You have not access to this resource");
         }
+    }
+
+    public Page<Measurement> getAllByAddressAndDateBetween(Integer idAddress, LocalDate from, LocalDate to, Pageable pageable) throws AddressNotExistsException {
+        Address address = addressService.getAddressById(idAddress);
+        return measurementRepository.findAllByMeterAndDateBetween(address.getMeter(), from, to, pageable);
     }
 
     public ClientConsumption getConsumptionByMeterAndDateBetween(Integer idMeter, Integer idQueryUser, LocalDate from, LocalDate to) throws MeterNotExistsException, UserNotExistsException, AccessNotAllowedException {
@@ -107,15 +114,12 @@ public class MeasurementService {
 
         double quantityKw = receivedMeasurementDto.getValue();
 
-        Meter meter = meterService.getMeterBySerialNumber(receivedMeasurementDto.getSerialNumber(), receivedMeasurementDto.getPassword());
+        Meter meter = meterService.getMeterBySerialNumberAndPassword(receivedMeasurementDto.getSerialNumber(), receivedMeasurementDto.getPassword());
         Measurement measurement = Measurement.builder()
                                     .meter(meter)
                                     .quantityKw(quantityKw)
                                     .date(LocalDate.parse(receivedMeasurementDto.getDate().substring(0,10)))
                                     .build();
-
-
-        //Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(sDate1);
 
         return measurementRepository.save(measurement);
     }
@@ -145,12 +149,15 @@ public class MeasurementService {
     }
 
     public void deleteMeasurementById(Integer id) throws MeasurementNotExistsException, RestrictDeleteException {
-        measurementRepository.deleteById(id);
+        Measurement measurement = getMeasurementById(id);
+        if(isNull(measurement.getBill())) {
+            measurementRepository.deleteById(id);
+        }
+        else {
+            throw new RestrictDeleteException("this measurement could not be deleted because it has already been invoiced");
+        }
+
     }
 
 
-   public Page<Measurement> getAllByAddressAndDateBetween(Integer idAddress, LocalDate from, LocalDate to, Pageable pageable) throws AddressNotExistsException {
-       Address address = addressService.getAddressById(idAddress);
-       return measurementRepository.findAllByMeterAndDateBetween(address.getMeter(), from, to, pageable);
-   }
 }

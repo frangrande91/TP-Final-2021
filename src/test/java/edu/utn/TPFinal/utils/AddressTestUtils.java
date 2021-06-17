@@ -10,10 +10,12 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.Collections;
 import java.util.List;
 
+import static edu.utn.TPFinal.utils.MeterTestUtils.aMeter;
+
 public class AddressTestUtils {
 
     public static Address aAddress() {
-        return Address.builder().id(1).address("False Street 123").build();
+        return Address.builder().id(1).address("False Street 123").meter(aMeter()).build();
     }
 
     public static AddressDto aAddressDto(){

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import static edu.utn.TPFinal.utils.UserTestUtils.aUser;
 public class BillTestUtils {
 
     public static Bill aBill(){
-        return Bill.builder().id(1).address(aAddress()).meter(aMeter()).userClient(aUser()).build();
+        return Bill.builder().id(1).address(aAddress()).meter(aMeter()).userClient(aUser()).measurementList(new ArrayList<>()).build();
     }
 
     public static Page<Bill> aBillPage(){

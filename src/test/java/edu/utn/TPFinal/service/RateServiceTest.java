@@ -1,7 +1,12 @@
 package edu.utn.TPFinal.service;
 
+import edu.utn.TPFinal.exception.RestrictDeleteException;
+import edu.utn.TPFinal.exception.ViolationChangeKeyAttributeException;
 import edu.utn.TPFinal.exception.alreadyExists.RateAlreadyExists;
+import edu.utn.TPFinal.exception.notFound.AddressNotExistsException;
+import edu.utn.TPFinal.exception.notFound.BillNotExistsException;
 import edu.utn.TPFinal.exception.notFound.RateNotExistsException;
+import edu.utn.TPFinal.model.Address;
 import edu.utn.TPFinal.model.Rate;
 
 import edu.utn.TPFinal.repository.RateRepository;
@@ -19,10 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static edu.utn.TPFinal.utils.AddressTestUtils.aAddress;
+import static edu.utn.TPFinal.utils.BillTestUtils.aBill;
 import static edu.utn.TPFinal.utils.MeterTestUtils.aMeterPage;
 import static edu.utn.TPFinal.utils.RateTestUtils.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static edu.utn.TPFinal.utils.RateTestUtils.aRate;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 
 public class RateServiceTest {
@@ -145,12 +153,14 @@ public class RateServiceTest {
         Assertions.assertThrows(RateNotExistsException.class, () -> rateService.getRateById(id));
     }
 
-    /*
     @Test
     public void deleteRateByIdOk() {
         Integer id = 1234;
+        Rate rate = aRate();
+        rate.setAddressList(new ArrayList<>());
+
         try {
-            Mockito.when(rateRepository.findById(id)).thenReturn(Optional.of(aRate()));
+            Mockito.when(rateRepository.findById(id)).thenReturn(Optional.of(rate));
             Mockito.doNothing().when(rateRepository).deleteById(id);
 
             rateService.deleteRateById(id);
@@ -158,12 +168,28 @@ public class RateServiceTest {
             Mockito.verify(rateRepository,Mockito.times(1)).findById(id);
             Mockito.verify(rateRepository,Mockito.times(1)).deleteById(id);
         }
-        catch (RateNotExistsException ex) {
+        catch (RateNotExistsException | RestrictDeleteException ex) {
             fail(ex);
         }
     }
 
-     */
+    @Test
+    public void deleteRateByIdRestrict() {
+        Integer id = 1234;
+        Rate rate = aRate();
+        rate.setAddressList(new ArrayList<>());
+        rate.getAddressList().add(aAddress());
+
+        Mockito.when(rateRepository.findById(id)).thenReturn(Optional.of(rate));
+        Mockito.doNothing().when(rateRepository).deleteById(id);
+
+        assertThrows(RestrictDeleteException.class, ()-> rateService.deleteRateById(id));
+
+
+        Mockito.verify(rateRepository,Mockito.times(1)).findById(id);
+        Mockito.verify(rateRepository,Mockito.times(0)).deleteById(id);
+
+    }
 
     @Test
     public void deleteRateByIdNotFound() {
@@ -177,4 +203,53 @@ public class RateServiceTest {
 
         Mockito.verify(rateRepository,Mockito.times(1)).findById(id);
     }
+
+    @Test
+    public void updateAddressOk() {
+        try {
+            when(rateRepository.findById(1)).thenReturn(Optional.of(aRate()));
+            when(rateRepository.save(aRate())).thenReturn(aRate());
+
+            Rate rate = rateService.updateRate(aRate().getId(),aRate());
+
+            assertEquals(aRate(),rate);
+
+            verify(rateRepository, times(1)).save(rate);
+        }
+        catch (ViolationChangeKeyAttributeException | RateNotExistsException e){
+            fail(e);
+        }
+    }
+
+    @Test
+    public void updateAddressViolationKey() {
+        Rate rate1 = aRate();
+        rate1.setTypeRate("CC");
+
+        when(rateRepository.findById(1)).thenReturn(Optional.of(aRate()));
+        when(rateRepository.save(aRate())).thenReturn(aRate());
+
+        Assertions.assertThrows(ViolationChangeKeyAttributeException.class, () -> {
+            rateService.updateRate(aRate().getId(),rate1);
+        });
+
+        verify(rateRepository, times(0)).save(rate1);
+    }
+
+    @Test
+    public void updateAddressViolationKey2() {
+        Rate rate1 = aRate();
+        rate1.setId(21345);
+
+        when(rateRepository.findById(1)).thenReturn(Optional.of(aRate()));
+        when(rateRepository.save(aRate())).thenReturn(aRate());
+
+        Assertions.assertThrows(ViolationChangeKeyAttributeException.class, () -> {
+            rateService.updateRate(aRate().getId(),rate1);
+        });
+
+        verify(rateRepository, times(0)).save(rate1);
+    }
+
+
 }
