@@ -37,7 +37,8 @@ public class BillService {
         this.addressService = addressService;
     }
 
-    public Page<Bill> getAllBillsByUserClientAndBetweenDate(Integer idClientUser,Integer idQueryUser, LocalDate from, LocalDate to, Pageable pageable) throws UserNotExistsException, ClientNotFoundException, AccessNotAllowedException {
+    public Page<Bill> getAllBillsByUserClientAndBetweenDate(Integer idQueryUser, Integer idClientUser, LocalDate from, LocalDate to, Pageable pageable) throws UserNotExistsException, ClientNotFoundException, AccessNotAllowedException {
+
         User queryUser = userService.getUserById(idQueryUser);
         User clientUser = userService.getUserById(idClientUser);
         userPermissionCheck(queryUser,clientUser);

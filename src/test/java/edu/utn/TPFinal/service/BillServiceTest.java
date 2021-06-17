@@ -217,6 +217,7 @@ public class BillServiceTest {
     public void addBill(){
         when(billRepository.save(aBill())).thenReturn(aBill());
         Bill bill = billService.addBill(aBill());
+
         assertEquals(aBill(), bill);
         verify(billRepository, times(1)).save(aBill());
     }
@@ -307,7 +308,7 @@ public class BillServiceTest {
     public void addClientToBillIfEmployee(){
         try {
             Bill bill = aBill();
-            //bill.setUserClient(aUser());
+
 
             User user = aUser();
             user.setTypeUser(TypeUser.EMPLOYEE);

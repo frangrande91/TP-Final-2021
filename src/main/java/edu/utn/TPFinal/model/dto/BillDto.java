@@ -1,16 +1,16 @@
 package edu.utn.TPFinal.model.dto;
 
-import edu.utn.TPFinal.model.Address;
-import edu.utn.TPFinal.model.Meter;
-import edu.utn.TPFinal.model.User;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class BillDto {
 
     private Integer id;

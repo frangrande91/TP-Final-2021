@@ -8,18 +8,10 @@ import edu.utn.TPFinal.utils.localdate.LocalDateDeserializer;
 import edu.utn.TPFinal.utils.localdate.LocalDateSerializer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.CollectionUtils;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.SetJoin;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
-import static edu.utn.TPFinal.utils.AddressTestUtils.aAddress;
+import java.time.LocalDate;
+import java.util.List;
 
 public class MeterTestUtils {
     public static String aMeterJSON() {
