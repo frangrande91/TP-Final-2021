@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class AddressDto {
-
     private Integer id;
     private MeterDto meter;
     private UserDto userClient;

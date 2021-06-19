@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
+import static edu.utn.TPFinal.utils.Utils.userPermissionCheck;
 import static java.util.Objects.isNull;
 
 @Service
@@ -55,16 +56,6 @@ public class BillService {
     public Page<Bill> getAllUnpaidByAddress(Integer idAddress, Pageable pageable) throws AddressNotExistsException {
         Address address = addressService.getAddressById(idAddress);
         return billRepository.findAllByAddressAndPayed(address,false, pageable);
-    }
-
-    private void userPermissionCheck(User queryUser,User clientUser) throws ClientNotFoundException, AccessNotAllowedException {
-        if(queryUser.getId().equals(clientUser.getId()) || queryUser.getTypeUser().equals(TypeUser.EMPLOYEE)) {
-            if(!clientUser.getTypeUser().equals(TypeUser.CLIENT)) {
-                throw new ClientNotFoundException(String.format("The client with id %s ",clientUser.getId()," do not exists"));
-            }
-        } else {
-            throw new AccessNotAllowedException("You have not access to this resource");
-        }
     }
 
     public Bill addBill(Bill bill) {

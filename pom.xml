@@ -123,6 +123,9 @@
 				<configuration>
 					<excludes>
 						<exclude>**/edu/utn/TPFinal/model/**</exclude>
+						<!--<exclude>**/edu/utn/TPFinal/converter/**</exclude>
+						<exclude>**/edu/utn/TPFinal/config/**</exclude>
+						<exclude>**/edu/utn/TPFinal/filter/**</exclude>-->
 					</excludes>
 				</configuration>
 				<executions>

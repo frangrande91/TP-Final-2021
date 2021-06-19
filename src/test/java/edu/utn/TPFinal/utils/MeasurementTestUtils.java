@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static edu.utn.TPFinal.utils.BillTestUtils.aBill;
@@ -24,7 +25,7 @@ public class MeasurementTestUtils {
                 .meter(aMeter())
                 .bill(aBill())
                 .quantityKw(2.0)
-                .date(LocalDate.of(2021,5,5))
+                .date(LocalDateTime.of(2021,5,5,0,0,0))
                 .priceMeasurement(100.0)
                 .build();
     }
@@ -34,11 +35,11 @@ public class MeasurementTestUtils {
     }
 
     public static MeasurementDto aMeasurementDto() {
-        return MeasurementDto.builder().id(1).meter(aMeterDto()).bill(aBill()).quantityKw(2.0).date(LocalDate.of(2021,5,5)).priceMeasurement(100.0).build();
+        return MeasurementDto.builder().id(1).meter(aMeterDto()).bill(aBill()).quantityKw(2.0).date(LocalDateTime.of(2021,5,5,0,0,0)).priceMeasurement(100.0).build();
     }
 
     public static ReceivedMeasurementDto aReceivedMeasurementDto() {
-        return ReceivedMeasurementDto.builder().serialNumber(null).value(2).date("2020-05-05").password("1235").build();
+        return ReceivedMeasurementDto.builder().serialNumber(null).value(2).date("2021-05-05T00:00").password("1235").build();
     }
 
     public static Page<MeasurementDto> aMeasurementDtoPage(){
@@ -61,8 +62,8 @@ public class MeasurementTestUtils {
                 .builder()
                 .consumptionKw(5.5)
                 .consumptionMoney(100.0)
-                .from(LocalDate.of(2020, 01, 05))
-                .to(LocalDate.of(2020, 12, 05))
+                .from(LocalDateTime.of(2021, 5, 5,0,0,0))
+                .to(LocalDateTime.of(2021, 5, 9,0,0,0))
                 .quantityMeasurements(10)
                 .clientUser(aUserDto())
                 .build();

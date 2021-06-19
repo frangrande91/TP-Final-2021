@@ -21,7 +21,7 @@ public class MeasurementDto {
     private MeterDto meter;
     private Bill bill;
     private Double quantityKw;
-    private LocalDate date;
+    private LocalDateTime date;
     private Double priceMeasurement;
 
 }

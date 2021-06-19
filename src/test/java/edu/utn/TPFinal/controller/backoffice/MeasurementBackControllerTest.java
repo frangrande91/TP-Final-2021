@@ -24,6 +24,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import static edu.utn.TPFinal.utils.EntityResponse.messageResponse;
 import static edu.utn.TPFinal.utils.MeasurementTestUtils.*;
@@ -64,7 +65,6 @@ public class MeasurementBackControllerTest {
         }
 
     }
-
     @Test
     public void getByAddressForDateRange() {
 
@@ -72,7 +72,7 @@ public class MeasurementBackControllerTest {
         try {
             Mockito.when(measurementService.getAllByAddressAndDateBetween(any(),any(),any(),any())).thenReturn(aMeasurementPage());
 
-            ResponseEntity<List<MeasurementDto>> responseEntity = measurementBackController.getByAddressForDateRange(1, LocalDate.of(2021,5,5),LocalDate.of(2021,5,7),1,1);
+            ResponseEntity<List<MeasurementDto>> responseEntity = measurementBackController.getByAddressForDateRange(1, LocalDateTime.of(2021,5,5,0,0,0),LocalDateTime.of(2021,5,9,0,0,0),1,1);
 
             assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
             assertEquals(measurementPage.getContent().size(),responseEntity.getBody().size());

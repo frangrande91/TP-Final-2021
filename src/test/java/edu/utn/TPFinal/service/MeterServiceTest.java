@@ -47,7 +47,6 @@ public class MeterServiceTest {
         Mockito.reset(meterRepository);
     }
 
-
     @Test
     public void addMeterOk() {
         try {
