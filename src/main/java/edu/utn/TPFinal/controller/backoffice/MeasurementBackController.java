@@ -1,14 +1,15 @@
 package edu.utn.TPFinal.controller.backoffice;
 
+import edu.utn.TPFinal.exception.AccessNotAllowedException;
 import edu.utn.TPFinal.exception.RestrictDeleteException;
-import edu.utn.TPFinal.exception.notFound.AddressNotExistsException;
-import edu.utn.TPFinal.exception.notFound.MeasurementNotExistsException;
-import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exception.notFound.*;
 import edu.utn.TPFinal.model.Measurement;
 import edu.utn.TPFinal.model.dto.MeasurementDto;
 import edu.utn.TPFinal.model.dto.ReceivedMeasurementDto;
 import edu.utn.TPFinal.model.dto.UserDto;
+import edu.utn.TPFinal.model.response.ClientConsumption;
 import edu.utn.TPFinal.model.response.Response;
+import edu.utn.TPFinal.repository.MeasurementRepository;
 import edu.utn.TPFinal.service.MeasurementService;
 import edu.utn.TPFinal.utils.EntityResponse;
 import edu.utn.TPFinal.utils.EntityURLBuilder;
@@ -17,6 +18,7 @@ import net.kaczmarzyk.spring.data.jpa.domain.Equal;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,13 +33,17 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import static edu.utn.TPFinal.utils.Utils.checkFromTo;
+import static edu.utn.TPFinal.utils.Utils.checkFromToTime;
 
 @RestController
 @RequestMapping("/backoffice/measurements")
@@ -72,12 +78,11 @@ public class MeasurementBackController {
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("addresses/{idAddress}")
     public ResponseEntity<List<MeasurementDto>> getByAddressForDateRange(@PathVariable Integer idAddress,
-                                                                  @RequestParam(value = "from", defaultValue = "2021-01-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
-                                                                  @RequestParam(value = "to", defaultValue = "2021-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to,
-                                                                  @RequestParam(value = "size", defaultValue = "10") Integer size,
-                                                                  @RequestParam(value = "page", defaultValue = "0") Integer page/*,
-                                                                  Authentication authentication*/) throws AddressNotExistsException {
-        checkFromTo(from,to);
+                                                                         @RequestParam(value = "from", defaultValue = "2020-01-05 00:00:00") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDateTime from,
+                                                                         @RequestParam(value = "to", defaultValue = "2020-12-05 00:00:00") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDateTime to,
+                                                                      @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                                                      @RequestParam(value = "page", defaultValue = "0") Integer page) throws AddressNotExistsException {
+        //checkFromTo(from,to);
         Pageable pageable = PageRequest.of(page, size);
         Page<Measurement> measurementPage = measurementService.getAllByAddressAndDateBetween(idAddress, from, to, pageable);
         Page<MeasurementDto> measurementDtoPage = measurementPage.map(measurement -> conversionService.convert(measurement,MeasurementDto.class));

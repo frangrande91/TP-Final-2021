@@ -3,6 +3,7 @@ package edu.utn.TPFinal.exception;
 import edu.utn.TPFinal.exception.alreadyExists.AddressAlreadyExistsException;
 import edu.utn.TPFinal.exception.alreadyExists.RateAlreadyExists;
 import edu.utn.TPFinal.exception.notFound.*;
+import edu.utn.TPFinal.model.response.ApiError;
 import edu.utn.TPFinal.utils.EntityResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -39,10 +40,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(EntityResponse.messageResponse(ex.getMessage()));
     }
 
-    @ExceptionHandler({ErrorLoginException.class})
+/*    @ExceptionHandler({ErrorLoginException.class})
     public ResponseEntity<Object> handlerErrorLoginException(ErrorLoginException ex,WebRequest request) {
         return ResponseNotFound(ex);
-    }
+    }*/
 
     @ExceptionHandler({BrandNotExistsException.class})
     public ResponseEntity<Object> handlerBrandNotExistsException(BrandNotExistsException ex,WebRequest request) {

@@ -35,7 +35,7 @@ public class Measurement {
     private Double quantityKw;
 
     @NotNull (message = "dateTime should not be null")
-    private LocalDate date;
+    private LocalDateTime date;
     
     private Double priceMeasurement;
 

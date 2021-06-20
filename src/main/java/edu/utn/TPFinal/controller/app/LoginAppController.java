@@ -1,6 +1,7 @@
 package edu.utn.TPFinal.controller.app;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.utn.TPFinal.model.User;
 import edu.utn.TPFinal.model.dto.LoginRequestDto;
@@ -69,7 +70,7 @@ public class LoginAppController {
                     .setExpiration(new Date(System.currentTimeMillis() + 1000000))
                     .signWith(SignatureAlgorithm.HS512, JWT_SECRET.getBytes()).compact();
             return  token;
-        } catch(Exception e) {
+        } catch(JsonProcessingException e) {
             return "dummy";
         }
     }

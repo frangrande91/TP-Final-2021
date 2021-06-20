@@ -8,6 +8,7 @@ import edu.utn.TPFinal.exception.notFound.ModelNotExistsException;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.Model;
 import edu.utn.TPFinal.repository.MeterRepository;
+import edu.utn.TPFinal.repository.ModelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +36,7 @@ public class MeterService {
 
     public Meter addMeter(Meter meter) throws MeterAlreadyExistsException {
          if(isNull(meterRepository.findByIdOrSerialNumber(meter.getId(),meter.getSerialNumber()))) {
+
              return meterRepository.save(meter);
          }
          else {
@@ -79,7 +81,6 @@ public class MeterService {
         else {
             throw new RestrictDeleteException("Can not delete this meter because it depends of another objects");
         }
-
     }
 
     public Meter addModelToMeter(Integer id, Integer idModel) throws MeterNotExistsException, ModelNotExistsException {

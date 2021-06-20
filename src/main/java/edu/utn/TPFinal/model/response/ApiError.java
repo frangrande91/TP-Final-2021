@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.exception;
+package edu.utn.TPFinal.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -16,10 +16,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
+import static edu.utn.TPFinal.utils.Utils.userPermissionCheck;
 import static java.util.Objects.isNull;
 
 @Service
@@ -40,7 +43,7 @@ public class MeasurementService {
         this.userService = userService;
     }
 
-    public Page<Measurement> getAllByMeterAndDateBetween(Integer idMeter,Integer idUser, LocalDate from, LocalDate to, Pageable pageable) throws MeterNotExistsException, UserNotExistsException, AccessNotAllowedException {
+    public Page<Measurement> getAllByMeterAndDateBetween(Integer idMeter,Integer idUser, LocalDateTime from, LocalDateTime to, Pageable pageable) throws MeterNotExistsException, UserNotExistsException, AccessNotAllowedException {
         Meter meter = meterService.getMeterById(idMeter);
         User user = userService.getUserById(idUser);
 
@@ -52,62 +55,47 @@ public class MeasurementService {
         }
     }
 
-    public Page<Measurement> getAllByAddressAndDateBetween(Integer idAddress, LocalDate from, LocalDate to, Pageable pageable) throws AddressNotExistsException {
+    public Page<Measurement> getAllByAddressAndDateBetween(Integer idAddress, LocalDateTime from, LocalDateTime to, Pageable pageable) throws AddressNotExistsException {
         Address address = addressService.getAddressById(idAddress);
         return measurementRepository.findAllByMeterAndDateBetween(address.getMeter(), from, to, pageable);
     }
 
-    public ClientConsumption getConsumptionByMeterAndDateBetween(Integer idMeter, Integer idQueryUser, LocalDate from, LocalDate to) throws MeterNotExistsException, UserNotExistsException, AccessNotAllowedException {
+    public ClientConsumption getConsumptionByMeterAndDateBetween(Integer idMeter, Integer idQueryUser, LocalDateTime from, LocalDateTime to) throws MeterNotExistsException, UserNotExistsException, AccessNotAllowedException, ClientNotFoundException {
         Meter meter = meterService.getMeterById(idMeter);
         User queryUser = userService.getUserById(idQueryUser);
         User clientUser = meter.getAddress().getUserClient();
 
         double totalConsumptionKw = 0.0;
         double totalConsumptionMoney = 0.0;
-        double lastMeasurementKw = 0.0;
+        int quantityMeasurements = 0;
 
-        Pageable pageable = PageRequest.of(0,1, Sort.by(List.of(new Sort.Order(Sort.Direction.DESC, "date"))));
+        userPermissionCheck(queryUser,clientUser);
 
-        if(userService.containsMeter(queryUser,meter) || queryUser.getTypeUser().equals(TypeUser.EMPLOYEE)) {
+        List<Measurement> measurements = measurementRepository.findAllByMeterAndDateBetween(meter,from,to);
 
-            List<Measurement> measurements = measurementRepository.findAllByMeterAndDateBetween(meter,from,to);
+        if(!measurements.isEmpty()) {
 
-            if(!measurements.isEmpty()) {
-                List<Measurement> lastMeasurementList = measurementRepository.findByMeterAndDateBefore(meter,from,pageable).toList();
+            totalConsumptionKw = measurements.get(measurements.size() - 1).getQuantityKw() - measurements.get(0).getQuantityKw();
 
-
-                if (!lastMeasurementList.isEmpty()) {
-                    lastMeasurementKw = lastMeasurementList.get(0).getQuantityKw();
-                }
-
-                for(Measurement m : measurements) {
-                    totalConsumptionMoney += m.getPriceMeasurement();
-                }
-
-                totalConsumptionKw = measurements.get(measurements.size() - 1).getQuantityKw() - lastMeasurementKw;
-                return ClientConsumption.builder()
-                        .consumptionKw(totalConsumptionKw)
-                        .consumptionMoney(totalConsumptionMoney)
-                        .quantityMeasurements(measurements.size())
-                        .from(from)
-                        .to(to)
-                        .clientUser(new UserDto(clientUser.getId(),clientUser.getFirstName(),clientUser.getLastName(),clientUser.getUsername(),clientUser.getTypeUser()))
-                        .build();
+            if(measurements.size() == 1){
+                totalConsumptionKw = measurements.get(0).getQuantityKw();
             }
-            else {
-                return ClientConsumption.builder()
-                        .consumptionKw(0.0)
-                        .consumptionMoney(0.0)
-                        .quantityMeasurements(0)
-                        .from(from)
-                        .to(to)
-                        .clientUser(new UserDto(clientUser.getId(),clientUser.getFirstName(),clientUser.getLastName(),clientUser.getUsername(),clientUser.getTypeUser()))
-                        .build();
+
+            for(Measurement m : measurements) {
+                totalConsumptionMoney += m.getPriceMeasurement();
             }
+
+            quantityMeasurements = measurements.size();
         }
-        else {
-            throw new AccessNotAllowedException("You have not access to this resource");
-        }
+
+        return ClientConsumption.builder()
+                .consumptionKw(totalConsumptionKw)
+                .consumptionMoney(totalConsumptionMoney)
+                .quantityMeasurements(quantityMeasurements)
+                .from(from)
+                .to(to)
+                .clientUser(new UserDto(clientUser.getId(),clientUser.getFirstName(),clientUser.getLastName(),clientUser.getUsername(),clientUser.getTypeUser()))
+                .build();
     }
 
     public Measurement addMeasurement(ReceivedMeasurementDto receivedMeasurementDto) throws MeterNotExistsException {
@@ -118,7 +106,7 @@ public class MeasurementService {
         Measurement measurement = Measurement.builder()
                                     .meter(meter)
                                     .quantityKw(quantityKw)
-                                    .date(LocalDate.parse(receivedMeasurementDto.getDate().substring(0,10)))
+                                    .date(LocalDateTime.parse(receivedMeasurementDto.getDate()))
                                     .build();
 
         return measurementRepository.save(measurement);

@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -61,7 +62,6 @@ public class BillAppControllerTest {
         }
     }
 
-    /*
     @Test
     public void getAllByUserClientAndBetweenDateNoContent() throws Exception {
         Authentication authentication = mock(Authentication.class);
@@ -83,7 +83,6 @@ public class BillAppControllerTest {
         }
     }
 
-     */
 
     @Test
     public void getAllSortsByUserClientAndBetweenDate() throws Exception {

@@ -2,12 +2,10 @@ package edu.utn.TPFinal.service;
 
 import edu.utn.TPFinal.exception.AccessNotAllowedException;
 import edu.utn.TPFinal.exception.RestrictDeleteException;
-import edu.utn.TPFinal.exception.notFound.AddressNotExistsException;
-import edu.utn.TPFinal.exception.notFound.MeasurementNotExistsException;
-import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
-import edu.utn.TPFinal.exception.notFound.UserNotExistsException;
+import edu.utn.TPFinal.exception.notFound.*;
 import edu.utn.TPFinal.model.*;
 import edu.utn.TPFinal.model.dto.ReceivedMeasurementDto;
+import edu.utn.TPFinal.model.response.ClientConsumption;
 import edu.utn.TPFinal.repository.MeasurementRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +18,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -56,27 +56,132 @@ public class MeasurementServiceTest {
     public void addMeasurement() {
         try {
             Measurement measurement = Measurement
-                                        .builder()
-                                        .id(null)
-                                        .meter(aMeter())
-                                        .bill(null)
-                                        .quantityKw(2.0)
-                                        .date(LocalDate.of(2020,5,5))
-                                        .priceMeasurement(null)
-                                        .build();
+                    .builder()
+                    .id(null)
+                    .meter(aMeter())
+                    .bill(null)
+                    .quantityKw(2.0)
+                    .date(LocalDateTime.of(2021, 5, 5, 0, 0, 0))
+                    .priceMeasurement(null)
+                    .build();
 
-            when(meterService.getMeterBySerialNumberAndPassword(aMeter().getSerialNumber(),aMeter().getPassword())).thenReturn(aMeter());
+            when(meterService.getMeterBySerialNumberAndPassword(aMeter().getSerialNumber(), aMeter().getPassword())).thenReturn(aMeter());
             when(measurementRepository.save(measurement)).thenReturn(measurement);
 
             Measurement measurementSaved = measurementService.addMeasurement(aReceivedMeasurementDto());
 
-            assertEquals(measurement,measurementSaved);
+            assertEquals(measurement, measurementSaved);
 
-            verify(meterService,times(1)).getMeterBySerialNumberAndPassword(aMeter().getSerialNumber(),aMeter().getPassword());
-            verify(measurementRepository,times(1)).save(measurementSaved);
+            verify(meterService, times(1)).getMeterBySerialNumberAndPassword(aMeter().getSerialNumber(), aMeter().getPassword());
+            verify(measurementRepository, times(1)).save(measurementSaved);
 
         } catch (MeterNotExistsException e) {
             fail(e);
+        }
+    }
+
+    @Test
+    public void getConsumptionByMeterAndDateBetweenWithOutConsumption() {
+
+        LocalDateTime from = LocalDateTime.parse("2021-05-05 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime to = LocalDateTime.parse("2021-05-09 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+        Address address = aAddress();
+        address.setUserClient(aUser());
+
+        Meter meter = aMeter();
+        meter.setAddress(address);
+
+        ClientConsumption clientConsumptionExpected = aClientConsumption();
+
+        clientConsumptionExpected.setConsumptionKw(0.0);
+        clientConsumptionExpected.setConsumptionMoney(0.0);
+        clientConsumptionExpected.setQuantityMeasurements(0);
+
+        try {
+
+            when(meterService.getMeterById(any())).thenReturn(meter);
+            when(userService.getUserById(any())).thenReturn(aUser());
+            when(measurementRepository.findAllByMeterAndDateBetween(any(),any(),any(),any())).thenReturn(aMeasurementPage());
+
+            ClientConsumption clientConsumption = measurementService.getConsumptionByMeterAndDateBetween(aMeter().getId(),aUser().getId(),from,to);
+
+            assertEquals(clientConsumptionExpected,clientConsumption);
+
+        } catch (MeterNotExistsException | UserNotExistsException | AccessNotAllowedException | ClientNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void getConsumptionByMeterAndDateBetweenWithOneConsumption() {
+
+        LocalDateTime from = LocalDateTime.parse("2021-05-05 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime to = LocalDateTime.parse("2021-05-09 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+        Address address = aAddress();
+        address.setUserClient(aUser());
+
+        Meter meter = aMeter();
+        meter.setAddress(address);
+
+        Measurement measurement = aMeasurement();
+        measurement.setMeter(aMeter());
+
+        ClientConsumption clientConsumptionExpected = aClientConsumption();
+
+        clientConsumptionExpected.setConsumptionKw(2.0);
+        clientConsumptionExpected.setConsumptionMoney(100.0);
+        clientConsumptionExpected.setQuantityMeasurements(1);
+
+        try {
+
+            when(meterService.getMeterById(any())).thenReturn(meter);
+            when(userService.getUserById(any())).thenReturn(aUser());
+            when(measurementRepository.findAllByMeterAndDateBetween(any(),any(),any())).thenReturn(aMeasurementPage().toList());
+
+            ClientConsumption clientConsumption = measurementService.getConsumptionByMeterAndDateBetween(aMeter().getId(),aUser().getId(),from,to);
+
+            assertEquals(clientConsumptionExpected,clientConsumption);
+
+        } catch (MeterNotExistsException | UserNotExistsException | AccessNotAllowedException | ClientNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void getConsumptionByMeterAndDateBetweenWithTooMuchConsumption() {
+
+        LocalDateTime from = LocalDateTime.parse("2021-05-05 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime to = LocalDateTime.parse("2021-05-09 00:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+        Address address = aAddress();
+        address.setUserClient(aUser());
+
+        Meter meter = aMeter();
+        meter.setAddress(address);
+
+        Measurement measurement = aMeasurement();
+        measurement.setMeter(aMeter());
+
+        ClientConsumption clientConsumptionExpected = aClientConsumption();
+
+        clientConsumptionExpected.setConsumptionKw(0.0);
+        clientConsumptionExpected.setConsumptionMoney(200.0);
+        clientConsumptionExpected.setQuantityMeasurements(2);
+
+        try {
+
+            when(meterService.getMeterById(any())).thenReturn(meter);
+            when(userService.getUserById(any())).thenReturn(aUser());
+            when(measurementRepository.findAllByMeterAndDateBetween(any(),any(),any())).thenReturn(List.of(aMeasurement(),aMeasurement()));
+
+            ClientConsumption clientConsumption = measurementService.getConsumptionByMeterAndDateBetween(aMeter().getId(),aUser().getId(),from,to);
+
+            assertEquals(clientConsumptionExpected,clientConsumption);
+
+        } catch (MeterNotExistsException | UserNotExistsException | AccessNotAllowedException | ClientNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
@@ -163,7 +268,7 @@ public class MeasurementServiceTest {
                     .meter(aMeter())
                     .bill(null)
                     .quantityKw(2.0)
-                    .date(LocalDate.of(2021,5,5))
+                    //.date(LocalDate.of(2021,5,5))
                     .priceMeasurement(100.0)
                     .build();
 
@@ -200,14 +305,14 @@ public class MeasurementServiceTest {
             when(addressService.getAddressById(1)).thenReturn(aAddress());
             when(measurementRepository.findAllByMeterAndDateBetween(any(),any(),any(),any())).thenReturn(aMeasurementPage());
 
-            Page<Measurement> measurementPage = measurementService.getAllByAddressAndDateBetween(1,LocalDate.of(2021,5,5), LocalDate.of(2021,5,9),pageable);
+            Page<Measurement> measurementPage = measurementService.getAllByAddressAndDateBetween(1,LocalDateTime.of(2021,5,5,0,0,0),LocalDateTime.of(2021,5,9,0,0,0),pageable);
 
             assertEquals(aMeasurementPage().getTotalElements(),measurementPage.getTotalElements());
             assertEquals(aMeasurementPage().getTotalPages(), measurementPage.getTotalElements());
             assertEquals(aMeasurementPage().getContent().size(),measurementPage.getContent().size());
 
             verify(addressService,times(1)).getAddressById(1);
-            verify(measurementRepository,times(1)).findAllByMeterAndDateBetween(measurementPage.getContent().get(0).getMeter(),LocalDate.of(2021,5,5), LocalDate.of(2021,5,9),pageable);
+            verify(measurementRepository,times(1)).findAllByMeterAndDateBetween(measurementPage.getContent().get(0).getMeter(),LocalDateTime.of(2021,5,5,0,0,0),LocalDateTime.of(2021,5,9,0,0,0),pageable);
 
         } catch (AddressNotExistsException e) {
             e.printStackTrace();
@@ -226,7 +331,7 @@ public class MeasurementServiceTest {
             when(userService.getUserById(1)).thenReturn(user);
             when(measurementRepository.findAllByMeterAndDateBetween(any(),any(),any(),any())).thenReturn(aMeasurementPage());
 
-            Page<Measurement> measurementPage = measurementService.getAllByMeterAndDateBetween(1,1, LocalDate.of(2021,5,5),LocalDate.of(2021,5,9),pageable);
+            Page<Measurement> measurementPage = measurementService.getAllByMeterAndDateBetween(1,1, LocalDateTime.of(2021,5,5,0,0,0),LocalDateTime.of(2021,5,9,0,0,0),pageable);
 
             assertEquals(aMeasurementPage().getTotalElements(),measurementPage.getTotalElements());
             assertEquals(aMeasurementPage().getTotalPages(), measurementPage.getTotalElements());
@@ -234,7 +339,7 @@ public class MeasurementServiceTest {
 
             verify(meterService,times(1)).getMeterById(1);
             verify(userService,times(1)).getUserById(1);
-            verify(measurementRepository,times(1)).findAllByMeterAndDateBetween(measurementPage.getContent().get(0).getMeter(),LocalDate.of(2021,5,5), LocalDate.of(2021,5,9),pageable);
+            verify(measurementRepository,times(1)).findAllByMeterAndDateBetween(measurementPage.getContent().get(0).getMeter(), LocalDateTime.of(2021,5,5,0,0,0),LocalDateTime.of(2021,5,9,0,0,0),pageable);
 
         } catch (MeterNotExistsException | UserNotExistsException | AccessNotAllowedException e) {
             fail(e);
@@ -254,12 +359,12 @@ public class MeasurementServiceTest {
             when(measurementRepository.findAllByMeterAndDateBetween(any(),any(),any(),any())).thenReturn(aMeasurementPage());
 
             assertThrows(AccessNotAllowedException.class,() -> {
-                        measurementService.getAllByMeterAndDateBetween(1,1, LocalDate.of(2021,5,5),LocalDate.of(2021,5,9),pageable);
+                        measurementService.getAllByMeterAndDateBetween(1,1, LocalDateTime.of(2021,5,5,0,0,0),LocalDateTime.of(2021,5,9,0,0,0),pageable);
             } );
 
             verify(meterService,times(1)).getMeterById(1);
             verify(userService,times(1)).getUserById(1);
-            verify(measurementRepository,times(0)).findAllByMeterAndDateBetween(aMeter(),LocalDate.of(2021,5,5), LocalDate.of(2021,5,9),pageable);
+            verify(measurementRepository,times(0)).findAllByMeterAndDateBetween(aMeter(),LocalDateTime.of(2021,5,5,0,0,0),LocalDateTime.of(2021,5,9,0,0,0),pageable);
         } catch (MeterNotExistsException | UserNotExistsException e) {
             fail(e);
         }
