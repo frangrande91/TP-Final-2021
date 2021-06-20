@@ -4,6 +4,7 @@ import edu.utn.TPFinal.exception.RestrictDeleteException;
 import edu.utn.TPFinal.exception.ViolationChangeKeyAttributeException;
 import edu.utn.TPFinal.exception.alreadyExists.MeterAlreadyExistsException;
 import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exception.notFound.ModelNotExistsException;
 import edu.utn.TPFinal.model.dto.MeterDto;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.response.Response;
@@ -116,6 +117,14 @@ public class MeterBackController {
     public ResponseEntity<Object> deleteMeterById(@PathVariable Integer id) throws MeterNotExistsException, RestrictDeleteException {
         meterService.deleteMeterById(id);
         return ResponseEntity.accepted().build();
+    }
+
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @PutMapping("/{id}/models/{idModel}")
+    public ResponseEntity<MeterDto> addModelToMeter(@PathVariable Integer id, @PathVariable Integer idModel) throws ModelNotExistsException, MeterNotExistsException {
+        Meter meter = meterService.addModelToMeter(id, idModel);
+        MeterDto meterDto = conversionService.convert(meterService.getMeterById(id), MeterDto.class);
+        return ResponseEntity.accepted().body(meterDto);
     }
 
 }

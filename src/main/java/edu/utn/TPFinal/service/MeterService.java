@@ -4,7 +4,9 @@ import edu.utn.TPFinal.exception.RestrictDeleteException;
 import edu.utn.TPFinal.exception.ViolationChangeKeyAttributeException;
 import edu.utn.TPFinal.exception.alreadyExists.MeterAlreadyExistsException;
 import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exception.notFound.ModelNotExistsException;
 import edu.utn.TPFinal.model.Meter;
+import edu.utn.TPFinal.model.Model;
 import edu.utn.TPFinal.repository.MeterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,10 +25,12 @@ public class MeterService {
 
     private static final String METER_PATH = "meter";
     private MeterRepository meterRepository;
+    private ModelService modelService;
 
     @Autowired
-    public MeterService(MeterRepository meterRepository) {
+    public MeterService(MeterRepository meterRepository, ModelService modelService) {
         this.meterRepository = meterRepository;
+        this.modelService = modelService;
     }
 
     public Meter addMeter(Meter meter) throws MeterAlreadyExistsException {
@@ -78,4 +82,11 @@ public class MeterService {
 
     }
 
+    public Meter addModelToMeter(Integer id, Integer idModel) throws MeterNotExistsException, ModelNotExistsException {
+        Meter meter = getMeterById(id);
+        Model model = modelService.getModelById(idModel);
+        meter.setModel(model);
+        return meterRepository.save(meter);
+
+    }
 }

@@ -53,7 +53,7 @@ public class LoginAppController {
         return ResponseEntity.ok((User) auth.getPrincipal());
     }
 
-    /** Lo tuve que hacer public para los tests **/
+
     public String generateToken(UserDto userDto) {
         try {
             String role = userDto.getTypeUser().toString();

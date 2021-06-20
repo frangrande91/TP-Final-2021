@@ -13,6 +13,8 @@ import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDate;
 import java.util.List;
 
+import static edu.utn.TPFinal.utils.ModelTestUtils.aModel;
+
 public class MeterTestUtils {
     public static String aMeterJSON() {
         final Gson gson =  new GsonBuilder()
@@ -25,7 +27,7 @@ public class MeterTestUtils {
     }
 
     public static Meter aMeter() {
-        return Meter.builder().id(1).serialNumber(null).password("1235").build();
+        return Meter.builder().id(1).serialNumber(null).password("1235").model(aModel()).build();
     }
 
     public static Page<Meter> aMeterPage() {

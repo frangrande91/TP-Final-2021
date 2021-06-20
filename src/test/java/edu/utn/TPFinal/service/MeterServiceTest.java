@@ -1,45 +1,48 @@
 package edu.utn.TPFinal.service;
+
 import edu.utn.TPFinal.exception.RestrictDeleteException;
 import edu.utn.TPFinal.exception.ViolationChangeKeyAttributeException;
 import edu.utn.TPFinal.exception.alreadyExists.MeterAlreadyExistsException;
 import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
-import edu.utn.TPFinal.exception.notFound.RateNotExistsException;
+import edu.utn.TPFinal.exception.notFound.ModelNotExistsException;
 import edu.utn.TPFinal.model.Meter;
-import edu.utn.TPFinal.model.Rate;
 import edu.utn.TPFinal.repository.MeterRepository;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static edu.utn.TPFinal.utils.AddressTestUtils.aAddress;
-import static edu.utn.TPFinal.utils.MeterTestUtils.*;
-import static edu.utn.TPFinal.utils.MeterTestUtils.aMeter;
-import static edu.utn.TPFinal.utils.RateTestUtils.aRate;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
-
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static edu.utn.TPFinal.utils.AddressTestUtils.aAddress;
+import static edu.utn.TPFinal.utils.MeterTestUtils.*;
+import static edu.utn.TPFinal.utils.ModelTestUtils.aModel;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 public class MeterServiceTest {
 
     private static MeterService meterService;
     private static MeterRepository meterRepository;
+    private static ModelService modelService;
 
 
     @BeforeAll
     public static void setUp() {
-        meterRepository = Mockito.mock(MeterRepository.class);
-        meterService = new MeterService(meterRepository);
+        meterRepository = mock(MeterRepository.class);
+        modelService = mock(ModelService.class);
+        meterService = new MeterService(meterRepository, modelService);
+
     }
 
     @AfterEach
@@ -277,5 +280,34 @@ public class MeterServiceTest {
 
         verify(meterRepository, times(0)).save(meter);
     }
+
+    @Test
+    public void addModelToMeterOk(){
+        try{
+            Meter meterAux = aMeter();
+            meterAux.setModel(aModel());
+            when(meterRepository.findById(aMeter().getId())).thenReturn(Optional.of(aMeter()));
+            when(modelService.getModelById(aModel().getId())).thenReturn(aModel());
+            when(meterRepository.save(aMeter())).thenReturn(aMeter());
+
+            Meter meter = meterService.addModelToMeter(1, 1);
+
+            assertEquals(aMeter().getModel(), meter.getModel());
+            verify(meterRepository, times(1)).findById(aModel().getId());
+            verify(modelService, times(1)).getModelById(1);
+            verify(meterRepository, times(1)).save(aMeter());
+        } catch (ModelNotExistsException | MeterNotExistsException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void addModelToMeterMeterNotExist(){
+        when(meterRepository.findById(aAddress().getId())).thenReturn(Optional.empty());
+
+        assertThrows(MeterNotExistsException.class, () -> meterService.addModelToMeter(aAddress().getId(),aMeter().getId()) );
+        verify(meterRepository, times(1)).findById(aMeter().getId());
+    }
+
 
 }

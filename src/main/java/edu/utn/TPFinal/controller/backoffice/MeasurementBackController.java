@@ -54,7 +54,7 @@ public class MeasurementBackController {
         this.conversionService = conversionService;
     }
 
-    /**Enponit especial**/
+    /**Endpoint especial**/
     @PostMapping("/")
     public ResponseEntity<Response> addMeasurement(@RequestBody ReceivedMeasurementDto receivedMeasurementDto) throws MeterNotExistsException {
 

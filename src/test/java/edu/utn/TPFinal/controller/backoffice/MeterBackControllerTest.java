@@ -2,6 +2,7 @@ package edu.utn.TPFinal.controller.backoffice;
 import edu.utn.TPFinal.controller.backoffice.MeterBackController;
 import edu.utn.TPFinal.exception.ViolationChangeKeyAttributeException;
 import edu.utn.TPFinal.exception.notFound.MeterNotExistsException;
+import edu.utn.TPFinal.exception.notFound.ModelNotExistsException;
 import edu.utn.TPFinal.exception.notFound.RateNotExistsException;
 import edu.utn.TPFinal.model.Meter;
 import edu.utn.TPFinal.model.dto.MeterDto;
@@ -19,6 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -27,6 +29,8 @@ import static edu.utn.TPFinal.utils.MeterTestUtils.*;
 import static edu.utn.TPFinal.utils.RateTestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
+
 import java.util.*;
 
 
@@ -49,7 +53,7 @@ public class MeterBackControllerTest {
     public void getAllMeters() throws Exception {
 
         Page<Meter> meterPage = aMeterPage();
-        Mockito.when(meterService.getAllMeters(any())).thenReturn(meterPage);
+        when(meterService.getAllMeters(any())).thenReturn(meterPage);
         ResponseEntity<List<MeterDto>> responseEntity = meterBackController.getAllMeters(1,1);
 
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
@@ -66,7 +70,7 @@ public class MeterBackControllerTest {
         Page<Meter> meterPage  = aMeterPage();
         Pageable pageable = PageRequest.of(1,1);
 
-        Mockito.when(meterService.getAllSpec(meterSpecification,pageable)).thenReturn(meterPage);
+        when(meterService.getAllSpec(meterSpecification,pageable)).thenReturn(meterPage);
         ResponseEntity<List<MeterDto>> responseEntity = meterBackController.getAllSpec(meterSpecification,pageable);
 
 
@@ -82,7 +86,7 @@ public class MeterBackControllerTest {
         Page<Meter> meterPage = aMeterPage();
         Pageable pageable = PageRequest.of(1,1);
 
-        Mockito.when(meterService.getAllSort(any(),any(),anyList())).thenReturn(aMeterPage());
+        when(meterService.getAllSort(any(),any(),anyList())).thenReturn(aMeterPage());
         ResponseEntity<List<MeterDto>> responseEntity = meterBackController.getAllSorted(pageable.getPageNumber(),pageable.getPageSize(),"id","serialNumber");
 
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
@@ -94,8 +98,8 @@ public class MeterBackControllerTest {
     @Test
     public void getMeterById() throws Exception {
 
-        Mockito.when(meterService.getMeterById(anyInt())).thenReturn(aMeter());
-        Mockito.when(conversionService.convert(aMeter(),MeterDto.class)).thenReturn(aMeterDto());
+        when(meterService.getMeterById(anyInt())).thenReturn(aMeter());
+        when(conversionService.convert(aMeter(),MeterDto.class)).thenReturn(aMeterDto());
         ResponseEntity<MeterDto> responseEntity = meterBackController.getMeterById(1);
 
         assertEquals(HttpStatus.OK.value(),responseEntity.getStatusCode().value());
@@ -112,7 +116,7 @@ public class MeterBackControllerTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
-        Mockito.when(meterService.addMeter(aMeter())).thenReturn(aMeter());
+        when(meterService.addMeter(aMeter())).thenReturn(aMeter());
         ResponseEntity<Response> responseEntity = meterBackController.addMeter(aMeter());
 
         assertEquals(EntityURLBuilder.buildURL2("meters", aRate().getId()).toString(),responseEntity.getHeaders().get("Location").get(0));
@@ -129,7 +133,7 @@ public class MeterBackControllerTest {
     @Test
     public void updateMeter() {
         try {
-            Mockito.when(meterService.updateMeter(any(),any())).thenReturn(aMeter());
+            when(meterService.updateMeter(any(),any())).thenReturn(aMeter());
 
             ResponseEntity<Response> responseEntity = meterBackController.updateMeter(1,aMeter());
 
@@ -140,7 +144,16 @@ public class MeterBackControllerTest {
         catch ( ViolationChangeKeyAttributeException | MeterNotExistsException e) {
             fail(e);
         }
+    }
 
+    @Test
+    public void addModelToMeter() throws Exception {
+        when(meterService.addModelToMeter(1,1)).thenReturn(aMeter());
+        when(conversionService.convert(aMeter(), MeterDto.class)).thenReturn(aMeterDto());
+
+        ResponseEntity<MeterDto> responseEntity = meterBackController.addModelToMeter(1,1);
+
+        assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
     }
 
 }
