@@ -476,26 +476,34 @@ DROP PROCEDURE IF EXISTS p_consult_measurements;
 DELIMITER $$
 CREATE PROCEDURE p_consult_measurements(IN pIdUser INT, IN pFrom DATETIME, IN pTo DATETIME)
 BEGIN
-	IF(pFrom > pTo) THEN
-		SIGNAL SQLSTATE '10001' 
-		SET MESSAGE_TEXT = 'The TO must be more big than FROM', 
-		MYSQL_ERRNO = 2.2;
+    DECLARE vCount INT DEFAULT 0;
+    SELECT COUNT(*) INTO vCount FROM users WHERE id_user = pIdUser;
+    IF(vCount = 1) THEN
+        IF(pFrom > pTo) THEN
+            SIGNAL SQLSTATE '10001'
+            SET MESSAGE_TEXT = 'The TO must be more big than FROM',
+            MYSQL_ERRNO = 2.2;
+        ELSE
+            SELECT
+                u.name,
+                u.last_name,
+                a.id_meter,
+                me.date,
+                me.id_measurement,
+                me.quantity_kw,
+                me.price_measurement
+            FROM users u
+            INNER JOIN addresses a
+                ON a.id_user = u.id_user
+            INNER JOIN measurements me
+                ON me.id_meter = a.id_meter
+            WHERE ( u.id_user = pIdUser ) AND ( me.date BETWEEN pFrom AND pTo);
+        END IF;
     ELSE
-		SELECT 
-			u.name, 
-			u.last_name, 
-			a.id_meter, 
-			me.date, 
-			me.id_measurement,
-			me.quantity_kw, 
-			me.price_measurement
-		FROM users u
-		INNER JOIN addresses a
-			ON a.id_user = u.id_user
-		INNER JOIN measurements me
-			ON me.id_meter = a.id_meter
-		WHERE ( u.id_user = pIdUser ) AND ( me.date BETWEEN pFrom AND pTo);
-	END IF;
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'User not exists',
+        MYSQL_ERRNO = 2.3;
+    END IF;
 END;
 
 #LLAMADA AL PROCEDURE
@@ -597,3 +605,118 @@ FROM
         HAVING me.date BETWEEN "2021-05-05" AND "2021-12-31" ) consum
 GROUP BY id, consum.name, consum.last_name, consum.username ORDER BY consumption DESC LIMIT 10;
 */
+
+
+
+/******************************************* NoSQL *****************************************************/
+/*
+Como PLAN B , generar una estructura de base de datos NoSQL de su preferencia
+para dar soporte al problema planteado
+ */
+
+
+udee.users = collection(){
+    id_user : int,
+    name : string,
+    last_name : string,
+    username : string,
+    password : string,
+    type_user : int
+    addresses = collection(Address)
+}
+
+         Address = Object(){
+            id_address : int,
+            address : string,
+            meter : Object(Meter),
+            rate : Object(Rate),
+        }
+
+            Meter = Objetc(){
+                id_meter : int,
+                serial_number : string,
+                password : string,
+                model : Object(Model)
+                bills : collection(Bill)
+            }
+
+                Model = Object(){
+                    id_model : int,
+                    name : string,
+                    brand : Object(Brand)
+                }
+
+                    Brand = Object(){
+                        id_brand : int,
+                        name : string
+                    }
+
+                Bill = Object(){
+                    id_bill : int,
+                    initial_measurement : datetime,
+                    final_measurement : datetime,
+                    total_consumption : double,
+                    total_payable : double,
+                    date : datetime,
+                    expiration : datetime
+               }
+
+            Rate = Object(){
+                id_rate : int,
+                value : double,
+                type_rate : string
+            }
+
+
+
+udee.addresses = collection(){
+    id_address : int,
+    address : string,
+    meter : Object(Meter)
+}
+
+        Meter = Objetc(){
+            id_meter : int,
+            serial_number : string,
+            password : string,
+            bills : collection(Bill)
+        }
+
+
+            Bill = Object(){
+                id_bill : int,
+                initial_measurement : datetime,
+                final_measurement : datetime,
+                total_consumption : double,
+                total_payable : double,
+                date : datetime,
+                expiration : datetime
+            }
+
+
+
+udee.measurements = collection(){
+    id_measurement : int,
+    date : datetime,
+    quantity_kw : double,
+    price_measurement : double,
+    id_address : int,
+}
+
+        INDICE => address, date
+
+
+ //otra forma menos performante
+
+udee.addesses = collection(){
+    id_address : int,
+    address : string,
+    measurements : collection(Measurement)
+}
+
+        Measurement = Object(){
+            id_measurement : int,
+            date : datetime,
+            quantity_kw : double,
+            price_measurement : double,
+        }

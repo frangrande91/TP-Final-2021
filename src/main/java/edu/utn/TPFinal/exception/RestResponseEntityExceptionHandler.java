@@ -43,13 +43,13 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 /*    @ExceptionHandler({ErrorLoginException.class})
     public ResponseEntity<Object> handlerErrorLoginException(ErrorLoginException ex,WebRequest request) {
         return ResponseNotFound(ex);
-    }*/
+    }
 
     @ExceptionHandler({BrandNotExistsException.class})
     public ResponseEntity<Object> handlerBrandNotExistsException(BrandNotExistsException ex,WebRequest request) {
         return ResponseNotFound(ex);
     }
-
+*/
     @ExceptionHandler({AddressNotExistsException.class})
     public ResponseEntity<Object> handlerAddressNotExistsException(AddressNotExistsException ex,WebRequest request) {
         return ResponseNotFound(ex);
@@ -108,28 +108,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
 
     @ExceptionHandler({SQLIntegrityConstraintViolationException.class})
-    public ResponseEntity<Object> SQLIntegrityConstraintViolationException
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            (AddressAlreadyExistsException ex, WebRequest request) {
+    public ResponseEntity<Object> SQLIntegrityConstraintViolationException(AddressAlreadyExistsException ex, WebRequest request) {
         System.out.println("TIPO DE EXCEPCION:"+ex.getClass());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(EntityResponse.messageResponse(ex.getMessage()));
     }
