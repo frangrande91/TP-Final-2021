@@ -1,6 +1,7 @@
-package edu.utn.TPFinal.controller.app;
+package edu.utn.TPFinal.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.utn.TPFinal.controller.LoginController;
 import edu.utn.TPFinal.model.User;
 import edu.utn.TPFinal.model.dto.UserDto;
 import edu.utn.TPFinal.model.response.LoginResponseDto;
@@ -25,18 +26,18 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class LoginAppControllerTest {
+public class LoginControllerTest {
 
     private static UserService userService;
     private static ConversionService conversionService;
-    private static LoginAppController loginAppController;
+    private static LoginController loginController;
 
 
     @BeforeAll
     public static void setUp(){
         userService = mock(UserService.class);
         conversionService = mock(ConversionService.class);
-        loginAppController = new LoginAppController(userService, conversionService);
+        loginController = new LoginController(userService, conversionService);
     }
 
 
@@ -44,10 +45,10 @@ public class LoginAppControllerTest {
     public void loginOk(){
         when(userService.login("nahuelmdp", "1234")).thenReturn(aUser());
         when(conversionService.convert(aUser(), UserDto.class)).thenReturn(aUserDto());
-        String token = loginAppController.generateToken(aUserDto());
+        String token = loginController.generateToken(aUserDto());
         LoginResponseDto loginResponseDto = LoginResponseDto.builder().token(token).build();
 
-        ResponseEntity<LoginResponseDto> response = loginAppController.login(aLoginRequestDto());
+        ResponseEntity<LoginResponseDto> response = loginController.login(aLoginRequestDto());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
        //assertEquals(loginResponseDto, response.getBody());
@@ -58,7 +59,7 @@ public class LoginAppControllerTest {
     public void loginUnauthorized(){
         when(userService.login("nahuelmdp", "1234")).thenReturn(null);
 
-        ResponseEntity<LoginResponseDto> response = loginAppController.login(aLoginRequestDto());
+        ResponseEntity<LoginResponseDto> response = loginController.login(aLoginRequestDto());
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
@@ -66,12 +67,12 @@ public class LoginAppControllerTest {
     @Test
     public void userDetails(){
         Authentication authentication = mock(Authentication.class);
-        when(authentication.getPrincipal()).thenReturn(aUser());
+        when(authentication.getPrincipal()).thenReturn(aUserDto());
 
-        ResponseEntity<User> response = loginAppController.userDetails(authentication);
+        ResponseEntity<UserDto> response = loginController.userDetails(authentication);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(aUser(), response.getBody());
+        assertEquals(aUserDto(), response.getBody());
     }
 
     @Test
@@ -93,7 +94,7 @@ public class LoginAppControllerTest {
                     .setExpiration(new Date(System.currentTimeMillis() + 1000000))
                     .signWith(SignatureAlgorithm.HS512, JWT_SECRET.getBytes()).compact();
 
-            String tokenReturn = loginAppController.generateToken(aUserDto());
+            String tokenReturn = loginController.generateToken(aUserDto());
 
             assertEquals(token.length(), tokenReturn.length());
         } catch (Exception e) {

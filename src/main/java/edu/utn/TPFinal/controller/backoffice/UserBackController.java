@@ -52,6 +52,18 @@ public class UserBackController {
         this.conversionService = conversionService;
     }
 
+    /***************************PUNTO 5+****************************/
+
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
+    @GetMapping("/topConsumers")
+    public ResponseEntity<List<ConsumerProjection>> get10TopMoreConsumers(@RequestParam(value = "from", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
+                                                                          @RequestParam(value = "to", defaultValue = "2021-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to) {
+        checkFromTo(from,to);
+        List<ConsumerProjection> consumerProjection = userService.getTop10MoreConsumers(from,to);
+        return ResponseEntity.status(HttpStatus.OK).body(consumerProjection);
+    }
+
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @PostMapping(value = "/")
     public ResponseEntity<Response> addUser(@RequestBody User user) throws UserAlreadyExists {
         User userCreated = userService.addUser(user);
@@ -63,7 +75,7 @@ public class UserBackController {
                 .body(EntityResponse.messageResponse("The user has been created"));
     }
 
-    @PreAuthorize(value = "hasAuthority('CLIENT')")
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("/")
     public ResponseEntity<List<UserDto>> getAllUsers(@RequestParam(value = "size", defaultValue = "10") Integer size,
                                        @RequestParam(value = "page", defaultValue = "0") Integer page) {
@@ -73,6 +85,7 @@ public class UserBackController {
         return EntityResponse.listResponse(userDtoPage);
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("/sort")
     public ResponseEntity<List<UserDto>> getAllSorted(@RequestParam(value = "size", defaultValue = "10") Integer size,
                                        @RequestParam(value = "page", defaultValue = "0") Integer page,
@@ -86,6 +99,7 @@ public class UserBackController {
         return EntityResponse.listResponse(userDtoPage);
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("/spec")
     public ResponseEntity<List<UserDto>> getAllSpec(
             @And({
@@ -100,12 +114,14 @@ public class UserBackController {
         return EntityResponse.listResponse(userDtoPage);
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable Integer id) throws UserNotExistsException {
         UserDto userDto = conversionService.convert(userService.getUserById(id),UserDto.class);
         return ResponseEntity.ok(userDto);
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @PutMapping("/{idClient}/addresses/{idAddress}")
     public ResponseEntity<Response> addAddressToClientUser(@PathVariable Integer idClient, @PathVariable Integer idAddress) throws UserNotExistsException, AddressNotExistsException, ClientNotFoundException {
         userService.addAddressToClientUser(idClient,idAddress);
@@ -113,20 +129,11 @@ public class UserBackController {
                 .body(EntityResponse.messageResponse("The user has been modified"));
     }
 
+    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
     @DeleteMapping("/{idUser}")
     public ResponseEntity<Object> deleteUser(@PathVariable Integer idUser) throws UserNotExistsException, RestrictDeleteException {
         userService.deleteById(idUser);
         return ResponseEntity.accepted().build();
-    }
-
-    /**PUNTO 5+*/
-    @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
-    @GetMapping("/topConsumers")
-    public ResponseEntity<List<ConsumerProjection>> get10TopMoreConsumers(@RequestParam(value = "from", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
-                                                                            @RequestParam(value = "to", defaultValue = "2021-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to) {
-        checkFromTo(from,to);
-        List<ConsumerProjection> consumerProjection = userService.getTop10MoreConsumers(from,to);
-        return ResponseEntity.status(HttpStatus.OK).body(consumerProjection);
     }
 
 }

@@ -1,9 +1,11 @@
 package edu.utn.TPFinal.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -35,6 +37,7 @@ public class Measurement {
     private Double quantityKw;
 
     @NotNull (message = "dateTime should not be null")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime date;
     
     private Double priceMeasurement;

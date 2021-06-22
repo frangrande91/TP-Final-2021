@@ -74,12 +74,13 @@ public class MeasurementBackController {
                 .body(EntityResponse.messageResponse("The measurement has been created"));
     }
 
-    /**PUNTO 6+*/
+    /****************************PUNTO 6*******************+*/
+
     @PreAuthorize(value = "hasAuthority('EMPLOYEE')")
-    @GetMapping("addresses/{idAddress}")
+    @GetMapping("/addresses/{idAddress}")
     public ResponseEntity<List<MeasurementDto>> getByAddressForDateRange(@PathVariable Integer idAddress,
-                                                                         @RequestParam(value = "from", defaultValue = "2020-01-05 00:00:00") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDateTime from,
-                                                                         @RequestParam(value = "to", defaultValue = "2020-12-05 00:00:00") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDateTime to,
+                                                                         @RequestParam(value = "from", defaultValue = "2021-01-05 00:00:00") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDateTime from,
+                                                                         @RequestParam(value = "to", defaultValue = "2021-12-05 00:00:00") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDateTime to,
                                                                       @RequestParam(value = "size", defaultValue = "10") Integer size,
                                                                       @RequestParam(value = "page", defaultValue = "0") Integer page) throws AddressNotExistsException {
         //checkFromTo(from,to);

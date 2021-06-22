@@ -1,4 +1,4 @@
-package edu.utn.TPFinal.controller.app;
+package edu.utn.TPFinal.controller;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,19 +26,19 @@ import java.util.stream.Collectors;
 import static edu.utn.TPFinal.utils.Constants.JWT_SECRET;
 
 @RestController
-@RequestMapping("/app")
-public class LoginAppController {
+@RequestMapping("/login")
+public class LoginController {
 
     private UserService userService;
     private ConversionService conversionService;
 
     @Autowired
-    public LoginAppController(UserService userService, ConversionService conversionService) {
+    public LoginController(UserService userService, ConversionService conversionService) {
         this.userService = userService;
         this.conversionService = conversionService;
     }
 
-    @PostMapping(value = "/login")
+    @PostMapping(value = "/")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) {
         User user = userService.login(loginRequestDto.getUsername(), loginRequestDto.getPassword());
         if (user!=null){
@@ -50,8 +50,8 @@ public class LoginAppController {
     }
 
     @GetMapping(value = "/userDetails")
-    public ResponseEntity<User> userDetails(Authentication auth) {
-        return ResponseEntity.ok((User) auth.getPrincipal());
+    public ResponseEntity<UserDto> userDetails(Authentication auth) {
+        return ResponseEntity.ok((UserDto) auth.getPrincipal());
     }
 
 
@@ -67,20 +67,12 @@ public class LoginAppController {
                     .claim("user", objectMapper.writeValueAsString(userDto))
                     .claim("authorities",grantedAuthorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                     .setIssuedAt(new Date(System.currentTimeMillis()))
-                    .setExpiration(new Date(System.currentTimeMillis() + 1000000))
+                    .setExpiration(new Date(System.currentTimeMillis() + 10000000))
                     .signWith(SignatureAlgorithm.HS512, JWT_SECRET.getBytes()).compact();
             return  token;
         } catch(JsonProcessingException e) {
             return "dummy";
         }
     }
-
-    /*
-    @GetMapping(value = "/hola")
-    public String hola() {
-        return "HOLA";
-    }
-
-     */
 
 }

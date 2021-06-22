@@ -29,4 +29,8 @@ public class ClientConsumption {
         return this.to.toString();
     }
 
+    public Long getConsumptionMoney() {
+        return this.consumptionMoney.longValue();
+    }
+
 }

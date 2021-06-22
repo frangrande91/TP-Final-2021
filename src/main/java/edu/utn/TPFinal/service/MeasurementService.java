@@ -14,13 +14,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import static edu.utn.TPFinal.utils.Utils.userPermissionCheck;
 import static java.util.Objects.isNull;
@@ -43,7 +47,7 @@ public class MeasurementService {
         this.userService = userService;
     }
 
-    public Page<Measurement> getAllByMeterAndDateBetween(Integer idMeter,Integer idUser, LocalDateTime from, LocalDateTime to, Pageable pageable) throws MeterNotExistsException, UserNotExistsException, AccessNotAllowedException {
+    public Page<Measurement> getAllByMeterAndDateBetween(Integer idMeter, Integer idUser, LocalDateTime from, LocalDateTime to, Pageable pageable) throws MeterNotExistsException, UserNotExistsException, AccessNotAllowedException {
         Meter meter = meterService.getMeterById(idMeter);
         User user = userService.getUserById(idUser);
 
@@ -69,9 +73,12 @@ public class MeasurementService {
         double totalConsumptionMoney = 0.0;
         int quantityMeasurements = 0;
 
+
         userPermissionCheck(queryUser,clientUser);
 
         List<Measurement> measurements = measurementRepository.findAllByMeterAndDateBetween(meter,from,to);
+
+        double firstMeasurement = isNull(measurements) ? measurements.get(0).getPriceMeasurement() : 0.0;
 
         if(!measurements.isEmpty()) {
 
@@ -90,7 +97,7 @@ public class MeasurementService {
 
         return ClientConsumption.builder()
                 .consumptionKw(totalConsumptionKw)
-                .consumptionMoney(totalConsumptionMoney)
+                .consumptionMoney(totalConsumptionMoney - firstMeasurement)
                 .quantityMeasurements(quantityMeasurements)
                 .from(from)
                 .to(to)

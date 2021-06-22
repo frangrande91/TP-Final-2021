@@ -112,7 +112,7 @@ public class RateBackController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteRateById(@PathVariable Integer id) throws RateNotExistsException, RestrictDeleteException {
         rateService.deleteRateById(id);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(EntityResponse.messageResponse("The rate has been deleted"));
     }
 
 }

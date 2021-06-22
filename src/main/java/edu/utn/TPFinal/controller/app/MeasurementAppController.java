@@ -22,10 +22,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import static edu.utn.TPFinal.utils.Utils.checkFromTo;
 import static edu.utn.TPFinal.utils.Utils.checkFromToTime;
@@ -48,12 +51,10 @@ public class MeasurementAppController {
     @PreAuthorize(value = "hasAuthority('EMPLOYEE') OR hasAuthority('CLIENT')")
     @GetMapping("/meters/{idMeter}/consumption")
     public ResponseEntity<ClientConsumption> getConsumptionByMeter(@PathVariable Integer idMeter,
-                                                              @RequestParam(value = "from", defaultValue = "2020-01-05 00:00:00") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDateTime from,
-                                                              @RequestParam(value = "to", defaultValue = "2020-12-05 00:00:00") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDateTime to,
+                                                              @RequestParam(value = "from", defaultValue = "2021-01-05 00:00:00") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDateTime from,
+                                                              @RequestParam(value = "to", defaultValue = "2021-12-05 00:00:00") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDateTime to,
                                                               Authentication authentication) throws UserNotExistsException, AccessNotAllowedException, MeterNotExistsException, ClientNotFoundException {
         checkFromToTime(from,to);
-        System.out.println(from);
-        System.out.println(to);
         UserDto userDto = (UserDto) authentication.getPrincipal();
         ClientConsumption clientConsumption = measurementService.getConsumptionByMeterAndDateBetween(idMeter, userDto.getId(), from, to);
         return ResponseEntity.status(HttpStatus.OK).body(clientConsumption);
@@ -63,8 +64,8 @@ public class MeasurementAppController {
     @PreAuthorize(value = "hasAuthority('EMPLOYEE') OR hasAuthority('CLIENT')")
     @GetMapping("/meters/{idMeter}")
     public ResponseEntity<List<MeasurementDto>> getAllByMeter(@PathVariable Integer idMeter,
-                                                                       @RequestParam(value = "from", defaultValue = "2020-01-05 00:00:00") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDateTime from,
-                                                                       @RequestParam(value = "to", defaultValue = "2020-12-05 00:00:00") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDateTime to,
+                                                                       @RequestParam(value = "from", defaultValue = "2021-01-01 00:00:00") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDateTime from,
+                                                                       @RequestParam(value = "to", defaultValue = "2021-12-31 00:00:00") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  LocalDateTime to,
                                                                        @RequestParam(value = "size", defaultValue = "10") Integer size,
                                                                        @RequestParam(value = "page", defaultValue = "0") Integer page,
                                                                        Authentication authentication) throws UserNotExistsException, AccessNotAllowedException, MeterNotExistsException {
@@ -72,6 +73,7 @@ public class MeasurementAppController {
         UserDto userDto = (UserDto) authentication.getPrincipal();
         Pageable pageable = PageRequest.of(page, size);
         Page<Measurement> measurementPage = measurementService.getAllByMeterAndDateBetween(idMeter,userDto.getId(),from,to,pageable);
+
         Page<MeasurementDto> measurementDtoPage = measurementPage.map(measurement -> conversionService.convert(measurement,MeasurementDto.class));
         return EntityResponse.listResponse(measurementDtoPage);
     }

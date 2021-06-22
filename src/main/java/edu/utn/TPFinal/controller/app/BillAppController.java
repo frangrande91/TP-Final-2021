@@ -46,8 +46,8 @@ public class BillAppController {
     public ResponseEntity<List<BillDto>> getAllByUserClientAndBetweenDate(@PathVariable Integer idClient,
                                                     @RequestParam(value = "size", defaultValue = "10") Integer size,
                                                     @RequestParam(value = "page", defaultValue = "0") Integer page,
-                                                    @RequestParam(value = "from", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
-                                                    @RequestParam(value = "to", defaultValue = "2020-01-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to,
+                                                    @RequestParam(value = "from", defaultValue = "2020-01-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
+                                                    @RequestParam(value = "to", defaultValue = "2020-12-05") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to,
                                                     Authentication authentication) throws UserNotExistsException, ClientNotFoundException, AccessNotAllowedException {
         checkFromTo(from,to);
         UserDto userDto = (UserDto) authentication.getPrincipal();

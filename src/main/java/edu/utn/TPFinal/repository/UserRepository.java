@@ -16,7 +16,7 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
     User findByIdOrUsername(Integer id, String username);
 
     @Query(value =
-            "SELECT consum.id_user AS id, consum.name,consum.last_name, consum.username, ( SUM(consum.max) - SUM(consum.min) ) AS consumption\n" +
+            "SELECT consum.id_user AS id, consum.name,consum.last_name as lastname, consum.username, ( SUM(consum.max) - SUM(consum.min) ) AS consumption\n" +
                     "FROM\n" +
                     "\t\t( SELECT m.id_meter, u.id_user, u.name, u.last_name, u.username, MAX(me.quantity_kw) AS max, MIN(me.quantity_kw) AS min, me.date\n" +
                     "\t\t\t FROM users AS u\n" +

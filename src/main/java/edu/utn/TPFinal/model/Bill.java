@@ -40,9 +40,9 @@ public class Bill {
     @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)
     private List<Measurement> measurementList;
 
-    private Date initialMeasurement;
+    private LocalDateTime initialMeasurement;
 
-    private Date finalMeasurement;
+    private LocalDateTime finalMeasurement;
 
     private LocalDate date;
 

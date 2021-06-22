@@ -24,7 +24,6 @@ import static org.mockito.Mockito.when;
 
 public class AllConverter {
 
-    @MockBean
     private ModelMapper modelMapper;
 
 
@@ -40,7 +39,7 @@ public class AllConverter {
 
     @BeforeEach
     public void setUp() {
-        //modelMapper = mock(ModelMapper.class);
+        modelMapper = mock(ModelMapper.class);
 
         addressToAddressDTOConverter = new AddressToAddressDTOConverter(modelMapper);
         billToBillDTOConverter = new BillToBillDTOConverter(modelMapper);

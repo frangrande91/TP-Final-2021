@@ -39,8 +39,9 @@ public class RateService {
 
     public Rate updateRate(Integer id, Rate newRate) throws ViolationChangeKeyAttributeException, RateNotExistsException {
         Rate currentRate = getRateById(id);
+
         if(!(currentRate.getId().equals(newRate.getId())) || !(currentRate.getTypeRate().equals(newRate.getTypeRate()))) {
-            throw new ViolationChangeKeyAttributeException("You can not change the id or serial number");
+            throw new ViolationChangeKeyAttributeException("You can not change the id or type rate");
         }
         return rateRepository.save(newRate);
     }

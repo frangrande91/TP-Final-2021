@@ -40,16 +40,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(EntityResponse.messageResponse(ex.getMessage()));
     }
 
-/*    @ExceptionHandler({ErrorLoginException.class})
-    public ResponseEntity<Object> handlerErrorLoginException(ErrorLoginException ex,WebRequest request) {
-        return ResponseNotFound(ex);
-    }
-
-    @ExceptionHandler({BrandNotExistsException.class})
-    public ResponseEntity<Object> handlerBrandNotExistsException(BrandNotExistsException ex,WebRequest request) {
-        return ResponseNotFound(ex);
-    }
-*/
     @ExceptionHandler({AddressNotExistsException.class})
     public ResponseEntity<Object> handlerAddressNotExistsException(AddressNotExistsException ex,WebRequest request) {
         return ResponseNotFound(ex);
@@ -87,7 +77,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler({ViolationChangeKeyAttributeException.class})
     public ResponseEntity<Object> handlerViolationChangeKeyAttributeException(ViolationChangeKeyAttributeException ex,WebRequest request) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(EntityResponse.messageResponse(ex.getMessage()));
     }
 
     @ExceptionHandler({RateAlreadyExists.class})
@@ -106,10 +96,18 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return ResponseEntity.status(HttpStatus.CONFLICT).body(EntityResponse.messageResponse(ex.getMessage()));
     }
 
+    @ExceptionHandler({FromToInvalidException.class})
+    public ResponseEntity<Object> handlerFromToInvalidException(FromToInvalidException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(EntityResponse.messageResponse(ex.getMessage()));
+    }
+
+    @ExceptionHandler({RestrictDeleteException.class})
+    public ResponseEntity<Object> handlerRestrictDeleteException(RestrictDeleteException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(EntityResponse.messageResponse(ex.getMessage()));
+    }
 
     @ExceptionHandler({SQLIntegrityConstraintViolationException.class})
     public ResponseEntity<Object> SQLIntegrityConstraintViolationException(AddressAlreadyExistsException ex, WebRequest request) {
-        System.out.println("TIPO DE EXCEPCION:"+ex.getClass());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(EntityResponse.messageResponse(ex.getMessage()));
     }
 

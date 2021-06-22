@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static edu.utn.TPFinal.utils.BillTestUtils.aBill;
+import static edu.utn.TPFinal.utils.BillTestUtils.aBillDto;
 import static edu.utn.TPFinal.utils.MeterTestUtils.aMeter;
 import static edu.utn.TPFinal.utils.MeterTestUtils.aMeterDto;
 import static edu.utn.TPFinal.utils.UserTestUtils.aUserDto;
@@ -35,7 +36,7 @@ public class MeasurementTestUtils {
     }
 
     public static MeasurementDto aMeasurementDto() {
-        return MeasurementDto.builder().id(1).meter(aMeterDto()).bill(aBill()).quantityKw(2.0).date(LocalDateTime.of(2021,5,5,0,0,0)).priceMeasurement(100.0).build();
+        return MeasurementDto.builder().id(1).meter(aMeterDto()).bill(aBillDto()).quantityKw(2.0).date(LocalDateTime.of(2021,5,5,0,0,0)).priceMeasurement(100.0).build();
     }
 
     public static ReceivedMeasurementDto aReceivedMeasurementDto() {

@@ -1,5 +1,6 @@
 package edu.utn.TPFinal.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import edu.utn.TPFinal.model.Bill;
 import edu.utn.TPFinal.model.Meter;
 import lombok.AllArgsConstructor;
@@ -19,8 +20,9 @@ public class MeasurementDto {
 
     private Integer id;
     private MeterDto meter;
-    private Bill bill;
+    private BillDto bill;
     private Double quantityKw;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime date;
     private Double priceMeasurement;
 
